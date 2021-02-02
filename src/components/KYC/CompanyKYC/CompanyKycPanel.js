@@ -1,104 +1,275 @@
-import React, { useEffect,useState } from 'react'
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
+import React, { useEffect, useState } from "react";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
+import Accordion from "@material-ui/core/Accordion";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
-import CompanyKYCForm from './CompanyKYCForm'
-import IndexCompanyDetails from './CompanyDetails/IndexCompanyDetails'
-import TaxIndex from './TaxDetails/TaxIndex'
-import AccountIndex from './AccountDetails/AccountIndex'
-import Tooltip from '@material-ui/core/Tooltip';
+import CompanyKYCForm from "./CompanyKYCForm";
+import IndexCompanyDetails from "./CompanyDetails/IndexCompanyDetails";
+import TaxIndex from "./TaxDetails/TaxIndex";
+import AccountIndex from "./AccountDetails/AccountIndex";
+import Tooltip from "@material-ui/core/Tooltip";
 
-import {
-  Button,
-    Card,
-    Grid,
-    IconButton
-} from '@material-ui/core'
+import { Button, Card, Grid, IconButton } from "@material-ui/core";
 
-import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline'
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
 
 const useStyles = makeStyles((theme) => ({
- 
-    root: {
-       minWidth: 275,
-    },
-    title: {
-      fontSize: 20,
-      height: 50,
-      padding: 10,
-      paddingLeft: 55,
-      color: 'white'
-    },
-    formHeadings: {
-      margin: 20,
-      marginBottom: 0
-    }
-  }));
-const KYCPanel = () => {
-    const classes = useStyles()
-    const [pressed,setPressed] = useState(true)
-    const [page,setPage] = useState('');
-    
-    const press = () => {
-      setPressed(!pressed)
-    }
-    const changePage = (page) => {
-      setPage(page)
-    }
-    if(page==='companyInfo'){
-      return(
-        <IndexCompanyDetails changePage={changePage} />
-      );
-    }
-    if(page==='taxInfo'){
-      return(
-        <TaxIndex changePage={changePage} />
-      )
-    }
-    if(page==='accountInfo'){
-      return(
-        <AccountIndex changePage={changePage} />
-      );
-    }
-    const displayPanel = <Card>
-    <Grid container style={{ backgroundColor: '#66bb6a',marginBottom:30}}  justify="space-between">  
-    <Typography fullWidth className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }} inline variant="body1" align="left">Company Info KYC <CheckCircleOutlineIcon /> 
-     </Typography>
-    <Typography fullWidth className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }} inline variant="body1" align="right">
-    <Tooltip title="Show details" interactive>
-    <IconButton onClick={()=>changePage('companyInfo')} aria-label="expand row" size="small" ><ChevronRightIcon /> 
-      </IconButton></Tooltip>
-    </Typography>
-    </Grid>
-    <Grid container style={{ backgroundColor: '#66bb6a',marginTop:30,marginBottom:30,minHeight:'400%'}}  justify="space-between">  
-    <Typography fullWidth className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }} inline variant="body1" align="left">Tax Info KYC <CheckCircleOutlineIcon />   </Typography>
-    <Typography fullWidth className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }} inline variant="body1" align="right">
-    <Tooltip title="Show details" interactive>
-    <IconButton onClick={()=>changePage('taxInfo')} aria-label="expand row" size="small" >
-        <ChevronRightIcon /> 
-      </IconButton></Tooltip>
-    </Typography>
-    </Grid>
-    <Grid container style={{ backgroundColor: '#66bb6a',marginTop:30,minHeight:'400%'}}  justify="space-between">  
-    <Typography fullWidth className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }} inline variant="body1" align="left">Account Info KYC <CheckCircleOutlineIcon />   </Typography>
-    <Typography fullWidth className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }} inline variant="body1" align="right">
-    <Tooltip title="Show details" interactive>
-    <IconButton onClick={()=>changePage('accountInfo')} aria-label="expand row" size="small" >
-        <ChevronRightIcon /> 
-      </IconButton></Tooltip>
-    </Typography>
-    </Grid>
-  
-</Card>;
+  root: {
+    minWidth: 275,
+  },
+  title: {
+    fontSize: 20,
+    height: 50,
+    padding: 10,
+    paddingLeft: 55,
+    color: "white",
+  },
+  formHeadings: {
+    margin: 20,
+    marginBottom: 0,
+  },
+}));
 
-    return(
-      <React.Fragment>
-      <Button onClick={()=>press()}>press</Button>
+const KYCPanel = () => {
+  const classes = useStyles();
+  const [pressed, setPressed] = useState(true);
+  const [page, setPage] = useState("");
+
+  const press = () => {
+    setPressed(!pressed);
+  };
+  const changePage = (page) => {
+    setPage(page);
+  };
+  if (page === "companyInfo") {
+    return <IndexCompanyDetails changePage={changePage} />;
+  }
+  if (page === "taxInfo") {
+    return <TaxIndex changePage={changePage} />;
+  }
+  if (page === "accountInfo") {
+    return <AccountIndex changePage={changePage} />;
+  }
+
+  const displayPanel = (
+    <div className={classes.root}>
+      <Accordion stles={{ backgroundColor: "grey" }}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1bh-content"
+          id="panel1bh-header"
+        >
+          <Typography
+            fullWidth
+            className={classes.title}
+            gutterBottom
+            style={{ backgroundColor: "white", color: "#3f51b5" }}
+            inline
+            variant="body1"
+            align="left"
+          >
+            Company Info KYC{" "}
+            <CheckCircleOutlineIcon style={{ color: "green" }} />{" "}
+            <ErrorOutlineIcon style={{ color: "orange" }} />
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography>
+            <IndexCompanyDetails changePage={changePage} />
+          </Typography>
+        </AccordionDetails>
+      </Accordion>
+      <Accordion
+      //  expanded={expanded === "panel1"}
+      //  onChange={handleChange("panel1")}
+      >
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1bh-content"
+          id="panel1bh-header"
+        >
+          <Typography
+            fullWidth
+            className={classes.title}
+            gutterBottom
+            style={{ backgroundColor: "white", color: "#3f51b5" }}
+            inline
+            variant="body1"
+            align="left"
+          >
+            Tax Info KYC <CheckCircleOutlineIcon style={{ color: "green" }} />{" "}
+            <ErrorOutlineIcon style={{ color: "orange" }} />
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography>
+            <TaxIndex changePage={changePage} />
+          </Typography>
+        </AccordionDetails>
+      </Accordion>
+      <Accordion
+      // expanded={expanded === "panel1"}
+      // onChange={handleChange("panel1")}
+      >
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1bh-content"
+          id="panel1bh-header"
+        >
+          <Typography
+            fullWidth
+            className={classes.title}
+            gutterBottom
+            style={{ backgroundColor: "white", color: "#3f51b5" }}
+            inline
+            variant="body1"
+            align="left"
+          >
+            Account Info KYC{" "}
+            <CheckCircleOutlineIcon style={{ color: "green" }} />{" "}
+            <ErrorOutlineIcon style={{ color: "orange" }} />
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography>
+            <AccountIndex changePage={changePage} />
+          </Typography>
+        </AccordionDetails>
+      </Accordion>
+    </div>
+    /*  {<Grid
+        container
+        style={{ backgroundColor: "#66bb6a", marginBottom: 30 }}
+        justify="space-between"
+      >
+        <Typography
+          fullWidth
+          className={classes.title}
+          gutterBottom
+          style={{ backgroundColor: "#66bb6a" }}
+          inline
+          variant="body1"
+          align="left"
+        >
+          Company Info KYC <CheckCircleOutlineIcon /> <ErrorOutlineIcon />
+        </Typography>
+        <Typography
+          fullWidth
+          className={classes.title}
+          gutterBottom
+          style={{ backgroundColor: "#66bb6a" }}
+          inline
+          variant="body1"
+          align="right"
+        >
+          <Tooltip title="Show details" interactive>
+            <IconButton
+              onClick={() => changePage("companyInfo")}
+              aria-label="expand row"
+              size="small"
+            >
+              <ChevronRightIcon />
+            </IconButton>
+          </Tooltip>
+        </Typography>
+      </Grid>
+      <Grid
+        container
+        style={{
+          backgroundColor: "#66bb6a",
+          marginTop: 30,
+          marginBottom: 30,
+          minHeight: "400%",
+        }}
+        justify="space-between"
+      >
+        <Typography
+          fullWidth
+          className={classes.title}
+          gutterBottom
+          style={{ backgroundColor: "#66bb6a" }}
+          inline
+          variant="body1"
+          align="left"
+        >
+          Tax Info KYC <CheckCircleOutlineIcon /> <ErrorOutlineIcon />{" "}
+        </Typography>
+        <Typography
+          fullWidth
+          className={classes.title}
+          gutterBottom
+          style={{ backgroundColor: "#66bb6a" }}
+          inline
+          variant="body1"
+          align="right"
+        >
+          <Tooltip title="Show details" interactive>
+            <IconButton
+              onClick={() => changePage("taxInfo")}
+              aria-label="expand row"
+              size="small"
+            >
+              <ChevronRightIcon />
+            </IconButton>
+          </Tooltip>
+        </Typography>
+      </Grid>
+      <Grid
+        container
+        style={{
+          backgroundColor: "#66bb6a",
+          marginTop: 30,
+          minHeight: "400%",
+        }}
+        justify="space-between"
+      >
+        <Typography
+          fullWidth
+          className={classes.title}
+          gutterBottom
+          style={{ backgroundColor: "#66bb6a" }}
+          inline
+          variant="body1"
+          align="left"
+        >
+          Account Info KYC <CheckCircleOutlineIcon />
+          <ErrorOutlineIcon />{" "}
+        </Typography>
+        <Typography
+          fullWidth
+          className={classes.title}
+          gutterBottom
+          style={{ backgroundColor: "#66bb6a" }}
+          inline
+          variant="body1"
+          align="right"
+        >
+          <Tooltip title="Show details" interactive>
+            <IconButton
+              onClick={() => changePage("accountInfo")}
+              aria-label="expand row"
+              size="small"
+            >
+              <ChevronRightIcon />
+            </IconButton>
+          </Tooltip>
+        </Typography>
+      </Grid> */
+    //  }
+  );
+
+  return (
+    <React.Fragment>
+      <Button onClick={() => press()}>press</Button>
       {pressed && displayPanel}
       {!pressed && <CompanyKYCForm />}
-      </React.Fragment>
-    )
-}
+    </React.Fragment>
+  );
+};
 
-export default KYCPanel
+export default KYCPanel;
