@@ -8,7 +8,10 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 import CompanyKYCForm from "./CompanyKYCForm";
 import IndexCompanyDetails from "./CompanyDetails/IndexCompanyDetails";
+import FormCompanyDetails from "./CompanyDetails/FormCompanyDetails";
+import TaxForm from "./TaxDetails/TaxForm";
 import TaxIndex from "./TaxDetails/TaxIndex";
+import AccountInfoForm from "./AccountDetails/AccountForm";
 import AccountIndex from "./AccountDetails/AccountIndex";
 import Tooltip from "@material-ui/core/Tooltip";
 
@@ -18,20 +21,29 @@ import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
 
+// const useStyles = makeStyles((theme) => ({
+//   root: {
+//     minWidth: 275,
+//   },
+//   title: {
+//     fontSize: 20,
+//     height: 50,
+//     padding: 10,
+//     paddingLeft: 55,
+//     color: "#DCDCDC",
+//   },
+//   formHeadings: {
+//     margin: 20,
+//     marginBottom: 0,
+//   },
+// }));
 const useStyles = makeStyles((theme) => ({
   root: {
-    minWidth: 275,
+    width: "100%",
   },
-  title: {
-    fontSize: 20,
-    height: 50,
-    padding: 10,
-    paddingLeft: 55,
-    color: "white",
-  },
-  formHeadings: {
-    margin: 20,
-    marginBottom: 0,
+  heading: {
+    fontSize: theme.typography.pxToRem(15),
+    fontWeight: theme.typography.fontWeightRegular,
   },
 }));
 
@@ -60,6 +72,7 @@ const KYCPanel = () => {
     <div className={classes.root}>
       <Accordion stles={{ backgroundColor: "grey" }}>
         <AccordionSummary
+          style={{ backgroundColor: "#DCDCDC" }}
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1bh-content"
           id="panel1bh-header"
@@ -68,27 +81,30 @@ const KYCPanel = () => {
             fullWidth
             className={classes.title}
             gutterBottom
-            style={{ backgroundColor: "white", color: "#3f51b5" }}
+            style={{ backgroundColor: "#DCDCDC", color: "#3f51b5" }}
             inline
             variant="body1"
             align="left"
           >
-            Company Info KYC{" "}
-            <CheckCircleOutlineIcon style={{ color: "green" }} />{" "}
-            <ErrorOutlineIcon style={{ color: "orange" }} />
+            Company Info {" "}
+            <Tooltip title="Done">
+              <CheckCircleOutlineIcon style={{ color: "green" }} />
+            </Tooltip>{" "}
+            <Tooltip title="Warning">
+              <ErrorOutlineIcon style={{ color: "orange" }} />
+            </Tooltip>
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Typography>
             <IndexCompanyDetails changePage={changePage} />
+            <FormCompanyDetails />
           </Typography>
         </AccordionDetails>
       </Accordion>
-      <Accordion
-      //  expanded={expanded === "panel1"}
-      //  onChange={handleChange("panel1")}
-      >
+      <Accordion>
         <AccordionSummary
+          style={{ backgroundColor: "#DCDCDC" }}
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1bh-content"
           id="panel1bh-header"
@@ -97,26 +113,30 @@ const KYCPanel = () => {
             fullWidth
             className={classes.title}
             gutterBottom
-            style={{ backgroundColor: "white", color: "#3f51b5" }}
+            style={{ backgroundColor: "#DCDCDC", color: "#3f51b5" }}
             inline
             variant="body1"
             align="left"
           >
-            Tax Info KYC <CheckCircleOutlineIcon style={{ color: "green" }} />{" "}
-            <ErrorOutlineIcon style={{ color: "orange" }} />
+            Tax Info {" "}
+            <Tooltip title="Done">
+              <CheckCircleOutlineIcon style={{ color: "green" }} />
+            </Tooltip>{" "}
+            <Tooltip title="Warning">
+              <ErrorOutlineIcon style={{ color: "orange" }} />
+            </Tooltip>
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Typography>
             <TaxIndex changePage={changePage} />
+            <TaxForm />
           </Typography>
         </AccordionDetails>
       </Accordion>
-      <Accordion
-      // expanded={expanded === "panel1"}
-      // onChange={handleChange("panel1")}
-      >
+      <Accordion>
         <AccordionSummary
+          style={{ backgroundColor: "#DCDCDC" }}
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1bh-content"
           id="panel1bh-header"
@@ -125,19 +145,24 @@ const KYCPanel = () => {
             fullWidth
             className={classes.title}
             gutterBottom
-            style={{ backgroundColor: "white", color: "#3f51b5" }}
+            style={{ backgroundColor: "#DCDCDC", color: "#3f51b5" }}
             inline
             variant="body1"
             align="left"
           >
-            Account Info KYC{" "}
-            <CheckCircleOutlineIcon style={{ color: "green" }} />{" "}
-            <ErrorOutlineIcon style={{ color: "orange" }} />
+            Account Info {" "}
+            <Tooltip title="Done">
+              <CheckCircleOutlineIcon style={{ color: "green" }} />
+            </Tooltip>{" "}
+            <Tooltip title="Warning">
+              <ErrorOutlineIcon style={{ color: "orange" }} />
+            </Tooltip>
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Typography>
             <AccountIndex changePage={changePage} />
+            <AccountInfoForm />
           </Typography>
         </AccordionDetails>
       </Accordion>

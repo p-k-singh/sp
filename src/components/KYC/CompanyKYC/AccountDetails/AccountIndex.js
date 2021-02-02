@@ -58,8 +58,7 @@ const AccountInfoIndex = (props) => {
         </Link>
             <Typography color="textPrimary">Account Details</Typography>
     </Breadcrumbs> */}
-        <Card className={classes.root}>
-            <CardContent style={{ padding: 0,marginTop:10 }}>
+        
                                 {/* <Typography className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }}>
                                     Account Details
                                 </Typography> */}
@@ -87,8 +86,7 @@ const AccountInfoIndex = (props) => {
 
                                     </Grid>
                                 </table>
-                </CardContent>
-            </Card>
+              
         </React.Fragment>
     )
     

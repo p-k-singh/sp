@@ -57,8 +57,7 @@ const TaxInfoIndex = (props) => {
         </Link>
             <Typography color="textPrimary">Tax Details</Typography>
     </Breadcrumbs> */}
-        <Card className={classes.root}>
-            <CardContent style={{ padding: 0,marginTop:10 }}>
+       
                                 {/* <Typography className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }}>
                                     Tax Details
                                 </Typography> */}
@@ -79,8 +78,7 @@ const TaxInfoIndex = (props) => {
                                         
                                     </Grid>
                                 </table>
-                </CardContent>
-            </Card>
+              
         </React.Fragment>
     )
     
