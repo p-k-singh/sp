@@ -51,17 +51,16 @@ const TaxInfoIndex = (props) => {
     }
     return(
         <React.Fragment>
-            <Breadcrumbs style={{marginBottom:'10px'}} aria-label="breadcrumb">
+            {/* <Breadcrumbs style={{marginBottom:'10px'}} aria-label="breadcrumb">
         <Link color="inherit" onClick={() => fun('')}>
             KYC
         </Link>
             <Typography color="textPrimary">Tax Details</Typography>
-    </Breadcrumbs>
-        <Card className={classes.root}>
-            <CardContent style={{ padding: 0,marginTop:10 }}>
-                                <Typography className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }}>
+    </Breadcrumbs> */}
+       
+                                {/* <Typography className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }}>
                                     Tax Details
-                                </Typography>
+                                </Typography> */}
                                 <table>
                                     <Grid container spacing={3} style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}>
                                         <Grid item xs={12} sm={6} >
@@ -79,8 +78,7 @@ const TaxInfoIndex = (props) => {
                                         
                                     </Grid>
                                 </table>
-                </CardContent>
-            </Card>
+              
         </React.Fragment>
     )
     

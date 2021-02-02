@@ -52,12 +52,12 @@ const CompanyKYC = (props) => {
     
         return(
             <div style={{overflow:'hidden'}} >
-                <Breadcrumbs style={{marginBottom:'10px'}} aria-label="breadcrumb">
+                {/* <Breadcrumbs style={{marginBottom:'10px'}} aria-label="breadcrumb">
         <Link color="inherit" onClick={() => fun('')}>
             KYC
         </Link>
             <Typography color="textPrimary">Tax Info KYC</Typography>
-    </Breadcrumbs>
+    </Breadcrumbs> */}
                 <Typography fullWidth className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }}>
                             Pending KYC
                 </Typography>
