@@ -15,8 +15,7 @@ import AccountInfoForm from "./AccountDetails/AccountForm";
 import AccountIndex from "./AccountDetails/AccountIndex";
 import Tooltip from "@material-ui/core/Tooltip";
 
-import { Button, Card, Grid, IconButton } from "@material-ui/core";
-
+import { Button, Card, Grid, IconButton } from "@material-ui/core"; import Done from "@material-ui/icons/Done";
 import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
@@ -72,7 +71,10 @@ const KYCPanel = () => {
     <div className={classes.root}>
       <Accordion stles={{ backgroundColor: "grey" }}>
         <AccordionSummary
-          style={{ backgroundColor: "#DCDCDC" }}
+          style={{ 
+            backgroundColor: 'rgba(0, 0, 0, .03)',
+    borderBottom: '1px solid rgba(0, 0, 0, .125)',
+          }}
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1bh-content"
           id="panel1bh-header"
@@ -81,14 +83,14 @@ const KYCPanel = () => {
             fullWidth
             className={classes.title}
             gutterBottom
-            style={{ backgroundColor: "#DCDCDC", color: "#3f51b5" }}
+            //style={{ backgroundColor: "#DCDCDC", color: "#3f51b5" }}
             inline
             variant="body1"
             align="left"
           >
-            Company Info {" "}
+            Company Inf {" "}
             <Tooltip title="Done">
-              <CheckCircleOutlineIcon style={{ color: "green" }} />
+              <Done style={{ color: "green" }} />
             </Tooltip>{" "}
             <Tooltip title="Warning">
               <ErrorOutlineIcon style={{ color: "orange" }} />
@@ -102,6 +104,8 @@ const KYCPanel = () => {
           </Typography>
         </AccordionDetails>
       </Accordion>
+
+
       <Accordion>
         <AccordionSummary
           style={{ backgroundColor: "#DCDCDC" }}

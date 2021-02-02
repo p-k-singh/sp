@@ -196,6 +196,11 @@ export default function CollapsibleTable(props) {
                   <th>Permit States: </th>
                    <td> {row.statesOfPermit.map((permitState) => permitState.name+' .')}</td>
                    </TableRow>
+                   {row.capacity!==undefined &&
+                   <TableRow>  
+                  <th>Capacity: </th>
+                   <td> {row.capacity}</td>
+                   </TableRow>}
                    
                 </Box>
               </Collapse>

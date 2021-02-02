@@ -63,6 +63,7 @@ const constants = {
       {name:'Warehouse',value:'warehouse'}
     ],
     capabilityOptions: [
+      {name:'',id:0},
       {name: 'GPS', id: 1},
       {name: 'Freezer', id: 2},
       {name:'Fastag',id:3},

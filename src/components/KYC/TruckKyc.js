@@ -36,6 +36,7 @@ const TruckKYC = (props) => {
     const [engineNumber, setEngineNumber] = useState();
     const [permitId,setPermitId] = useState()
     const [truckNumber,setTruckNumber] = useState()
+    const [capacity,setCapacity] = useState()
     const [rcDoc,setRcDoc] = useState([])
     const [permitDoc,setPermitDoc] = useState()
     const [statesOfPermit,setStatesOfPermit] = useState([])
@@ -63,6 +64,9 @@ const TruckKYC = (props) => {
     }
     const onTruckNumberChange = (event) => {
         setTruckNumber(event.target.value)
+    }
+    const onTruckCapacityChange = (event) => {
+        setCapacity(event.target.value)
     }
   
     const onPermitDocChange = (event) => {
@@ -146,6 +150,7 @@ const TruckKYC = (props) => {
                                             truckNumber: truckNumber,
                                             chassisNumber: chassisNumber,
                                             engineNumber: engineNumber,
+                                            capacity: capacity,
                                             permitId:permitId,
                                             rcLink: tempRCLink,
                                             permitLink: tempPermitLink,
@@ -201,6 +206,18 @@ const TruckKYC = (props) => {
                                 fullWidth
                                 value={truckNumber}
                                 onChange={(event) => onTruckNumberChange(event)}
+                                />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                <TextField
+                                required
+                                type="number"
+                                id="capacity"
+                                name="capacity"
+                                label="Enter Capacity"
+                                fullWidth
+                                value={capacity}
+                                onChange={(event) => onTruckCapacityChange(event)}
                                 />
                                 </Grid>
                             </Grid>   
