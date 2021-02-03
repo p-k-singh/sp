@@ -13,12 +13,12 @@ import TaxForm from "./TaxDetails/TaxForm";
 import TaxIndex from "./TaxDetails/TaxIndex";
 import AccountInfoForm from "./AccountDetails/AccountForm";
 import AccountIndex from "./AccountDetails/AccountIndex";
-import Tooltip from "@material-ui/core/Tooltip";
 
 import { Button, Card, Grid, IconButton } from "@material-ui/core"; import Done from "@material-ui/icons/Done";
 import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
+import Tooltip from "@material-ui/core/Tooltip";
 
 // const useStyles = makeStyles((theme) => ({
 //   root: {
