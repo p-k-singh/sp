@@ -202,8 +202,8 @@ const TruckKYC = (props) => {
             {showForm &&  <Button 
              onClick={handleShowForm}
             className="row"
-                variant='contained' style={{backgroundColor:'#f9a825', marginBottom:'10px'}}
-            >Show Done KYC</Button>}
+                variant='contained' style={{ marginBottom:'10px'}}
+            >Back</Button>}
             
             {showForm && EachKYC()}
             {!showForm && <ShowDrivers  />}

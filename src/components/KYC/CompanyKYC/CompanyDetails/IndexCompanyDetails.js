@@ -30,27 +30,13 @@ const useStyles = makeStyles({
 });
 const AccountInfoIndex = (props) => {
     const classes = useStyles()
-    const [comDetails,setComDetails] = useState()
-    const [loading,setLoading] = useState(true)
-    useEffect(()=>{
-        var temp = {
-            registeredName:'GoFlexe',
-            registeredAddress:'Patna',
-            email:'pks@gmail.com',
-            contact:'8252782928'
-        }
-        setComDetails(temp);
-        setLoading(false)
-    },[])
+    const [comDetails,setComDetails] = useState(props.companyDetails)
+    
     const fun = (page) => {
         //alert(JSON.stringify(props))
         props.changePage(page)
     }
-    if(loading===true){
-        return(
-            <Spinner />
-        )
-    }
+    
     return(
         <React.Fragment>
             {/* <Breadcrumbs style={{marginBottom:'10px'}} aria-label="breadcrumb">
@@ -80,13 +66,13 @@ const AccountInfoIndex = (props) => {
                                         <Grid item xs={12} sm={6}>
                                             <tr>
                                                 <th scope="row">Email:</th>
-                                                <td>{comDetails.email}</td>
+                                                <td>{comDetails.registeredEmail}</td>
                                             </tr>
                                         </Grid>
                                         <Grid item xs={12} sm={6}>
                                             <tr>
                                                 <th scope="row">Contact:</th>
-                                                <td>{comDetails.contact}</td>
+                                                <td>{comDetails.registeredContactNo}</td>
                                             </tr>
                                         </Grid>
 

@@ -2,8 +2,8 @@ import React,{useEffect, useState} from 'react'
 import Spinner from '../../../UI/Spinner'
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-// import {Auth,API} from 'aws-amplify'
-// import axios from 'axios'
+import {Auth,API} from 'aws-amplify'
+import axios from 'axios'
 import {Link} from 'react-router-dom'
 import {
     TextField,
@@ -32,17 +32,50 @@ const useStyles = makeStyles({
 const AccountInfoForm = (props) => {
    
     const classes = useStyles()
-    const [aadharDoc,setAadharDoc] = useState()
-
+    const [loading,setLoading] = useState(false)
+    const [myState,setMyState] = useState({
+        accountHolderName:'',
+        accountNumber:'',
+        ifscCode:''
+    })
     const submitKYC =  () => {
+        setLoading(true)
+        Auth.currentUserInfo()
+            .then((userDetails)=>{
+            const payload={
+            body:{
+                id:userDetails.username,
+                type:'serviceprovider',
+                selfInfo:{
+                    accountInfo:{
+                        accountHolderName:myState.accountHolderName,
+                        accountNumber:myState.accountNumber,
+                        ifscCode:myState.ifscCode
+                        }
+            }
+         }
+        }
+                            API.post("GoFlexeOrderPlacement",'/kyc/info?type='+'serviceprovider',payload)
+                            .then(resp=> console.log(resp))
+                            .catch(err => console.log(err))
+                           
+                            fun()
+                    })
+                    .catch(err => console.log(err))
+                    setLoading(false)
         
     }
-    const fun = (page) => {
+    const fun = () => {
         //alert(JSON.stringify(props))
-        props.changePage(page)
+        props.loadData()
     }
-    const onAadharProofChange = (event) => {
-        setAadharDoc(event.target.files[0])
+    const fieldsChange = (event) => {
+        setMyState({...myState,[event.target.name]:event.target.value})
+    }
+    if(loading===true){
+        return(
+            <Spinner />
+        )
     }
     
         return(
@@ -66,6 +99,8 @@ const AccountInfoForm = (props) => {
                             type="text"
                             id="accountHolderName"
                             name="accountHolderName"
+                            value={myState.accountHolderName}
+                            onChange={(event)=>fieldsChange(event)}
                             label="Account Holder's Name"
                             fullWidth                            
                      
@@ -77,6 +112,8 @@ const AccountInfoForm = (props) => {
                             id="accountNumber"
                             name="accountNumber"
                             label="Account Number"
+                            value={myState.accountNumber}
+                            onChange={(event)=>fieldsChange(event)}
                             fullWidth                            
                             
                         />
@@ -86,6 +123,8 @@ const AccountInfoForm = (props) => {
                             type="text"
                             id="ifscCode"
                             name="ifscCode"
+                            value={myState.ifscCode}
+                            onChange={(event)=>fieldsChange(event)}
                             label="IFSC Code"
                             fullWidth                            
                     

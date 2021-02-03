@@ -30,37 +30,16 @@ const useStyles = makeStyles({
 });
 const TaxInfoIndex = (props) => {
     const classes = useStyles()
-    const [taxDetails,setTaxDetails] = useState()
-    const [loading,setLoading] = useState(true)
-    useEffect(()=>{
-        var temp = {
-            pan:'KHOPS5817Q',
-            gstin:'HELLO745'
-        }
-        setTaxDetails(temp);
-        setLoading(false)
-    },[])
+    const [taxDetails,setTaxDetails] = useState(props.taxDetails)
+    
     const fun = (page) => {
         //alert(JSON.stringify(props))
         props.changePage(page)
     }
-    if(loading===true){
-        return(
-            <Spinner />
-        )
-    }
+    
     return(
         <React.Fragment>
-            {/* <Breadcrumbs style={{marginBottom:'10px'}} aria-label="breadcrumb">
-        <Link color="inherit" onClick={() => fun('')}>
-            KYC
-        </Link>
-            <Typography color="textPrimary">Tax Details</Typography>
-    </Breadcrumbs> */}
-       
-                                {/* <Typography className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }}>
-                                    Tax Details
-                                </Typography> */}
+
                                 <table>
                                     <Grid container spacing={3} style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}>
                                         <Grid item xs={12} sm={6} >

@@ -157,7 +157,7 @@ const Assignment = (props) => {
                 getOptionSelected={(option, value) => option.truckNumber === value.truckNumber }
 
                 style={{ width: 300 }}
-                renderInput={(params) => <TextField {...params} label="Combo box" variant="outlined" />}
+                renderInput={(params) => <TextField {...params} label="Truck Number" variant="outlined" />}
                 />
         </Grid>
         <Grid item xs={12} sm={3} >
@@ -212,7 +212,7 @@ const Assignment = (props) => {
                                 <button
                                     onClick={()=>addTruck()}
                                     >
-                                    Add Item
+                                    Add Truck
                                     </button>
                                     {list}
                                     <Grid container spacing={3} style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}>

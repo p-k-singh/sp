@@ -2,9 +2,9 @@ import React,{useEffect, useState} from 'react'
 
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-// import {Auth,API} from 'aws-amplify'
-// import axios from 'axios'
-import {Link} from 'react-router-dom'
+import {Auth,API} from 'aws-amplify'
+ import axios from 'axios'
+import Spinner from '../../../UI/Spinner'
 import {
     TextField,
     Grid,
@@ -32,32 +32,109 @@ const useStyles = makeStyles({
 const CompanyKYC = (props) => {
    
     const classes = useStyles()
-    const [pan,setPan] = useState()
-    const [gst,setGST] = useState()
-
-    const submitKYC =  () => {
-        
+    const [panDoc,setPanDoc] = useState()
+    const [gstDoc,setGSTDoc] = useState()
+    const [loading,setLoading] = useState(false)
+    const [myState,setMyState] = useState({
+        pan:'',
+        gstin:''
+    })
+    const fieldsChange = (event) => {
+        setMyState({...myState,[event.target.name]:event.target.value})
     }
-    const fun = (page) => {
+    const submitKYC =  () => {
+        setLoading(true)
+        var panLink,gstinLink;
+        const metaData= {
+            'contentType': panDoc.type
+        }
+        const payload= {
+             body: {
+                 contentType: panDoc.type,
+                 metaData: metaData
+             }
+        }
+        API.post(
+            "GoFlexeOrderPlacement", '/kyc/document?type='+'serviceprovider', payload)
+            .then((initiateResult)=>{
+                panLink = `uploads/kycdocuments/${initiateResult.fileId}.${panDoc.type}`
+                axios.put(initiateResult.s3PutObjectUrl,panDoc,{
+                    headers: {
+                        'Content-Type': panDoc.type
+                    }
+                }).then(resp => {
+                    const metaData= {
+                        'contentType': gstDoc.type
+                    }
+                    const payload= {
+                         body: {
+                             contentType: gstDoc.type,
+                             metaData: metaData
+                         }
+                    }
+                    API.post(
+                        "GoFlexeOrderPlacement", '/kyc/document?type='+'serviceprovider', payload)
+                        .then((initiateResult)=>{
+                            gstinLink = `uploads/kycdocuments/${initiateResult.fileId}.${gstDoc.type}`
+                            axios.put(initiateResult.s3PutObjectUrl,gstDoc,{
+                                headers: {
+                                    'Content-Type': gstDoc.type
+                                }
+                            }).then(res=>{
+                                Auth.currentUserInfo()
+                                .then((userDetails)=>{
+                                    const payload={
+                                        body:{
+                                            id:userDetails.username,
+                                            type:'serviceprovider',
+                                            selfInfo:{
+                                            
+                                            taxInfo:{
+                                            pan:myState.pan,
+                                            gstin:myState.gstin,
+                                            panLink:panLink,
+                                            gstinLink:gstinLink
+                                            },
+                                           
+                                        }
+                                        }
+                                    }
+                                        API.post("GoFlexeOrderPlacement",'/kyc/info?type='+'serviceprovider',payload)
+                                        .then(resp=> {console.log(resp)
+                                        fun()})
+                                        .catch(err => console.log(err))
+                                })
+                                .catch(err=>console.log(err))
+                            })
+                            .catch(err=>console.log(err))
+                        })
+                        .catch(err=> console.log(err))
+                })
+                .catch(err=>console.log(err))
+            })
+            .catch(err=> console.log(err))
+            setLoading(false)
+    }
+    const fun = () => {
         //alert(JSON.stringify(props))
-        props.changePage(page)
+        props.loadData()
     }
    
     const onPanProofChange = (event) => {
-        setPan(event.target.files[0]);
+        setPanDoc(event.target.files[0]);
     }
     const onGSTINProofChange = (event) => {
-        setGST(event.target.files[0])
+        setGSTDoc(event.target.files[0])
+    }
+    if(loading===true){
+        return(
+            <Spinner />
+        )
     }
     
         return(
             <div style={{overflow:'hidden'}} >
-                {/* <Breadcrumbs style={{marginBottom:'10px'}} aria-label="breadcrumb">
-        <Link color="inherit" onClick={() => fun('')}>
-            KYC
-        </Link>
-            <Typography color="textPrimary">Tax Info KYC</Typography>
-    </Breadcrumbs> */}
+                
                 <Typography fullWidth className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }}>
                             Pending KYC
                 </Typography>
@@ -72,6 +149,8 @@ const CompanyKYC = (props) => {
                             type="text"
                             id="pan"
                             name="pan"
+                            value={myState.pan}
+                            onChange={(event)=>fieldsChange(event)}
                             label="Enter PAN"
                             fullWidth                            
                         />
@@ -82,6 +161,8 @@ const CompanyKYC = (props) => {
                             type="text"
                             id="gstin"
                             name="gstin"
+                            value={myState.gstin}
+                            onChange={(event)=>fieldsChange(event)}
                             label="GST Number"
                             fullWidth                            
                         />

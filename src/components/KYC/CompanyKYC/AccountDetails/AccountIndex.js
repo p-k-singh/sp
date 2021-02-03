@@ -30,38 +30,16 @@ const useStyles = makeStyles({
 });
 const AccountInfoIndex = (props) => {
     const classes = useStyles()
-    const [accDetails,setAccDetails] = useState()
-    const [loading,setLoading] = useState(true)
-    useEffect(()=>{
-        var temp = {
-            accountHolderName:'Prashant Kumar Singh',
-            accountNumber:'918252782928',
-            ifscCode:'ABCD1234'
-        }
-        setAccDetails(temp);
-        setLoading(false)
-    },[])
+    const [accDetails,setAccDetails] = useState(props.accountDetails)
+   
+   
     const fun = (page) => {
         //alert(JSON.stringify(props))
         props.changePage(page)
     }
-    if(loading===true){
-        return(
-            <Spinner />
-        )
-    }
+   
     return(
         <React.Fragment>
-            {/* <Breadcrumbs style={{marginBottom:'10px'}} aria-label="breadcrumb">
-        <Link color="inherit" onClick={() => fun('')}>
-            KYC
-        </Link>
-            <Typography color="textPrimary">Account Details</Typography>
-    </Breadcrumbs> */}
-        
-                                {/* <Typography className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }}>
-                                    Account Details
-                                </Typography> */}
                                 <table>
                                     <Grid container spacing={3} style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}>
                                         <Grid item xs={12} sm={6} >
