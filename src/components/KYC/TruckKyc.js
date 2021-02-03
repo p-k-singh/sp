@@ -196,7 +196,13 @@ const TruckKYC = (props) => {
         fullWidth
         className={classes.title}
         gutterBottom
-        style={{ backgroundColor: "#66bb6a" }}
+        style={{
+          backgroundColor: "rgba(0, 0, 0, .09)",
+          borderBottom: "1px solid rgba(0, 0, 0, .125)",
+          borderWidth: 120,
+          color: "black",
+          borderRadius: "5px",
+        }}
       >
         KYC
       </Typography>
