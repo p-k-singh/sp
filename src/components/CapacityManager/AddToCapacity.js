@@ -264,7 +264,7 @@ const AddTocapacity = (props) => {
                       type='text'
                       id="location"
                       name="location"
-                      label="Location"
+                      label="Base Location"
                       fullWidth
                       value={location}
                        onChange={(event)=>onLocationChangeController(event)}

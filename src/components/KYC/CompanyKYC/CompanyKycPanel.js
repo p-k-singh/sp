@@ -71,9 +71,9 @@ const KYCPanel = () => {
     <div className={classes.root}>
       <Accordion stles={{ backgroundColor: "grey" }}>
         <AccordionSummary
-          style={{ 
-            backgroundColor: 'rgba(0, 0, 0, .03)',
-    borderBottom: '1px solid rgba(0, 0, 0, .125)',
+          style={{
+            backgroundColor: "rgba(0, 0, 0, .03)",
+            borderBottom: "1px solid rgba(0, 0, 0, .125)",
           }}
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1bh-content"
@@ -83,12 +83,11 @@ const KYCPanel = () => {
             fullWidth
             className={classes.title}
             gutterBottom
-            //style={{ backgroundColor: "#DCDCDC", color: "#3f51b5" }}
             inline
             variant="body1"
             align="left"
           >
-            Company Inf {" "}
+            Company Info{" "}
             <Tooltip title="Done">
               <Done style={{ color: "green" }} />
             </Tooltip>{" "}
@@ -105,10 +104,12 @@ const KYCPanel = () => {
         </AccordionDetails>
       </Accordion>
 
-
       <Accordion>
         <AccordionSummary
-          style={{ backgroundColor: "#DCDCDC" }}
+          style={{
+            backgroundColor: "rgba(0, 0, 0, .03)",
+            borderBottom: "1px solid rgba(0, 0, 0, .125)",
+          }}
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1bh-content"
           id="panel1bh-header"
@@ -117,14 +118,13 @@ const KYCPanel = () => {
             fullWidth
             className={classes.title}
             gutterBottom
-            style={{ backgroundColor: "#DCDCDC", color: "#3f51b5" }}
             inline
             variant="body1"
             align="left"
           >
-            Tax Info {" "}
+            Tax Info{" "}
             <Tooltip title="Done">
-              <CheckCircleOutlineIcon style={{ color: "green" }} />
+              <Done style={{ color: "green" }} />
             </Tooltip>{" "}
             <Tooltip title="Warning">
               <ErrorOutlineIcon style={{ color: "orange" }} />
@@ -140,7 +140,10 @@ const KYCPanel = () => {
       </Accordion>
       <Accordion>
         <AccordionSummary
-          style={{ backgroundColor: "#DCDCDC" }}
+          style={{
+            backgroundColor: "rgba(0, 0, 0, .03)",
+            borderBottom: "1px solid rgba(0, 0, 0, .125)",
+          }}
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1bh-content"
           id="panel1bh-header"
@@ -149,14 +152,13 @@ const KYCPanel = () => {
             fullWidth
             className={classes.title}
             gutterBottom
-            style={{ backgroundColor: "#DCDCDC", color: "#3f51b5" }}
             inline
             variant="body1"
             align="left"
           >
-            Account Info {" "}
+            Account Info{" "}
             <Tooltip title="Done">
-              <CheckCircleOutlineIcon style={{ color: "green" }} />
+              <Done style={{ color: "green" }} />
             </Tooltip>{" "}
             <Tooltip title="Warning">
               <ErrorOutlineIcon style={{ color: "orange" }} />
