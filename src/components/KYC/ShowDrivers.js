@@ -17,6 +17,8 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import Checkbox from "@material-ui/core/Checkbox";
 import EditIcon from "@material-ui/icons/Edit";
 import { IconButton } from "@material-ui/core";
+
+import Button from "@material-ui/core/Button";
 const useRowStyles = makeStyles({
   root: {
     "& > *": {
@@ -136,18 +138,28 @@ export default function CollapsibleTable(props) {
               <TableCell />
               {checkedBoxes.length === 1 ? (
                 <TableCell align="right">
-                  <IconButton size="small">
-                    <EditIcon label="Edit" color="primary" />
-                  </IconButton>
+                  <Button
+                    variant="contained"
+                    color="default"
+                    className={classes.button}
+                    startIcon={<EditIcon label="Edit" />}
+                  >
+                    Edit
+                  </Button>
                 </TableCell>
               ) : (
                 <TableCell />
               )}
               {checkedBoxes.length > 0 ? (
                 <TableCell align="right">
-                  <IconButton size="small">
-                    <DeleteIcon color="secondary" />
-                  </IconButton>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    className={classes.button}
+                    startIcon={<DeleteIcon />}
+                  >
+                    Delete
+                  </Button>
                 </TableCell>
               ) : (
                 <TableCell />

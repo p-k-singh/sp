@@ -233,6 +233,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import Checkbox from "@material-ui/core/Checkbox";
 import EditIcon from "@material-ui/icons/Edit";
 import RefreshIcon from "@material-ui/icons/Refresh";
+import Button from "@material-ui/core/Button";
 
 import Done from "@material-ui/icons/Done";
 import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
@@ -357,20 +358,28 @@ export default function CollapsibleTable(props) {
               <TableCell />
               {checkedBoxes.length === 1 ? (
                 <TableCell align="right">
-                  <IconButton size="small">
-                    {" "}
-                    <EditIcon label="Edit" color="primary" />{" "}
-                  </IconButton>
+                  <Button
+                    variant="contained"
+                    color="default"
+                    className={classes.button}
+                    startIcon={<EditIcon label="Edit" />}
+                  >
+                    Edit
+                  </Button>
                 </TableCell>
               ) : (
                 <TableCell />
               )}
               {checkedBoxes.length > 0 ? (
                 <TableCell align="right">
-                  <IconButton size="small">
-                    {" "}
-                    <DeleteIcon color="secondary" />
-                  </IconButton>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    className={classes.button}
+                    startIcon={<DeleteIcon />}
+                  >
+                    Delete
+                  </Button>
                 </TableCell>
               ) : (
                 <TableCell />
