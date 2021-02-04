@@ -30,15 +30,13 @@
 // function Row(props,idx) {
 //   const { row } = props;
 //   const [open, setOpen] = React.useState(false);
-  
 
 //   return (
 //     <React.Fragment>
-      
+
 //     </React.Fragment>
 //   );
 // }
-
 
 // export default function CollapsibleTable(props) {
 //   const classes = useRowStyles();
@@ -46,8 +44,6 @@
 //   const [checkedBoxes,setCheckedBoxes] = useState([])
 //   const [loading,setLoading] = useState('true')
 //   const [rows,setRows] = useState()
-
-
 
 //   function loadData(){
 //     setLoading('true')
@@ -119,7 +115,7 @@
 
 //   const isOpened = (idx) => openedPages.indexOf(idx) !== -1;
 //   const isChecked = (idx) => checkedBoxes.indexOf(idx)!==-1;
-  
+
 //   if(loading==='error'){
 //     return(
 //       <div>
@@ -137,7 +133,7 @@
 //       <div style={{textAlign:'center'}}>No Trucks Added</div>
 //     )
 //   }
- 
+
 //   return (
 //     <TableContainer component={Paper}>
 //       <Table aria-label="collapsible table">
@@ -177,7 +173,7 @@
 //             onChange={(event) => handleChecked(event,idx)}
 //             inputProps={{ 'aria-label': 'secondary checkbox' }}
 //           />
-          
+
 //             </TableCell>
 //             <TableCell component="th" scope="row">
 //               {row.truckNumber}
@@ -198,11 +194,11 @@
 //                    <td> {row.statesOfPermit.map((permitState) => permitState.name+' .')}</td>
 //                    </TableRow>
 //                    {row.capacity!==undefined &&
-//                    <TableRow>  
+//                    <TableRow>
 //                   <th>Capacity: </th>
 //                    <td> {row.capacity}</td>
 //                    </TableRow>}
-                   
+
 //                 </Box>
 //               </Collapse>
 //             </TableCell>
@@ -361,14 +357,20 @@ export default function CollapsibleTable(props) {
               <TableCell />
               {checkedBoxes.length === 1 ? (
                 <TableCell align="right">
-                  <EditIcon label="Edit" color="primary" />{" "}
+                  <IconButton size="small">
+                    {" "}
+                    <EditIcon label="Edit" color="primary" />{" "}
+                  </IconButton>
                 </TableCell>
               ) : (
                 <TableCell />
               )}
               {checkedBoxes.length > 0 ? (
                 <TableCell align="right">
-                  <DeleteIcon color="secondary" />
+                  <IconButton size="small">
+                    {" "}
+                    <DeleteIcon color="secondary" />
+                  </IconButton>
                 </TableCell>
               ) : (
                 <TableCell />
@@ -416,8 +418,6 @@ export default function CollapsibleTable(props) {
                       onChange={(event) => handleChecked(event, idx)}
                       inputProps={{ "aria-label": "secondary checkbox" }}
                     />
-
-                    
                   </TableCell>
                   <TableCell component="th" scope="row">
                     {row.truckNumber}
@@ -426,7 +426,7 @@ export default function CollapsibleTable(props) {
                   <TableCell align="right">{row.chassisNumber}</TableCell>
                   <TableCell align="right">{row.engineNumber}</TableCell>
                   <TableCell align="right">
-                  {idx % 2 === 1 ? (
+                    {idx % 2 === 1 ? (
                       <Tooltip title="Done">
                         <Done style={{ color: "green", marginLeft: 20 }} />
                       </Tooltip>

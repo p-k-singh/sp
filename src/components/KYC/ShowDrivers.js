@@ -136,14 +136,18 @@ export default function CollapsibleTable(props) {
               <TableCell />
               {checkedBoxes.length === 1 ? (
                 <TableCell align="right">
-                  <EditIcon label="Edit" color="primary" />{" "}
+                  <IconButton size="small">
+                    <EditIcon label="Edit" color="primary" />
+                  </IconButton>
                 </TableCell>
               ) : (
                 <TableCell />
               )}
               {checkedBoxes.length > 0 ? (
                 <TableCell align="right">
-                  <DeleteIcon color="secondary" />
+                  <IconButton size="small">
+                    <DeleteIcon color="secondary" />
+                  </IconButton>
                 </TableCell>
               ) : (
                 <TableCell />
