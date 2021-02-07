@@ -1,5 +1,12 @@
-
 import React,{useState} from 'react'
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+
 import {
     TextField,
     Grid,
@@ -7,10 +14,13 @@ import {
     FormControl,
     InputLabel,
     Select,
-    Button
+    Button,
+    Switch,
+    Card,
+    Container
   } from '@material-ui/core'
   import Typography from '@material-ui/core/Typography';
-  import { makeStyles } from '@material-ui/core/styles';
+  import { makeStyles,withStyles } from '@material-ui/core/styles';
   import { Multiselect } from 'multiselect-react-dropdown';
   import constants from '../../Constants/constants'
   import {Auth,API} from 'aws-amplify'
@@ -31,6 +41,39 @@ import {
       marginBottom: 0
     }
   });
+  const AntSwitch = withStyles((theme) => ({
+    root: {
+      width: 28,
+      height: 16,
+      padding: 0,
+      display: 'flex',
+    },
+    switchBase: {
+      padding: 2,
+      color: theme.palette.grey[500],
+      '&$checked': {
+        transform: 'translateX(12px)',
+        color: theme.palette.common.white,
+        '& + $track': {
+          opacity: 1,
+          backgroundColor: theme.palette.primary.main,
+          borderColor: theme.palette.primary.main,
+        },
+      },
+    },
+    thumb: {
+      width: 12,
+      height: 12,
+      boxShadow: 'none',
+    },
+    track: {
+      border: `1px solid ${theme.palette.grey[500]}`,
+      borderRadius: 16 / 2,
+      opacity: 1,
+      backgroundColor: theme.palette.common.white,
+    },
+    checked: {},
+  }))(Switch);
 const AddTocapacity = (props) => {
     const classes = useStyles()
     
@@ -45,13 +88,26 @@ const AddTocapacity = (props) => {
     const [loading,setLoading] = useState(false)
     const [availableFrom,setAvailableFrom] = useState('')
     const [availableTo,setAvailableTo] = useState('')
+    const [assetActive,setAssetActive] = useState(true)
     const capabilityOptions = {
         options:constants.capabilityOptions
     }
-   
+    const warehouseCapabilityOptions = {
+        options:constants.warehouseCapabilityOptions
+    }
 
     const typeChangeController = (event) => {
         setType(event.target.value)
+        setCapability([])
+        if(event.target.value==='truck'){
+            setUnit('tons')
+        }
+        else{
+            setUnit('sqft')
+        }
+    }
+    const handleAssetActive = () => {
+        setAssetActive(!assetActive)
     }
     const onTruckNumberChangeController = (event) => {
         setTruckNumber(event.target.value)
@@ -59,9 +115,9 @@ const AddTocapacity = (props) => {
     const onSizeChangeController = (event) => {
         setSize(event.target.value)
     }
-    const unitChangeController = (event) => {
-        setUnit(event.target.value)
-    }
+    // const unitChangeController = (event) => {
+    //     setUnit(event.target.value)
+    // }
     const ownershipChangeController = (event) => {
         setOwnership(event.target.value)
     }
@@ -92,7 +148,7 @@ const AddTocapacity = (props) => {
         const data={
             owner:owner,
             type:type,
-            
+            assetNumber:truckNumber,
             capacity:size,
             unit:unit,
             capabilities:capability,
@@ -100,6 +156,7 @@ const AddTocapacity = (props) => {
             availableToDateTime: availableTo,
             ownershipType: ownership,
             location:location,
+            active:assetActive,
             pincode:pin
 
         }
@@ -121,6 +178,65 @@ const AddTocapacity = (props) => {
         setLoading(false)
         props.changeDisplaySetting('storage')
        
+    }
+    const renderCapabilityForm = () => {
+        return(
+            // <Card variant='outlined' style={{minWidth:'90000'}} >  
+            <Container style={{marginTop:20}}>
+              <Grid container spacing={3} style={{ paddingLeft: 50,paddingRight:50,paddingBottom:50 }}>
+                {capability.map((row)=>(
+                    <Grid item xs={12} sm={4} >
+                        {/* <th >Name</th>
+                        <td>                  */}
+                        <TextField
+                        id={row.name}
+                        label={row.name}
+                        helperText={row.unit}
+                        />
+                        {/* <Input defaultValue="Disabled" variant='outlined' inputProps={{ 'aria-label': 'description' }} />  */}
+                        {/* </td> */}
+                    </Grid>
+                    // <TableRow>
+                        
+                        
+
+                    //     {/* <Input defaultValue="Disabled" variant='outlined' inputProps={{ 'aria-label': 'description' }} /> */}
+                    // </TableRow>
+                    
+                ))}
+                <Grid item xs={12} sm={4} ></Grid>
+            </Grid>
+            </Container>
+            // </Card>
+
+        )
+    //     return(
+    //         <TableContainer width={'50%'} component={Paper} >
+    //   <Table className={classes.table} size="small" aria-label="a dense table">
+    //     <TableHead>
+    //       <TableRow>
+    //         <TableCell>Dessert (100g serving)</TableCell>
+    //         <TableCell >Calories</TableCell>
+           
+    //       </TableRow>
+    //     </TableHead>
+    //     <TableBody>
+    //       {capability.map((row) => (
+    //         <TableRow key={row.name}>
+    //           <TableCell >{"rowName"} </TableCell>
+    //           <TableCell >{'absdds'}</TableCell>
+    //         </TableRow>
+    //       ))}
+    //     </TableBody>
+    //   </Table>
+    // </TableContainer>
+    //         // <form className={classes.root} noValidate autoComplete="off">
+    //         // <Input defaultValue="Hello world" inputProps={{ 'aria-label': 'description' }} />
+    //         // {/* <Input placeholder="Placeholder" inputProps={{ 'aria-label': 'description' }} /> */}
+    //         // {/* <Input defaultValue="Disabled" disabled inputProps={{ 'aria-label': 'description' }} />
+    //         // <Input defaultValue="Error" error inputProps={{ 'aria-label': 'description' }} /> */}
+    //         // </form>
+    //     )
     }
     if(loading===true){
         return(
@@ -150,7 +266,7 @@ const AddTocapacity = (props) => {
                                 </Select>
                             </FormControl>
                         </Grid>
-                {/* {type==='truck' && 
+                {type==='truck' && 
                     <Grid item xs={12} sm={6}>
                     <TextField
                       required
@@ -167,8 +283,8 @@ const AddTocapacity = (props) => {
                 }
                 {type!=='truck' &&
                     <Grid item xs={12} sm={6}></Grid>
-                } */}
-                  <Grid item xs={12} sm={6}></Grid>
+                }
+                  {/* <Grid item xs={12} sm={6}></Grid> */}
                 <Grid item xs={12} sm={6}>
                     <TextField
                       required
@@ -183,33 +299,31 @@ const AddTocapacity = (props) => {
                     />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                            <FormControl  style={{minWidth: 400}} className={classes.formControl}>
-                                <InputLabel htmlFor="age-native-simple">Unit</InputLabel>
-                                <Select
-                                    native
-                                    value={unit}
-                                    onChange={unitChangeController}
-                                    inputProps={{
-                                        name: 'age',
-                                        id: 'age-native-simple',
-                                    }}
-                                >
-                                    {constants.capacityUnits.map((d) => <option value={d.value}>{d.name}</option>)}
-                                </Select>
-                            </FormControl>
+                    <TextField
+                    disabled
+                      
+                      type='text'
+                      id="unit"
+                      name="unit"
+                      label="Unit"
+                      fullWidth
+                      value={unit}
+                    //    onChange={(event)=>onSizeChangeController(event)}
+                      autoComplete="shipping address-line1"
+                    />
                         </Grid>
-                        <Grid item xs={12} sm={12}>
+                <Grid item xs={12} sm={12}>
                 <Multiselect
-               
-                style={{borderLeft:'0px',overflow:'hidden', multiselectContainer:{height:'75px'} }}
-                    options={capabilityOptions.options} // Options to display in the dropdown
+                    style={{borderLeft:'0px'}}
+                    options={type==='truck'?capabilityOptions.options:warehouseCapabilityOptions.options} // Options to display in the dropdown
                     onSelect={onMultiSelect} // Function will trigger on select event
+                    selectedValues={capability}
                     onRemove={onMultiRemove} // Function will trigger on remove event
                     displayValue="name" // Property name to display in the dropdown options
                     placeholder="Capabilities"
                     />
-
                 </Grid>
+                {renderCapabilityForm()}
         </Grid>
         <Typography className={classes.formHeadings} >Availability Details</Typography>
         <Grid container spacing={3} style={{ padding: 50, paddingTop: 20 ,paddingBottom: 30 }}>
@@ -285,10 +399,19 @@ const AddTocapacity = (props) => {
                       autoComplete="shipping address-line1"
                     />
                 </Grid>
-                <Grid item xs={12} sm={6}></Grid>
-                
+                <Grid item xs={12} sm={6}></Grid> 
         </Grid>
-       
+        <Grid container spacing={3} style={{ padding: 50, paddingTop: 20 ,paddingBottom: 30 }}>
+        <Typography component="div">
+        <Grid component="label" container alignItems="center" spacing={1}>
+          <Grid item>Inactive</Grid>
+          <Grid item>
+            <AntSwitch checked={assetActive} onChange={handleAssetActive} name="checkedC" />
+          </Grid>
+          <Grid item>Active</Grid>
+        </Grid>
+      </Typography>
+      </Grid>
       </form>
       <Button variant='contained' onClick={submitCapacity} style={{float:'right',backgroundColor:'#f9a825',marginBottom:'20px'}}>Submit</Button>
     </CardContent>

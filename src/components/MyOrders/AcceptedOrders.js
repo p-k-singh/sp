@@ -31,7 +31,10 @@ const useStyles = makeStyles((theme) => ({
         height: 50,
         padding: 10,
         paddingLeft: 55,
-        color: 'white'
+        borderBottomStyle:'solid',
+    borderWidth:"1px",
+    borderRadius:'5px',
+        
     },
   }));
   
@@ -59,9 +62,9 @@ const MyOrders=()=>{
     
     return(
                 <div>
-                    <Typography className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }}>
+                    {/* <Typography className={classes.title} gutterBottom style={{}}>
                                     My Active Orders
-                    </Typography>  
+                    </Typography>   */}
 
                    <section className="root">
                         {
@@ -83,7 +86,7 @@ const MyOrders=()=>{
                             <div>
                                  
                                     <Button
-                                    component={Link} to={`assignment/${eachOrder.ServiceOrderId}`}
+                                    component={Link} to={`assignment/${eachOrder.ServiceOrderId}/${eachOrder.customerOrderId}`}
                                     variant="contained"
                                     color="default"
                                     className={classes.allocationButton}
@@ -92,7 +95,7 @@ const MyOrders=()=>{
                                     </Button>
                                 
                              
-                                    <Button
+                                    {/* <Button
                                     component={Link} to={`allocation/${eachOrder.ServiceOrderId}`}
                                     variant="contained"
                                     color="default"
@@ -100,7 +103,7 @@ const MyOrders=()=>{
                                     startIcon={<LocalShippingIcon />}>
                                     allocate
                                     </Button>
-                               
+                                */}
                                
                                     <Button
                                     component={Link} to="/track"

@@ -73,9 +73,10 @@ const TruckKYC = (props) => {
                 metaData: metaData
              }
         }
+        var ext=dl.name.split('.').pop();
         API.post("GoFlexeOrderPlacement", '/kyc/document?type='+'serviceprovider', payload)
             .then((initiateResult)=>{
-                tempLink=`uploads/kycdocuments/${initiateResult.fileId}.${dl.type}`
+                tempLink=`uploads/kycdocuments/serviceprovider/${initiateResult.fileId}.${ext}`
                 axios.put(initiateResult.s3PutObjectUrl, dl, {
                     headers: {
                       'Content-Type': dl.type
@@ -116,9 +117,9 @@ const TruckKYC = (props) => {
     const EachKYC = () => {
         return(
         <div style={{overflow:'hidden'}} >
-                <Typography fullWidth className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }}>
+                {/* <Typography fullWidth className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }}>
                             KYC:            
-                </Typography>
+                </Typography> */}
                         
                        
                 <form >
@@ -198,7 +199,7 @@ const TruckKYC = (props) => {
              onClick={handleShowForm}
             className="row"
                 variant='contained' style={{backgroundColor:'#f9a825', marginBottom:'10px'}}
-            >Add KYC</Button>}
+            >Add </Button>}
             {showForm &&  <Button 
              onClick={handleShowForm}
             className="row"

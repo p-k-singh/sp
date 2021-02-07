@@ -57,7 +57,7 @@ const CompanyKYC = (props) => {
         API.post(
             "GoFlexeOrderPlacement", '/kyc/document?type='+'serviceprovider', payload)
             .then((initiateResult)=>{
-                panLink = `uploads/kycdocuments/${initiateResult.fileId}.${panDoc.type}`
+                panLink = `uploads/kycdocuments/serviceprovider/${initiateResult.fileId}.${panDoc.type}`
                 axios.put(initiateResult.s3PutObjectUrl,panDoc,{
                     headers: {
                         'Content-Type': panDoc.type
@@ -72,10 +72,11 @@ const CompanyKYC = (props) => {
                              metaData: metaData
                          }
                     }
+                    var ext=gstDoc.name.split('.').pop();
                     API.post(
                         "GoFlexeOrderPlacement", '/kyc/document?type='+'serviceprovider', payload)
                         .then((initiateResult)=>{
-                            gstinLink = `uploads/kycdocuments/${initiateResult.fileId}.${gstDoc.type}`
+                            gstinLink = `uploads/kycdocuments/serviceprovider/${initiateResult.fileId}.${ext}`
                             axios.put(initiateResult.s3PutObjectUrl,gstDoc,{
                                 headers: {
                                     'Content-Type': gstDoc.type
@@ -135,12 +136,12 @@ const CompanyKYC = (props) => {
         return(
             <div style={{overflow:'hidden'}} >
                 
-                <Typography fullWidth className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }}>
+                {/* <Typography fullWidth className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }}>
                             Pending KYC
-                </Typography>
+                </Typography> */}
                         <form>
                           
-                <Typography className={classes.formHeadings} >Tax Details</Typography>
+                {/* <Typography className={classes.formHeadings} >Tax Details</Typography> */}
                     <Grid container spacing={3} style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}>
                     
                     <Grid item xs={12} sm={6}>

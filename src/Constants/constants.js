@@ -63,11 +63,20 @@ const constants = {
       {name:'Warehouse',value:'warehouse'}
     ],
     capabilityOptions: [
-      {name:'',id:0},
-      {name: 'GPS', id: 1},
-      {name: 'Freezer', id: 2},
-      {name:'Fastag',id:3},
-      {name:'AC',id:4}
+      {name: 'GPS', id: 1,key:'gps',value:'',unit:''},
+      {name: 'Freezer', id: 2,key:'freezer',value:'',unit:''},
+      {name:'Fastag',id:3,key:'fastag',value:'',unit:''},
+      {name:'AC',id:4,key:'ac',value:'',unit:''},
+      
+    ],
+    warehouseCapabilityOptions:[
+      {name:'Trained Staff',id:1,key:'trainedStaff',value:'',unit:'kg'},
+      {name:'Safety',id:2,key:'safety',value:'',unit:'cm'},
+      {name:'Market Proximity',id:3,key:'marketProximity',value:'',unit:'number'},
+      {name:'Parking',id:4,key:'parking',value:'',unit:'kg'},
+      {name:'Mechanical Appliances',id:5,key:'mechanicalAppliances',value:'',unit:'cm'},
+      {name:'Emergency Protocols',id:6,key:'emergencyProtocols',value:'',unit:'inches'},
+      {name:'Customer Service',id:7,key:'customerService',value:'',unit:'number'}
     ],
     capacityUnits:[
       {name:'Sqft.',value:'sqft'},
@@ -79,6 +88,8 @@ const constants = {
       {name:'Executive',value:'executive'},
       {name:'Finance',value:'finance'}
     ],
+    
+
 }
 
   export default constants

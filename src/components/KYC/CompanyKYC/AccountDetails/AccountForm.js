@@ -86,12 +86,12 @@ const AccountInfoForm = (props) => {
         </Link>
             <Typography color="textPrimary">Account KYC</Typography>
     </Breadcrumbs> */}
-                <Typography fullWidth className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }}>
+                {/* <Typography fullWidth className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }}>
                             Pending KYC
-                        </Typography>
+                        </Typography> */}
                         <form>
                           
-                        <Typography className={classes.formHeadings} >Account Details</Typography>
+                        {/* <Typography className={classes.formHeadings} >Account Details</Typography> */}
                     <Grid container spacing={3} style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}>
                     
                     <Grid item xs={12} sm={6}>

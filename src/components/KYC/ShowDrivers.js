@@ -15,7 +15,7 @@ import { Auth, API } from "aws-amplify";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Checkbox from "@material-ui/core/Checkbox";
-import EditIcon from "@material-ui/icons/Edit";
+import {Button} from "@material-ui/core";
 import { IconButton } from "@material-ui/core";
 const useRowStyles = makeStyles({
   root: {
@@ -134,16 +134,32 @@ export default function CollapsibleTable(props) {
             <TableRow>
               <TableCell />
               <TableCell />
+              <TableCell />
               {checkedBoxes.length === 1 ? (
-                <TableCell align="right">
-                  <EditIcon label="Edit" color="primary" />{" "}
+                <TableCell >
+                  <Button
+                    
+                    variant="contained"
+                    color="default"
+                    className={classes.button}
+                   // startIcon={<EditIcon label="Edit" />}
+                  >
+                    Edit
+                  </Button>{" "}
                 </TableCell>
               ) : (
                 <TableCell />
               )}
               {checkedBoxes.length > 0 ? (
-                <TableCell align="right">
-                  <DeleteIcon color="secondary" />
+                <TableCell >
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    className={classes.button}
+                    //startIcon={<DeleteIcon />}
+                  >
+                    Delete
+                  </Button>
                 </TableCell>
               ) : (
                 <TableCell />
@@ -161,6 +177,7 @@ export default function CollapsibleTable(props) {
             <TableCell>Driver Name</TableCell>
             <TableCell>Phone</TableCell>
             <TableCell>Licence Id</TableCell>
+            <TableCell>Licence</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -182,6 +199,9 @@ export default function CollapsibleTable(props) {
                   </TableCell>
                   <TableCell>{row.phone}</TableCell>
                   <TableCell>{row.licenceId}</TableCell>
+                  <TableCell>
+                  <a href={'https://goflexe-kyc.s3.ap-south-1.amazonaws.com/'+row.licenceUrl} target={'_blank'} >Open</a>
+                  </TableCell>
                 </TableRow>
               </React.Fragment>
             );

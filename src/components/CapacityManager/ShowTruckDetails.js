@@ -17,7 +17,7 @@ import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import {Auth,API} from 'aws-amplify'
 import DeleteIcon from '@material-ui/icons/Delete';
 import Checkbox from '@material-ui/core/Checkbox';
-import EditIcon from '@material-ui/icons/Edit';
+import {Button} from '@material-ui/core';
 import Spinner from '../UI/Spinner'
 import EditCapacity from './EditCapacity'
 const useRowStyles = makeStyles({
@@ -39,55 +39,6 @@ function Row(props,idx) {
   );
 }
 
-
-//type   3   15	ton	self/outsorced	loc.	Capability	dateTime(from and to)   
-// const rows = [
-//     {
-//         type:'Truck',
-//         quantity:3,
-//         size:15,
-//         unitOfMeasurement:'tons',
-//         ownership:'Self',
-//         location:'Delhi',
-//         capability:['Freezer','GPS'],
-//         availableFrom:'03:00,30Jan2020',
-//         availableTo:'18:00,31Dec2021'
-//     },
-//     {
-//         type:'Truck',
-//         quantity:4,
-//         size:15,
-//         unitOfMeasurement:'tons',
-//         ownership:'Outsourced',
-//         location:'Kolkata',
-//         capability:['Freezer','GPS'],
-//         availableFrom:'03:00,30Jan2020',
-//         availableTo:'18:00,31Dec2021'
-//     },
-//     {
-//         type:'Warehouse',
-//         quantity:3,
-//         size:15,
-//         unitOfMeasurement:'sqft',
-//         ownership:'self',
-//         location:'Banglore',
-//         capability:['Freezer','GPS'],
-//         availableFrom:'03:00,30Jan2020',
-//         availableTo:'18:00,31Dec2021'
-//     },
-//     {
-//         type:'Warehouse',
-//         quantity:1,
-//         size:50,
-//         unitOfMeasurement:'sqft',
-//         ownership:'self',
-//         location:'Hyderabad',
-//         capability:['Freezer','GPS'],
-//         availableFrom:'03:00,30Jan2020',
-//         availableTo:'18:00,31Dec2021'
-//     },
-  
-// ];
 
 export default function CollapsibleTable(props) {
   const classes = useRowStyles();
@@ -131,6 +82,7 @@ export default function CollapsibleTable(props) {
 
     setOpenedPages(newSelected);
   };
+  
 
   const handleChecked = (event, idx) => {
     const selectedIndex = checkedBoxes.indexOf(idx);
@@ -177,12 +129,25 @@ export default function CollapsibleTable(props) {
             <TableCell />
             <TableCell />
             {checkedBoxes.length===1 ? <TableCell align="right">
-              <IconButton onClick={()=>onEditButtonClicked()}>
-              <EditIcon label='Edit' color='primary' /> </IconButton> 
+            <Button
+                    onClick={()=>onEditButtonClicked()}
+                    variant="contained"
+                    color="default"
+                    className={classes.button}
+                   // startIcon={<EditIcon label="Edit" />}
+                  >
+                    Edit
+                  </Button>
               </TableCell> : <TableCell /> }
             {checkedBoxes.length>0 ? <TableCell align="right">
-              <IconButton >
-              <DeleteIcon color='secondary' /> </IconButton>
+            <Button
+                    variant="contained"
+                    color="secondary"
+                    className={classes.button}
+                    //startIcon={<DeleteIcon />}
+                  >
+                    Delete
+                  </Button>
               </TableCell> : <TableCell />}
           </TableRow>
         </TableHead>}
@@ -247,6 +212,7 @@ export default function CollapsibleTable(props) {
                   <th>Available To: </th>
                    <td> {row.availableToDateTime}(yyyy-mm-dd-Time) </td>
                    </TableRow>
+                   
                 </Box>
               </Collapse>
             </TableCell>

@@ -46,12 +46,18 @@ const TaxInfoIndex = (props) => {
                                             <tr>
                                                 <th scope="row">PAN:</th>
                                                 <td>{taxDetails.pan}</td>
+                                                <td>
+                                                <a href={'https://goflexe-kyc.s3.ap-south-1.amazonaws.com/'+taxDetails.panLink} target={'_blank'} >(Open)</a>
+                                                </td>
                                             </tr>
                                         </Grid>
                                         <Grid item xs={12} sm={7}>
                                             <tr>
                                                 <th scope="row">GSTIN:</th>
                                                 <td>{taxDetails.gstin}</td>
+                                                <td>
+                                                <a href={'https://goflexe-kyc.s3.ap-south-1.amazonaws.com/'+taxDetails.gstinLink} target={'_blank'} >(Open)</a>
+                                                </td>
                                             </tr>
                                         </Grid>
                                         

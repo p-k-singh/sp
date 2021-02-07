@@ -2,15 +2,16 @@ import React,{useEffect, useState} from 'react'
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { Multiselect } from 'multiselect-react-dropdown';
-import constants from '../../Constants/constants';
+import constants from '../../../Constants/constants';
 import {Auth,API} from 'aws-amplify'
 import axios from 'axios'
-import Spinner from '../UI/Spinner'
-import ShowTrucks from './ShowTrucks'
+import Spinner from '../../UI/Spinner'
+import ShowTrucks from './ShowWarehouse'
 import {
     TextField,
     Grid,
     Button,
+    
 } from '@material-ui/core'
 const useStyles = makeStyles({
     root: {
@@ -35,13 +36,14 @@ const useStyles = makeStyles({
 
 const TruckKYC = (props) => {
     const classes = useStyles()
-    const [chassisNumber, setChassisNumber] = useState();
-    const [engineNumber, setEngineNumber] = useState();
-    const [permitId,setPermitId] = useState()
-    const [truckNumber,setTruckNumber] = useState()
+    const [pan, setPan] = useState();
+    const [gstin, setGstin] = useState();
+ 
+    const [propertyName,setPropertyName] = useState()
     const [capacity,setCapacity] = useState()
-    const [rcDoc,setRcDoc] = useState([])
-    const [permitDoc,setPermitDoc] = useState()
+    const [panDoc,setPanDoc] = useState()
+    const [gstinDoc,setGstinDoc] = useState()
+    const [registrationDoc,setRegistrationDoc] = useState()
     const [statesOfPermit,setStatesOfPermit] = useState([])
     const [isAllIndiaPermit,setIsAllIndiaPermit] = useState(false)
     const [loading,setLoading] = useState(false)
@@ -53,29 +55,28 @@ const TruckKYC = (props) => {
     const handleShowForm = () => {
         setShowForm(!showForm)
     }
-    const onChassisNumberChange =(event)=>{
-        setChassisNumber(event.target.value);
+    const onPanChange =(event)=>{
+        setPan(event.target.value);
     }
-    const onEngineNumberChange=(event)=>{
-        setEngineNumber(event.target.value);   
+    const onGstinChange=(event)=>{
+        setGstin(event.target.value);   
     }
-    const onPermitIdChange=(event)=>{
-        setPermitId(event.target.value);
+    
+    const onPanDocChange = (event) => {
+        setPanDoc(event.target.files[0])
     }
-    const onRcDocChange = (event) => {
-        setRcDoc(event.target.files[0])
-        // var tempFile = event.target.files[0]
-        // alert(tempFile.name.split('.').pop())
+    const onPropertyNameChange = (event) => {
+        setPropertyName(event.target.value)
     }
-    const onTruckNumberChange = (event) => {
-        setTruckNumber(event.target.value)
-    }
-    const onTruckCapacityChange = (event) => {
+    const onWarehouseCapacityChange = (event) => {
         setCapacity(event.target.value)
     }
   
-    const onPermitDocChange = (event) => {
-        setPermitDoc(event.target.files[0])
+    const onGstDocChange = (event) => {
+        setGstinDoc(event.target.files[0])
+    }
+    const onRegistrationDocChange = (event) => {
+        setRegistrationDoc(event.target.files[0])
     }
     const onMultiSelect = (selectedList, selectedItem) => { 
        if(selectedItem.id==='AI'){
@@ -101,42 +102,40 @@ const TruckKYC = (props) => {
         var tempRCLink;
         var tempPermitLink;
         const metaData= {
-            'contentType': rcDoc.type
+            'contentType': panDoc.type
         }
         const payload= {
              body: {
-                 contentType: rcDoc.type,
+                 contentType: panDoc.type,
                  metaData: metaData
              }
         }
-        var ext=rcDoc.name.split('.').pop();
         API.post(
             "GoFlexeOrderPlacement", '/kyc/document?type='+'serviceprovider', payload)
         .then((initiateResult)=>{
-            tempRCLink=`uploads/kycdocuments/serviceprovider/${initiateResult.fileId}.${ext}`
-            axios.put(initiateResult.s3PutObjectUrl, rcDoc, {
+            tempRCLink=`uploads/kycdocuments/serviceprovider/${initiateResult.fileId}.${panDoc.type}`
+            axios.put(initiateResult.s3PutObjectUrl, panDoc, {
                 headers: {
-                  'Content-Type': rcDoc.type
+                  'Content-Type': panDoc.type
                 },
             }).then(resp=> {
                     console.log(resp)
                     const metaData= {
-                        'contentType': permitDoc.type
+                        'contentType': gstinDoc.type
                     }
                     const payload= {
                          body: {
-                             contentType: permitDoc.type,
+                             contentType: gstinDoc.type,
                              metaData: metaData
                          }
                     }
-                    var ext=permitDoc.name.split('.').pop();
                     API.post(
                         "GoFlexeOrderPlacement", '/kyc/document?type='+'serviceprovider', payload)
                         .then((initiateResult)=>{
-                            tempPermitLink=`uploads/kycdocuments/serviceprovider/${initiateResult.fileId}.${ext}`
-                            axios.put(initiateResult.s3PutObjectUrl, permitDoc, {
+                            tempPermitLink=`uploads/kycdocuments/serviceprovider/${initiateResult.fileId}.${gstinDoc.type}`
+                            axios.put(initiateResult.s3PutObjectUrl, gstinDoc, {
                                 headers: {
-                                  'Content-Type': permitDoc.type
+                                  'Content-Type': gstinDoc.type
                                 },
                             }).then(resp=> {
                                     console.log(resp)
@@ -154,11 +153,11 @@ const TruckKYC = (props) => {
                                             id:userDetails.username,
                                             type:'serviceprovider',
                                             trucks:[{
-                                            truckNumber: truckNumber,
-                                            chassisNumber: chassisNumber,
-                                            engineNumber: engineNumber,
+                                            propertyName: propertyName,
+                                            pan: pan,
+                                            
                                             capacity: capacity,
-                                            permitId:permitId,
+                                            
                                             rcLink: tempRCLink,
                                             permitLink: tempPermitLink,
                                             statesOfPermit: states
@@ -196,9 +195,10 @@ const TruckKYC = (props) => {
                 {/* <Typography fullWidth className={classes.title} gutterBottom style={{backgroundColor:'#f0f0f0' }}>
                              KYC
                         </Typography> */}
+                   
                         <form>
 
-                        <Typography className={classes.formHeadings} >Truck Details</Typography>
+                        <Typography className={classes.formHeadings} >Property Details</Typography>
 
 
                                 {/*test*/}
@@ -207,12 +207,12 @@ const TruckKYC = (props) => {
                                 <TextField
                                 required
                                 type="text"
-                                id="truckNumber"
-                                name="truckNumber"
-                                label="Enter Truck Number"
+                                id="propertyName"
+                                name="propertyName"
+                                label="Enter Property Name"
                                 fullWidth
-                                value={truckNumber}
-                                onChange={(event) => onTruckNumberChange(event)}
+                                value={propertyName}
+                                onChange={(event) => onPropertyNameChange(event)}
                                 />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -221,37 +221,37 @@ const TruckKYC = (props) => {
                                 type="number"
                                 id="capacity"
                                 name="capacity"
-                                label="Enter Capacity"
+                                label="Enter Capacity(in sqft.)"
                                 fullWidth
                                 value={capacity}
-                                onChange={(event) => onTruckCapacityChange(event)}
+                                onChange={(event) => onWarehouseCapacityChange(event)}
                                 />
                                 </Grid>
                             </Grid>   
-                                <Typography className={classes.formHeadings} >RC Details</Typography>
+                                <Typography className={classes.formHeadings} >Tax Details</Typography>
                                 {/*test*/}
                 <Grid container spacing={3} style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}>
                     <Grid item xs={12} sm={6}>
                         <TextField
                             required
                             type="text"
-                            id="chassisNumber"
-                            name="chassisNumber"
-                            label="Enter Chassis Number"
+                            id="pan"
+                            name="pan"
+                            label="Enter PAN"
                             fullWidth
-                            value={chassisNumber}
-                            onChange={(event) => onChassisNumberChange(event)}
+                            value={pan}
+                            onChange={(event) => onPanChange(event)}
                         />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <TextField
                             type="text"
-                            id="engineNumber"
-                            name="engineNumber"
-                            label="Enter Engine Number"
+                            id="gstin"
+                            name="gstin"
+                            label="Enter GSTIN"
                             fullWidth                            
-                            value={engineNumber}
-                            onChange={(event) => onEngineNumberChange(event)}
+                            value={gstin}
+                            onChange={(event) => onGstinChange(event)}
                         />
                     </Grid>
                     {/* <Grid item xs={12} sm={6}>
@@ -260,43 +260,20 @@ const TruckKYC = (props) => {
                     
                 </Grid>    
 
-                <Typography className={classes.formHeadings} >Permit Details</Typography>
-                <Grid container spacing={3} style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}>
-                    <Grid item xs={12} sm={6} style={{marginTop:'10px'}}>
-                        <Multiselect
-                
-                style={{borderLeft:'0px',overflow:'hidden', multiselectContainer:{height:'75px'} }}
-                    options={capabilityOptions.options} // Options to display in the dropdown
-                    onSelect={onMultiSelect} // Function will trigger on select event
-                    onRemove={onMultiRemove} // Function will trigger on remove event
-                    displayValue="name" // Property name to display in the dropdown options
-                    placeholder="Permit Status"
-                    />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            type="text"
-                            id="permitId"
-                            name="permitId"
-                            label="Enter Permit Id"
-                            fullWidth                            
-                            value={permitId}
-                            onChange={(event) => onPermitIdChange(event)}
-                        />
-                    </Grid>
-                    
-                </Grid>   
                 <Typography className={classes.formHeadings} >Documents Upload</Typography>
                 <Grid container spacing={3} style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}>
                     <Grid item xs={12} >
-                    <label>RC Proof: </label>
-                    <input   style={{marginLeft:'15px'}} type="file" onChange={(event) => onRcDocChange(event)} /> 
+                    <label>Pan Proof: </label>
+                    <input   style={{marginLeft:'15px'}} type="file" onChange={(event) => onPanDocChange(event)} /> 
                     </Grid>
                     <Grid item xs={12} >
-                    <label>Permit Proof: </label>
-                    <input style={{marginLeft:'15px'}} type="file" onChange={(event) => onPermitDocChange(event)} /> 
+                    <label>GST Proof: </label>
+                    <input style={{marginLeft:'15px'}} type="file" onChange={(event) => onGstDocChange(event)} /> 
                     </Grid>
-                    
+                    <Grid item xs={12} >
+                    <label>Registration Certificate: </label>
+                    <input style={{marginLeft:'15px'}} type="file" onChange={(event) => onRegistrationDocChange(event)} /> 
+                    </Grid>
                 </Grid>
                 
                 <Button 

@@ -55,10 +55,11 @@ const CompanyKYC = (props) => {
                  metaData: metaData
              }
         }
+        var ext=registrationDoc.name.split('.').pop();
         API.post(
             "GoFlexeOrderPlacement", '/kyc/document?type='+'serviceprovider', payload)
             .then((initiateResult)=>{
-                docLink = `uploads/kycdocuments/${initiateResult.fileId}.${registrationDoc.type}`
+                docLink = `uploads/kycdocuments/serviceprovider/${initiateResult.fileId}.${ext}`
                 axios.put(initiateResult.s3PutObjectUrl,registrationDoc,{
                     headers: {
                         'Content-Type': registrationDoc.type
@@ -108,12 +109,12 @@ const CompanyKYC = (props) => {
     
         return(
             <div style={{overflow:'hidden'}} >
-                <Typography fullWidth className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }}>
+                {/* <Typography fullWidth className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }}>
                             Pending KYC
-                        </Typography>
+                        </Typography> */}
                         <form>
                           
-                <Typography className={classes.formHeadings} >Company Details</Typography>
+                {/* <Typography className={classes.formHeadings} >Company Details</Typography> */}
                     <Grid container spacing={3} style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}>
                     
                     <Grid item xs={12} sm={6}>

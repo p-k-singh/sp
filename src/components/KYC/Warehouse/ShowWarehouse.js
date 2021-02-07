@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Spinner from "../UI/Spinner";
+import Spinner from "../../UI/Spinner";
 import { makeStyles } from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
 import Collapse from "@material-ui/core/Collapse";
@@ -98,8 +98,6 @@ export default function CollapsibleTable(props) {
   const downloadDoc = (docLink) => {
     console.log('https://goflexe-kyc.s3.ap-south-1.amazonaws.com/'+docLink)
     var url = 'https://goflexe-kyc.s3.ap-south-1.amazonaws.com/'+docLink
-
-    
   //   download(url)
   //   function download(url){
   //     $('<iframe>', { id:'idown', src:url }).hide().appendTo('body').click();
@@ -297,17 +295,7 @@ export default function CollapsibleTable(props) {
                         )}
                         <TableRow>
                      <th>RC Document:</th>
-                     <td>
-                       <a href={'https://goflexe-kyc.s3.ap-south-1.amazonaws.com/'+row.rcLink} target={'_blank'} >Open</a>
-                       {/* <Button onClick={()=>downloadDoc(row.rcLink)}>Download</Button> */}
-                     </td>
-                   </TableRow>
-                   <TableRow>
-                     <th>Permit Document:</th>
-                     <td>
-                       <a href={'https://goflexe-kyc.s3.ap-south-1.amazonaws.com/'+row.permitLink} target={'_blank'} >Open</a>
-                       {/* <Button onClick={()=>downloadDoc(row.rcLink)}>Download</Button> */}
-                     </td>
+                     <td><Button onClick={()=>downloadDoc(row.rcLink)}>Download</Button></td>
                    </TableRow>
                       </Box>
                     </Collapse>

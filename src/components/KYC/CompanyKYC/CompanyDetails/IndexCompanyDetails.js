@@ -39,16 +39,6 @@ const AccountInfoIndex = (props) => {
     
     return(
         <React.Fragment>
-            {/* <Breadcrumbs style={{marginBottom:'10px'}} aria-label="breadcrumb">
-        <Link color="inherit" onClick={() => fun('')}>
-            KYC
-        </Link>
-            <Typography color="textPrimary">Company Details</Typography>
-    </Breadcrumbs> */}
-      
-                                {/* <Typography className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }}>
-                                    Company Details
-                                </Typography> */}
                                 <table>
                                     <Grid container spacing={3} style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}>
                                         <Grid item xs={12} sm={6} >
@@ -75,7 +65,14 @@ const AccountInfoIndex = (props) => {
                                                 <td>{comDetails.registeredContactNo}</td>
                                             </tr>
                                         </Grid>
-
+                                        <Grid item xs={12} sm={6}>
+                                            <tr>
+                                                <th>Registraion Proof:</th>
+                                                <td>
+                                                <a href={'https://goflexe-kyc.s3.ap-south-1.amazonaws.com/'+comDetails.registrationDocLink} target={'_blank'} >Open</a>
+                                                </td>
+                                            </tr>
+                                        </Grid>
                                     </Grid>
                                 </table>
               

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
@@ -45,6 +45,12 @@ const AllocationForm = (props) => {
     const [estimatedPickupDate, setEstimatedPickupDate] = useState('');
     const [estimatedDeliveryDate, setEstimatedDeliveryDate] = useState('');
 
+    useEffect(()=>{
+        API
+        .get("GoFlexeOrderPlacement", `/serviceorder?orderId=${params.id}`)
+        .then(res=> console.log(res))
+        .catch(err=>console.log(err))
+    },[])
 
     const onDriverNameChangeController=(event,index)=>{
         let driverNameArr = driverName.slice(); 
@@ -87,6 +93,7 @@ const AllocationForm = (props) => {
                 driversArray.push(driver);
             }
         //alert(JSON.stringify(driversArray));
+        //params.id
         const payload={
             body:{
                 username:currentuser,
@@ -96,6 +103,7 @@ const AllocationForm = (props) => {
                 estimatedDeliveryDate:estimatedDeliveryDate   
         }
     }
+   // console.log(currentuser)
         API
         .post("GoFlexeOrderPlacement", `/serviceorder`, payload)
         .then(res=>{

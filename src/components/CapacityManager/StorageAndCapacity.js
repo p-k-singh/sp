@@ -126,7 +126,9 @@ const useStyles = makeStyles((theme) => ({
     height: 50,
     padding: 10,
     paddingLeft: 55,
-    color: "white",
+    borderBottomStyle:'solid',
+    borderWidth:"1px",
+    borderRadius:'5px'
   },
   allocationButton: {
     animationName: "$blinker",
@@ -169,7 +171,7 @@ const StorageAndCapacity = () => {
           <Typography
             className={classes.title}
             gutterBottom
-            style={{ backgroundColor: "#66bb6a" }}
+            
           >
             Capacity Manager
           </Typography>

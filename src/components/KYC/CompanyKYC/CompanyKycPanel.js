@@ -205,7 +205,7 @@ const KYCPanel = () => {
 
   return (
     <React.Fragment>
-      <Button onClick={() => press()}>press</Button>
+      {/* <Button onClick={() => press()}>press</Button> */}
       {pressed && displayPanel}
       {!pressed && <CompanyKYCForm />}
     </React.Fragment>

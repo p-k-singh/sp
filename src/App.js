@@ -136,7 +136,7 @@ function App() {
           <Route path='/allocation/:id' render={(props) => {
                     return ( <AllocationForm {...props } /> )
                 }} />
-          <Route path='/assignment/:id' render={(props) => {
+          <Route path='/assignment/:id/:customerOrderId' render={(props) => {
                     return ( <AssignmentForm {...props } /> )
                 }} />
           <Route exact path="/track" component={Track} />
