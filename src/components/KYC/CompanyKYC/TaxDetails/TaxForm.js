@@ -54,10 +54,11 @@ const CompanyKYC = (props) => {
                  metaData: metaData
              }
         }
+        var ext=panDoc.name.split('.').pop();
         API.post(
             "GoFlexeOrderPlacement", '/kyc/document?type='+'serviceprovider', payload)
             .then((initiateResult)=>{
-                panLink = `uploads/kycdocuments/serviceprovider/${initiateResult.fileId}.${panDoc.type}`
+                panLink = `uploads/kycdocuments/serviceprovider/${initiateResult.fileId}.${ext}`
                 axios.put(initiateResult.s3PutObjectUrl,panDoc,{
                     headers: {
                         'Content-Type': panDoc.type
