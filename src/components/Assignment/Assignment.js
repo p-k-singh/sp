@@ -76,14 +76,7 @@ const Assignment = (props) => {
     },[trucks])
     
     function fetchCapacityRequired(){
-        // const url = 'https://t2v0d33au7.execute-api.ap-south-1.amazonaws.com/Staging01/serviceorder/'+params.id;
-        // API.get(url)
-        // .then(res=>console.log(res))
-        // .catch(err=>console.log(err))
-        //console.log(params.customerOrderId);
-        //console.log(props)
         const url='https://t2v0d33au7.execute-api.ap-south-1.amazonaws.com/Staging01/customerorder/'+params.customerOrderId;
-        //console.log(url);
         axios.get(url)
         .then(resp=>{
             var weightPerUnit = resp.data.Item.weightPerUnit
