@@ -79,7 +79,7 @@ const Details = (props) => {
         <OrderDetails id={props} />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <Assignment />
+       
       </TabPanel>
       <TabPanel value={value} index={2}>
         <Track />
