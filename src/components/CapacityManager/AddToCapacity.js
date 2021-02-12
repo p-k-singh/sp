@@ -90,6 +90,12 @@ const AddTocapacity = (props) => {
   const [availableFrom, setAvailableFrom] = useState("");
   const [availableTo, setAvailableTo] = useState("");
   const [assetActive, setAssetActive] = useState(true);
+
+  /**Validators */
+  const [pinValidator,setPinValidator] = useState("")
+  const [capacityValidator,setCapacityValidator] = useState("")
+
+
   const capabilityOptions = {
     options: constants.capabilityOptions,
   };
@@ -113,6 +119,12 @@ const AddTocapacity = (props) => {
     setTruckNumber(event.target.value);
   };
   const onSizeChangeController = (event) => {
+    if(event.target.value<0){
+      setCapacityValidator("Capacity cannot be negative")
+    }
+    else{
+      setCapacityValidator("")
+    }
     setSize(event.target.value);
   };
   // const unitChangeController = (event) => {
@@ -125,6 +137,21 @@ const AddTocapacity = (props) => {
     setLocation(event.target.value);
   };
   const onPinChangeController = (event) => {
+    var pickupPinCode = parseInt(event.target.value, 10);
+    var greater = 999999,
+      smaller = 100000;
+    var check = 1;
+    if (pickupPinCode < smaller || pickupPinCode > greater) {
+      setPinValidator("Must be of 6 digits");
+      check = 0;
+    }
+    if (pickupPinCode < 0) {
+      setPinValidator("Cannot be negative");
+      check = 0;
+    }
+    if (check === 1) {
+      setPinValidator("");
+    }
     setPin(event.target.value);
   };
   const onMultiSelect = (selectedList, selectedItem) => {
@@ -286,6 +313,10 @@ const AddTocapacity = (props) => {
             <TextField
               required
               type="number"
+              error={capacityValidator !== ""}
+                helperText={
+                  capacityValidator === "" ? " " : capacityValidator
+              }
               id="size"
               name="size"
               label="Capacity"
@@ -422,6 +453,10 @@ const AddTocapacity = (props) => {
             <TextField
               required
               type="number"
+              error={pinValidator !== ""}
+              helperText={
+                pinValidator === "" ? " " : pinValidator
+            }
               id="pin"
               name="pin"
               label="Pin Code"
