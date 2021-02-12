@@ -5,6 +5,7 @@ import axios from 'axios'
 import Spinner from '../UI/Spinner'
 import {API,Auth} from 'aws-amplify'
 import ShowDrivers from './ShowDrivers'
+import Tooltip from "@material-ui/core/Tooltip";
 import {
     TextField,
     Grid,
@@ -130,7 +131,8 @@ const TruckKYC = (props) => {
                         {/*test*/}
         <Grid container spacing={3} style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}>
         <Grid item xs={12} sm={6} >
-                <TextField
+           <Tooltip title = 'Same as on Driving license'>
+               <TextField
                     required
                     type="text"
                     id="driverName"
@@ -139,7 +141,7 @@ const TruckKYC = (props) => {
                     fullWidth
                     value={driverName}
                     onChange={(event) => onDriverNameChange(event)}
-                />
+                /></Tooltip>
             </Grid>
             <Grid item xs={12} sm={6} >
                 <TextField
@@ -174,7 +176,7 @@ const TruckKYC = (props) => {
         <Typography className={classes.formHeadings} >Documents Upload</Typography>
         <Grid container spacing={3} style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}>
             <Grid item xs={12} >
-            <label>Driving Licence Proof: </label>
+            <label>Driving Licence : </label>
             <input   style={{marginLeft:'15px'}} type="file" onChange={(event) => onDlChange(event)} /> 
             </Grid>
             

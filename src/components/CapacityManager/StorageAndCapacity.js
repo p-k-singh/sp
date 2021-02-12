@@ -105,6 +105,7 @@
 // }
 // export default StorageAndCapacity
 import React, { useEffect, useState } from "react";
+import InfoIcon from "@material-ui/icons/Info";
 import {
   TextField,
   Button,
@@ -117,6 +118,9 @@ import ShowTruckDetails from "./ShowTruckDetails";
 import AddToCapacity from "./AddToCapacity";
 import { makeStyles } from "@material-ui/core/styles";
 import AddTocapacity from "./AddToCapacity";
+import IconButton from "@material-ui/core/IconButton";
+import Tooltip from "@material-ui/core/Tooltip";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     // minWidth: 275,
@@ -168,13 +172,13 @@ const StorageAndCapacity = () => {
     <div>
       <Card className={classes.root}>
         <CardContent style={{ padding: 0 }}>
-          <Typography
-            className={classes.title}
-            gutterBottom
-            
-          >
+          <Typography className={classes.title} gutterBottom>
             Capacity Manager
+            <Tooltip title="Add and Manage all Assets">
+              <InfoIcon style={{ color: "lightgrey", marginLeft: 20 }} />
+            </Tooltip>
           </Typography>
+
           <div className="col " style={{ fontSize: "20px" }}>
             <div className="row">
               <tr
@@ -220,7 +224,7 @@ const StorageAndCapacity = () => {
               </Button>
             )}
             <Button
-              style={{  backgroundColor:"#f9a825",marginBottom: "20px" ,}}
+              style={{ backgroundColor: "#f9a825", marginBottom: "20px" }}
               variant="contained"
               onClick={() => changeDisplaySetting("addForm")}
               className={classes.allocationButton}

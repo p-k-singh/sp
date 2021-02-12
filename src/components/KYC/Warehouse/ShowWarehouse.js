@@ -19,11 +19,11 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import Checkbox from "@material-ui/core/Checkbox";
 import EditIcon from "@material-ui/icons/Edit";
 import RefreshIcon from "@material-ui/icons/Refresh";
-import {Button} from '@material-ui/core'
+import { Button } from "@material-ui/core";
 import Done from "@material-ui/icons/Done";
 import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
 import Tooltip from "@material-ui/core/Tooltip";
-import {Link} from 'react-router-dom'
+import { Link } from "react-router-dom";
 
 const useRowStyles = makeStyles({
   root: {
@@ -96,36 +96,34 @@ export default function CollapsibleTable(props) {
     setOpenedPages(newSelected);
   };
   const downloadDoc = (docLink) => {
-    console.log('https://goflexe-kyc.s3.ap-south-1.amazonaws.com/'+docLink)
-    var url = 'https://goflexe-kyc.s3.ap-south-1.amazonaws.com/'+docLink
-  //   download(url)
-  //   function download(url){
-  //     $('<iframe>', { id:'idown', src:url }).hide().appendTo('body').click();
-  // }
-  // $("#downloadButton").click(function(){
-  //     $.ajax({
-  //         url: 'example.com/your_end_point',
-  //         success: function(url){
-  //             download(url);
-  //         }
-  //     })
-  // });
+    console.log("https://goflexe-kyc.s3.ap-south-1.amazonaws.com/" + docLink);
+    var url = "https://goflexe-kyc.s3.ap-south-1.amazonaws.com/" + docLink;
+    //   download(url)
+    //   function download(url){
+    //     $('<iframe>', { id:'idown', src:url }).hide().appendTo('body').click();
+    // }
+    // $("#downloadButton").click(function(){
+    //     $.ajax({
+    //         url: 'example.com/your_end_point',
+    //         success: function(url){
+    //             download(url);
+    //         }
+    //     })
+    // });
     // ('<iframe>', { id:'idown', src:url }).hide().appendTo('body').click()
-   
-      // fetch('https://goflexe-kyc.s3.ap-south-1.amazonaws.com/'+docLink)
-      //   .then(response => {
-      //     response.blob().then(blob => {
-      //       let url = window.URL.createObjectURL(blob);
-      //       let a = document.createElement('a');
-      //       a.href = url;
-      //       a.download = 'employees.json';
-      //       a.click();
-      //     });
-      //     //window.location.href = response.url;
-      // });
-    
 
-  }
+    // fetch('https://goflexe-kyc.s3.ap-south-1.amazonaws.com/'+docLink)
+    //   .then(response => {
+    //     response.blob().then(blob => {
+    //       let url = window.URL.createObjectURL(blob);
+    //       let a = document.createElement('a');
+    //       a.href = url;
+    //       a.download = 'employees.json';
+    //       a.click();
+    //     });
+    //     //window.location.href = response.url;
+    // });
+  };
 
   const handleChecked = (event, idx) => {
     const selectedIndex = checkedBoxes.indexOf(idx);
@@ -176,11 +174,11 @@ export default function CollapsibleTable(props) {
               <TableCell />
               {checkedBoxes.length === 1 ? (
                 <TableCell align="right">
-                   <Button
+                  <Button
                     variant="contained"
                     color="default"
                     className={classes.button}
-                   // startIcon={<EditIcon label="Edit" />}
+                    // startIcon={<EditIcon label="Edit" />}
                   >
                     Edit
                   </Button>{" "}
@@ -190,7 +188,7 @@ export default function CollapsibleTable(props) {
               )}
               {checkedBoxes.length > 0 ? (
                 <TableCell align="right">
-                   <Button
+                  <Button
                     variant="contained"
                     color="secondary"
                     className={classes.button}
@@ -209,7 +207,9 @@ export default function CollapsibleTable(props) {
           <TableRow>
             <TableCell>
               <IconButton onClick={() => loadData()}>
-                <RefreshIcon label="Edit" color="primary" />{" "}
+                <Tooltip title=" Refresh">
+                  <RefreshIcon label="Edit" color="primary" />
+                </Tooltip>
               </IconButton>
             </TableCell>
             <TableCell>Truck Number</TableCell>
@@ -245,8 +245,6 @@ export default function CollapsibleTable(props) {
                       onChange={(event) => handleChecked(event, idx)}
                       inputProps={{ "aria-label": "secondary checkbox" }}
                     />
-
-                    
                   </TableCell>
                   <TableCell component="th" scope="row">
                     {row.truckNumber}
@@ -255,12 +253,12 @@ export default function CollapsibleTable(props) {
                   <TableCell align="right">{row.chassisNumber}</TableCell>
                   <TableCell align="right">{row.engineNumber}</TableCell>
                   <TableCell align="right">
-                  {idx % 2 === 1 ? (
+                    {idx % 2 === 1 ? (
                       <Tooltip title="Done">
                         <Done style={{ color: "green", marginLeft: 20 }} />
                       </Tooltip>
                     ) : (
-                      <Tooltip title="Warning">
+                      <Tooltip title="Pending">
                         <ErrorOutlineIcon
                           style={{ color: "orange", marginLeft: 20 }}
                         />
@@ -294,9 +292,13 @@ export default function CollapsibleTable(props) {
                           </TableRow>
                         )}
                         <TableRow>
-                     <th>RC Document:</th>
-                     <td><Button onClick={()=>downloadDoc(row.rcLink)}>Download</Button></td>
-                   </TableRow>
+                          <th>RC Document:</th>
+                          <td>
+                            <Button onClick={() => downloadDoc(row.rcLink)}>
+                              Download
+                            </Button>
+                          </td>
+                        </TableRow>
                       </Box>
                     </Collapse>
                   </TableCell>

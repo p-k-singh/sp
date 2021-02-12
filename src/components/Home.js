@@ -11,15 +11,15 @@ const Home = (props) => {
        // alert(url)
     }
     return (
-        <div>
-            <h1>Dashboard Coming Sooon ...</h1> 
-            <Input type="text" value={id} onChange={(event) => onIdChange(event)} />
-            <Button
-            variant="contained"
-                component={Link}
-                to={`/accept-order/${id}`}
-            >GO</Button>
-        </div>
-    )
+      <div>
+        <h1>Dashboard Coming Sooon ...</h1>
+
+        <h4>Enter Order Id</h4>
+        <Input type="text" value={id} onChange={(event) => onIdChange(event)} />
+        <Button variant="contained" component={Link} to={`/accept-order/${id}`}>
+          GO
+        </Button>
+      </div>
+    );
 }
 export default Home

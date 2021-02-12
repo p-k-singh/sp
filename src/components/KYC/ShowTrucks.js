@@ -262,7 +262,7 @@ export default function CollapsibleTable(props) {
                         <Done style={{ color: "green", marginLeft: 20 }} />
                       </Tooltip>
                     ) : (
-                      <Tooltip title="Warning">
+                      <Tooltip title="Pending">
                         <ErrorOutlineIcon
                           style={{ color: "orange", marginLeft: 20 }}
                         />
