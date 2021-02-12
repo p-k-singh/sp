@@ -20,7 +20,7 @@ import PersonIcon from '@material-ui/icons/Person';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import InfoIcon from '@material-ui/icons/Info';
+import FileCopyIcon from "@material-ui/icons/FileCopy";
 import { useAppContext } from '../libs/contextLibs'
 import {
     ListItem,
@@ -126,7 +126,7 @@ export default function Dashboard() {
         { title: 'My Orders', to: '/my-orders', icon:<AddShoppingCartIcon/> },
         { title: 'Capacity Manager', to: '/capacity', icon:<BatteryFullIcon/> },
         { title: 'User Manager', to: '/userManager', icon: <GroupIcon/> },
-        {title:'KYC', to : '/kyc' , icon:<InfoIcon />},
+        {title:'KYC', to : '/kyc' , icon:<FileCopyIcon />},
         {title: 'Help', to: '/help', icon: <Help/>}
     ]
     const classes = useStyles();

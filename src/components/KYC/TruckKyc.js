@@ -7,6 +7,8 @@ import {Auth,API} from 'aws-amplify'
 import axios from 'axios'
 import Spinner from '../UI/Spinner'
 import ShowTrucks from './ShowTrucks'
+import Tooltip from "@material-ui/core/Tooltip";
+import InfoIcon from "@material-ui/icons/Info";
 import {
     TextField,
     Grid,
@@ -192,123 +194,171 @@ const TruckKYC = (props) => {
     
     
     const eachKYC = (
-            <div style={{overflow:'hidden',marginTop:'20px'}} >
-                {/* <Typography fullWidth className={classes.title} gutterBottom style={{backgroundColor:'#f0f0f0' }}>
+      <div style={{ overflow: "hidden", marginTop: "20px" }}>
+        {/* <Typography fullWidth className={classes.title} gutterBottom style={{backgroundColor:'#f0f0f0' }}>
                              KYC
                         </Typography> */}
-                        <form>
+        <form>
+          <Typography className={classes.formHeadings}>
+            Truck Details
+          </Typography>
 
-                        <Typography className={classes.formHeadings} >Truck Details</Typography>
-
-
-                                {/*test*/}
-                                <Grid container spacing={3} style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}>
-                                <Grid item xs={12} sm={6}>
-                                <TextField
-                                required
-                                type="text"
-                                id="truckNumber"
-                                name="truckNumber"
-                                label="Enter Truck Number"
-                                fullWidth
-                                value={truckNumber}
-                                onChange={(event) => onTruckNumberChange(event)}
-                                />
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                <TextField
-                                required
-                                type="number"
-                                id="capacity"
-                                name="capacity"
-                                label="Enter Capacity"
-                                fullWidth
-                                value={capacity}
-                                onChange={(event) => onTruckCapacityChange(event)}
-                                />
-                                </Grid>
-                            </Grid>   
-                                <Typography className={classes.formHeadings} >RC Details</Typography>
-                                {/*test*/}
-                <Grid container spacing={3} style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            required
-                            type="text"
-                            id="chassisNumber"
-                            name="chassisNumber"
-                            label="Enter Chassis Number"
-                            fullWidth
-                            value={chassisNumber}
-                            onChange={(event) => onChassisNumberChange(event)}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            type="text"
-                            id="engineNumber"
-                            name="engineNumber"
-                            label="Enter Engine Number"
-                            fullWidth                            
-                            value={engineNumber}
-                            onChange={(event) => onEngineNumberChange(event)}
-                        />
-                    </Grid>
-                    {/* <Grid item xs={12} sm={6}>
+          {/*test*/}
+          <Grid
+            container
+            spacing={3}
+            style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}
+          >
+            <Grid item xs={12} sm={6}>
+              <TextField
+                required
+                type="text"
+                id="truckNumber"
+                name="truckNumber"
+                label="Enter Truck Number"
+                fullWidth
+                value={truckNumber}
+                onChange={(event) => onTruckNumberChange(event)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Tooltip title="Carrying Capacity in Tons">
+                <TextField
+                  required
+                  type="number"
+                  id="capacity"
+                  name="capacity"
+                  label="Enter Capacity"
+                  fullWidth
+                  value={capacity}
+                  onChange={(event) => onTruckCapacityChange(event)}
+                />
+              </Tooltip>
+            </Grid>
+          </Grid>
+          <Typography className={classes.formHeadings}>RC Details</Typography>
+          {/*test*/}
+          <Grid
+            container
+            spacing={3}
+            style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}
+          >
+            <Grid item xs={12} sm={6}>
+              <Tooltip title="Can be found on the dashboard, driver's side door and on the registration certificate.">
+                <TextField
+                  required
+                  type="text"
+                  id="chassisNumber"
+                  name="chassisNumber"
+                  label="Enter Chassis Number"
+                  fullWidth
+                  value={chassisNumber}
+                  onChange={(event) => onChassisNumberChange(event)}
+                />
+              </Tooltip>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Tooltip title="Can be found on the body of the truck's engine. ">
+                <TextField
+                  type="text"
+                  id="engineNumber"
+                  name="engineNumber"
+                  label="Enter Engine Number"
+                  fullWidth
+                  value={engineNumber}
+                  onChange={(event) => onEngineNumberChange(event)}
+                />
+              </Tooltip>
+            </Grid>
+            {/* <Grid item xs={12} sm={6}>
                     <input type="file" onChange={(event) => onRcChange(event,idx)} /> 
                     </Grid> */}
-                    
-                </Grid>    
+          </Grid>
 
-                <Typography className={classes.formHeadings} >Permit Details</Typography>
-                <Grid container spacing={3} style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}>
-                    <Grid item xs={12} sm={6} style={{marginTop:'10px'}}>
-                        <Multiselect
-                
-                style={{borderLeft:'0px',overflow:'hidden', multiselectContainer:{height:'75px'} }}
-                    options={capabilityOptions.options} // Options to display in the dropdown
-                    onSelect={onMultiSelect} // Function will trigger on select event
-                    onRemove={onMultiRemove} // Function will trigger on remove event
-                    displayValue="name" // Property name to display in the dropdown options
-                    placeholder="Permit Status"
-                    />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            type="text"
-                            id="permitId"
-                            name="permitId"
-                            label="Enter Permit Id"
-                            fullWidth                            
-                            value={permitId}
-                            onChange={(event) => onPermitIdChange(event)}
-                        />
-                    </Grid>
-                    
-                </Grid>   
-                <Typography className={classes.formHeadings} >Documents Upload</Typography>
-                <Grid container spacing={3} style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}>
-                    <Grid item xs={12} >
-                    <label>RC Proof: </label>
-                    <input   style={{marginLeft:'15px'}} type="file" onChange={(event) => onRcDocChange(event)} /> 
-                    </Grid>
-                    <Grid item xs={12} >
-                    <label>Permit Proof: </label>
-                    <input style={{marginLeft:'15px'}} type="file" onChange={(event) => onPermitDocChange(event)} /> 
-                    </Grid>
-                    
-                </Grid>
-                
-                <Button 
-                    onClick={() => submitKYCChained()}
-                    className="row"
-                    variant='contained' style={{float:'right',backgroundColor:'#f9a825', marginBottom:'10px'}}
-            >Submit KYC</Button>
-            
-            
+          <Typography className={classes.formHeadings}>
+            Permit Details
+            <Tooltip title="Specify state permits of tuck">
+              <InfoIcon
+                style={{ color: "lightgrey", marginLeft: 10 }}
+                fontSize="small"
+              />
+            </Tooltip>
+          </Typography>
+          <Grid
+            container
+            spacing={3}
+            style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}
+          >
+            <Grid item xs={12} sm={6} style={{ marginTop: "10px" }}>
+              <Multiselect
+                style={{
+                  borderLeft: "0px",
+                  overflow: "hidden",
+                  multiselectContainer: { height: "75px" },
+                }}
+                options={capabilityOptions.options} // Options to display in the dropdown
+                onSelect={onMultiSelect} // Function will trigger on select event
+                onRemove={onMultiRemove} // Function will trigger on remove event
+                displayValue="name" // Property name to display in the dropdown options
+                placeholder="Permit Status"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Tooltip title="Document number / Recipt number">
+               
+                <TextField
+                  type="text"
+                  id="permitId"
+                  name="permitId"
+                  label="Enter Permit Id"
+                  fullWidth
+                  value={permitId}
+                  onChange={(event) => onPermitIdChange(event)}
+                />
+              </Tooltip>
+            </Grid>
+          </Grid>
+          <Typography className={classes.formHeadings}>
+            Documents Upload
+          </Typography>
+          <Grid
+            container
+            spacing={3}
+            style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}
+          >
+            <Grid item xs={12}>
+              <label>RC Proof: </label>
+              <input
+                style={{ marginLeft: "15px" }}
+                type="file"
+                onChange={(event) => onRcDocChange(event)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <label>Permit Proof: </label>
+              <input
+                style={{ marginLeft: "15px" }}
+                type="file"
+                onChange={(event) => onPermitDocChange(event)}
+              />
+            </Grid>
+          </Grid>
+
+          <Button
+            onClick={() => submitKYCChained()}
+            className="row"
+            variant="contained"
+            style={{
+              float: "right",
+              backgroundColor: "#f9a825",
+              marginBottom: "10px",
+            }}
+          >
+            Submit KYC
+          </Button>
         </form>
-            </div>
-        );
+      </div>
+    );
     
     if(loading===true){
         return(

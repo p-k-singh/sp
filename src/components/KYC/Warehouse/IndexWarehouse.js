@@ -237,7 +237,7 @@ const TruckKYC = (props) => {
                             type="text"
                             id="pan"
                             name="pan"
-                            label="Enter PAN"
+                            label="Enter PAN No."
                             fullWidth
                             value={pan}
                             onChange={(event) => onPanChange(event)}
@@ -263,11 +263,11 @@ const TruckKYC = (props) => {
                 <Typography className={classes.formHeadings} >Documents Upload</Typography>
                 <Grid container spacing={3} style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}>
                     <Grid item xs={12} >
-                    <label>Pan Proof: </label>
+                    <label>Pan Card : </label>
                     <input   style={{marginLeft:'15px'}} type="file" onChange={(event) => onPanDocChange(event)} /> 
                     </Grid>
                     <Grid item xs={12} >
-                    <label>GST Proof: </label>
+                    <label>GSTIN : </label>
                     <input style={{marginLeft:'15px'}} type="file" onChange={(event) => onGstDocChange(event)} /> 
                     </Grid>
                     <Grid item xs={12} >
