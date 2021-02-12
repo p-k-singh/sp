@@ -8,6 +8,8 @@ import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import OrderDetails from "./OrderDetails/OrderDetails";
+import Track from "./Track/Track";
+import Assignment from "./Assignment/Assignment";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -77,10 +79,10 @@ const Details = (props) => {
         <OrderDetails id={props} />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        Pricing
+        <Assignment />
       </TabPanel>
       <TabPanel value={value} index={2}>
-        History
+        <Track />
       </TabPanel>
     </div>
   );
@@ -92,12 +94,7 @@ const Home = (props) => {
   } = props;
 
   console.log("From Home " + params.id);
-  return (
-    <div>
-      {Details(params.id)}
-      <h1>New Order: {params.id} Coming Soon</h1>
-    </div>
-  );
+  return <div>{Details(params.id)}</div>;
 };
 
 export default Home;

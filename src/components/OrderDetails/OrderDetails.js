@@ -92,12 +92,7 @@ const OrderDetails = (props) => {
                   </td>
                 </tr>
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <tr>
-                  <th scope="row">Pickup Pin</th>
-                  <td>{allDetails.noOfUnits}</td>
-                </tr>
-              </Grid>
+
               <Grid item xs={12} sm={6}>
                 <tr>
                   <th scope="row">{constants.destinationAddress}</th>
@@ -106,13 +101,7 @@ const OrderDetails = (props) => {
                   </td>
                 </tr>
               </Grid>
-              <Grid item xs={12} sm={6}>
-               
-                <tr>
-                  <th scope="row">Destination Pin</th>
-                  <td>{allDetails.noOfUnits}</td>
-                </tr>
-              </Grid>
+
               <Grid item xs={12} sm={6}>
                 <tr>
                   <th scope="row">{constants.weightPerUnit}</th>
@@ -134,15 +123,6 @@ const OrderDetails = (props) => {
                   <td>{allDetails.deliveryDate}</td>
                 </tr>
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <tr>
-                  <th scope="row">{constants.DimensionPerUnit}</th>
-                  <td>
-                    {allDetails.width} x {allDetails.height} x{" "}
-                    {allDetails.breadth} {allDetails.unit}{" "}
-                  </td>
-                </tr>
-              </Grid>
             </Grid>
           </table>
           <Typography
@@ -160,17 +140,9 @@ const OrderDetails = (props) => {
             >
               <Grid item xs={12} sm={12}>
                 <tr>
-                  <th scope="row">User Id : </th>
+                  <th scope="row">Customer Id : </th>
                   <td>
                     <td>{allDetails.customerEmail}</td>
-                  </td>
-                </tr>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <tr>
-                  <th scope="row">{constants.pickupAddress}</th>
-                  <td>
-                    {allDetails.fromAddress},{allDetails.fromPin}
                   </td>
                 </tr>
               </Grid>

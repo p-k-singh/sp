@@ -47,7 +47,7 @@ const Track = (props) => {
         gutterBottom
        
       >
-        Track
+        Tracking Details
       </Typography>
       <form>
         <Grid
