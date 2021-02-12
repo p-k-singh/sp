@@ -10,6 +10,7 @@ import Box from "@material-ui/core/Box";
 import OrderDetails from "./OrderDetails/OrderDetails";
 import Track from "./Track/Track";
 import Assignment from "./Assignment/Assignment";
+import PaymentIndex from './Payments/PaymentIndex'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -78,12 +79,12 @@ const Details = (props) => {
       <TabPanel value={value} index={0}>
         <OrderDetails id={props} />
       </TabPanel>
-      <TabPanel value={value} index={1}>
-       
-      </TabPanel>
+      <TabPanel value={value} index={1}></TabPanel>
       <TabPanel value={value} index={2}>
+       
         <Track />
       </TabPanel>
+       <TabPanel value={value} index={3}>< PaymentIndex /></TabPanel>
     </div>
   );
 };
