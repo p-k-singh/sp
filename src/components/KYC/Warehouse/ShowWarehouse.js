@@ -159,7 +159,7 @@ export default function CollapsibleTable(props) {
     return <Spinner />;
   }
   if (rows.length === 0) {
-    return <div style={{ textAlign: "center" }}>No Trucks Added</div>;
+    return <div style={{ textAlign: "center" }}>No Warehouses Added</div>;
   }
 
   return (
@@ -212,10 +212,10 @@ export default function CollapsibleTable(props) {
                 </Tooltip>
               </IconButton>
             </TableCell>
-            <TableCell>Truck Number</TableCell>
-            <TableCell align="right">Permit Id</TableCell>
-            <TableCell align="right">Chassis Number</TableCell>
-            <TableCell align="right">Engine Number</TableCell>
+            <TableCell>Warehouse Name</TableCell>
+            <TableCell align="right">Capacity</TableCell>
+            {/* <TableCell align="right">Chassis Number</TableCell>
+            <TableCell align="right">Engine Number</TableCell>*/}
             <TableCell align="right">Status</TableCell>
           </TableRow>
         </TableHead>
@@ -250,8 +250,8 @@ export default function CollapsibleTable(props) {
                     {row.truckNumber}
                   </TableCell>
                   <TableCell align="right">{row.permitId}</TableCell>
-                  <TableCell align="right">{row.chassisNumber}</TableCell>
-                  <TableCell align="right">{row.engineNumber}</TableCell>
+                  {/* <TableCell align="right">{row.chassisNumber}</TableCell>
+                  <TableCell align="right">{row.engineNumber}</TableCell> */}
                   <TableCell align="right">
                     {idx % 2 === 1 ? (
                       <Tooltip title="Done">

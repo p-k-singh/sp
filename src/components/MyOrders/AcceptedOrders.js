@@ -41,8 +41,10 @@ const useStyles = makeStyles((theme) => ({
 
 const MyOrders = () => {
   const classes = useStyles();
-  const [activeOrders, setActiveOrders] = useState("hello");
+  const [activeOrders, setActiveOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
+    setLoading(true);
     async function putValues() {
       var currentUser = await Auth.currentUserInfo();
       var currentUsername = currentUser.username;
@@ -53,58 +55,75 @@ const MyOrders = () => {
       );
       console.log(temp);
       setActiveOrders(temp);
+      setLoading(false);
     }
     putValues();
   }, []);
-  if (activeOrders === "hello") {
-    return <Spinner />;
-  }
 
-  return (
-    <div>
-      {/* <Typography className={classes.title} gutterBottom style={{}}>
+  if (activeOrders == "") {
+    if (loading == true) {
+      return (
+        <div>
+          <Spinner />
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <Typography
+            style={{ fontSize: 20, height: 50, padding: 10, paddingLeft: 55 }}
+          >
+            You have not accepted any orders yet.
+          </Typography>
+        </div>
+      );
+    }
+  } else {
+    return (
+      <div>
+        {/* <Typography className={classes.title} gutterBottom style={{}}>
                                     My Active Orders
                     </Typography>   */}
-      <section className="">
-        {activeOrders.map((eachOrder) => (
-          <div>
-            <Card
-              style={{
-                margin: 0,
-                marginTop: 20,
-              }}
-            >
-              <CardContent
+        <section className="">
+          {activeOrders.map((eachOrder) => (
+            <div>
+              <Card
                 style={{
-                  marginTop: 0,
-                  padding: 16,
+                  margin: 0,
+                  marginTop: 20,
                 }}
               >
-                <Grid container spacing={5}>
-                  <Grid item xs={2}>
-                    <figure
+                <CardContent
+                  style={{
+                    marginTop: 0,
+                    padding: 16,
+                  }}
+                >
+                  <Grid container spacing={5}>
+                    <Grid item xs={2}>
+                      <figure
+                        style={{
+                          marginTop: 0,
+                          marginBottom: 0,
+                          padding: 10,
+                        }}
+                      >
+                        <img
+                          alt="truck"
+                          src="data:image/svg+xml;base64,PHN2ZyBpZD0iQ2FwYV8xIiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA1MTIgNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHdpZHRoPSI1MTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxsaW5lYXJHcmFkaWVudCBpZD0iU1ZHSURfMV8iIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMjU2IiB4Mj0iMjU2IiB5MT0iNTEyIiB5Mj0iMCI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMDBiNTljIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjOWNmZmFjIi8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9IlNWR0lEXzJfIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjMwMSIgeDI9IjMwMSIgeTE9IjI3MSIgeTI9IjYxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNjM2ZmZTgiLz48c3RvcCBvZmZzZXQ9Ii45OTczIiBzdG9wLWNvbG9yPSIjZjBmZmY0Ii8+PC9saW5lYXJHcmFkaWVudD48Zz48cGF0aCBkPSJtNTA4Ljk5MyAxNTYuOTkxYy0yLjgzMy0zLjc3Mi03LjI3Ni01Ljk5MS0xMS45OTMtNS45OTFoLTEwNy4yNTdjLTcuMTYzLTQyLjUxMS00NC4yMjctNzUtODguNzQzLTc1cy04MS41OCAzMi40ODktODguNzQzIDc1aC05My4yMzVsLTE5LjYtMTM4LjEwN2MtMS4wNDktNy4zOTYtNy4zOC0xMi44OTMtMTQuODUxLTEyLjg5M2gtNjkuNTcxYy04LjI4NCAwLTE1IDYuNzE2LTE1IDE1czYuNzE2IDE1IDE1IDE1aDU2LjU1bDE5LjU5OSAxMzguMTA0di4wMDEuMDAzbDIyLjY0MyAxNTkuNDk5YzIuNDU3IDE3LjE5NyAxMC44MiAzMi45NzggMjMuNTk4IDQ0LjY4NC0xMC4wMDQgOC4yNi0xNi4zOSAyMC43NTMtMTYuMzkgMzQuNzA5IDAgMjAuNzIzIDE0LjA4NSAzOC4yMDkgMzMuMTgxIDQzLjQxNC0yLjA0NSA1LjEzNy0zLjE4MSAxMC43My0zLjE4MSAxNi41ODYgMCAyNC44MTMgMjAuMTg3IDQ1IDQ1IDQ1czQ1LTIwLjE4NyA0NS00NWMwLTUuMjU4LS45MTUtMTAuMzA1LTIuNTgtMTVoMTI1LjE2Yy0xLjY2NSA0LjY5NS0yLjU4IDkuNzQyLTIuNTggMTUgMCAyNC44MTMgMjAuMTg3IDQ1IDQ1IDQ1czQ1LTIwLjE4NyA0NS00NS0yMC4xODctNDUtNDUtNDVoLTI0MGMtOC4yNzEgMC0xNS02LjcyOS0xNS0xNXM2LjcyOS0xNSAxNS0xNWgyMjQuNzQyYzMzLjMwOSAwIDYyLjk2My0yMi4zNjggNzIuMDk4LTU0LjMzOWw0OC41NjctMTY3LjQ4M2MxLjMxMy00LjUzMS40MTktOS40MTYtMi40MTQtMTMuMTg3eiIgZmlsbD0idXJsKCNTVkdJRF8xXykiLz48Zz48Zz48cGF0aCBkPSJtMzAxIDYxYy01Ny44OTcgMC0xMDUgNDcuMTAzLTEwNSAxMDVzNDcuMTAzIDEwNSAxMDUgMTA1IDEwNS00Ny4xMDMgMTA1LTEwNS00Ny4xMDMtMTA1LTEwNS0xMDV6bTQwLjYwNiAxMDAuNjA3LTQ1IDQ1Yy0yLjkyOCAyLjkyOS02Ljc2NyA0LjM5My0xMC42MDYgNC4zOTNzLTcuNjc4LTEuNDY0LTEwLjYwNi00LjM5NGwtMTUtMTVjLTUuODU4LTUuODU4LTUuODU4LTE1LjM1NSAwLTIxLjIxMyA1Ljg1Ny01Ljg1OCAxNS4zNTUtNS44NTggMjEuMjEzIDBsNC4zOTQgNC4zOTMgMzQuMzk0LTM0LjM5M2M1Ljg1Ny01Ljg1OCAxNS4zNTUtNS44NTggMjEuMjEzIDAgNS44NTcgNS44NTkgNS44NTcgMTUuMzU2LS4wMDIgMjEuMjE0eiIgZmlsbD0idXJsKCNTVkdJRF8yXykiLz48L2c+PC9nPjwvZz48L3N2Zz4="
+                        />
+                      </figure>
+                    </Grid>
+
+                    <Grid
+                      item
+                      xs={3}
                       style={{
-                        marginTop: 0,
-                        marginBottom: 0,
-                        padding: 10,
+                        marginTop: 15,
+                        marginBottom: 20,
                       }}
                     >
-                      <img
-                        alt="truck"
-                        src="data:image/svg+xml;base64,PHN2ZyBpZD0iQ2FwYV8xIiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA1MTIgNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHdpZHRoPSI1MTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxsaW5lYXJHcmFkaWVudCBpZD0iU1ZHSURfMV8iIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMjU2IiB4Mj0iMjU2IiB5MT0iNTEyIiB5Mj0iMCI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMDBiNTljIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjOWNmZmFjIi8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9IlNWR0lEXzJfIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjMwMSIgeDI9IjMwMSIgeTE9IjI3MSIgeTI9IjYxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNjM2ZmZTgiLz48c3RvcCBvZmZzZXQ9Ii45OTczIiBzdG9wLWNvbG9yPSIjZjBmZmY0Ii8+PC9saW5lYXJHcmFkaWVudD48Zz48cGF0aCBkPSJtNTA4Ljk5MyAxNTYuOTkxYy0yLjgzMy0zLjc3Mi03LjI3Ni01Ljk5MS0xMS45OTMtNS45OTFoLTEwNy4yNTdjLTcuMTYzLTQyLjUxMS00NC4yMjctNzUtODguNzQzLTc1cy04MS41OCAzMi40ODktODguNzQzIDc1aC05My4yMzVsLTE5LjYtMTM4LjEwN2MtMS4wNDktNy4zOTYtNy4zOC0xMi44OTMtMTQuODUxLTEyLjg5M2gtNjkuNTcxYy04LjI4NCAwLTE1IDYuNzE2LTE1IDE1czYuNzE2IDE1IDE1IDE1aDU2LjU1bDE5LjU5OSAxMzguMTA0di4wMDEuMDAzbDIyLjY0MyAxNTkuNDk5YzIuNDU3IDE3LjE5NyAxMC44MiAzMi45NzggMjMuNTk4IDQ0LjY4NC0xMC4wMDQgOC4yNi0xNi4zOSAyMC43NTMtMTYuMzkgMzQuNzA5IDAgMjAuNzIzIDE0LjA4NSAzOC4yMDkgMzMuMTgxIDQzLjQxNC0yLjA0NSA1LjEzNy0zLjE4MSAxMC43My0zLjE4MSAxNi41ODYgMCAyNC44MTMgMjAuMTg3IDQ1IDQ1IDQ1czQ1LTIwLjE4NyA0NS00NWMwLTUuMjU4LS45MTUtMTAuMzA1LTIuNTgtMTVoMTI1LjE2Yy0xLjY2NSA0LjY5NS0yLjU4IDkuNzQyLTIuNTggMTUgMCAyNC44MTMgMjAuMTg3IDQ1IDQ1IDQ1czQ1LTIwLjE4NyA0NS00NS0yMC4xODctNDUtNDUtNDVoLTI0MGMtOC4yNzEgMC0xNS02LjcyOS0xNS0xNXM2LjcyOS0xNSAxNS0xNWgyMjQuNzQyYzMzLjMwOSAwIDYyLjk2My0yMi4zNjggNzIuMDk4LTU0LjMzOWw0OC41NjctMTY3LjQ4M2MxLjMxMy00LjUzMS40MTktOS40MTYtMi40MTQtMTMuMTg3eiIgZmlsbD0idXJsKCNTVkdJRF8xXykiLz48Zz48Zz48cGF0aCBkPSJtMzAxIDYxYy01Ny44OTcgMC0xMDUgNDcuMTAzLTEwNSAxMDVzNDcuMTAzIDEwNSAxMDUgMTA1IDEwNS00Ny4xMDMgMTA1LTEwNS00Ny4xMDMtMTA1LTEwNS0xMDV6bTQwLjYwNiAxMDAuNjA3LTQ1IDQ1Yy0yLjkyOCAyLjkyOS02Ljc2NyA0LjM5My0xMC42MDYgNC4zOTNzLTcuNjc4LTEuNDY0LTEwLjYwNi00LjM5NGwtMTUtMTVjLTUuODU4LTUuODU4LTUuODU4LTE1LjM1NSAwLTIxLjIxMyA1Ljg1Ny01Ljg1OCAxNS4zNTUtNS44NTggMjEuMjEzIDBsNC4zOTQgNC4zOTMgMzQuMzk0LTM0LjM5M2M1Ljg1Ny01Ljg1OCAxNS4zNTUtNS44NTggMjEuMjEzIDAgNS44NTcgNS44NTkgNS44NTcgMTUuMzU2LS4wMDIgMjEuMjE0eiIgZmlsbD0idXJsKCNTVkdJRF8yXykiLz48L2c+PC9nPjwvZz48L3N2Zz4="
-                      />
-                    </figure>
-                  </Grid>
-
-                  <Grid
-                    item
-                    xs={3}
-                    style={{
-                      marginTop: 15,
-                      marginBottom: 20,
-                    }}
-                  >
-                    {/* <table >
+                      {/* <table >
                       <tr
                         style={{
                           marginBottom: 25,
@@ -122,86 +141,88 @@ const MyOrders = () => {
                           <td>{eachOrder.displayId}</td>
                         </td>
                       </tr>  </table> */}
-                    <h6
-                      style={{
-                        marginBottom: 25,
-                        marginRight: 50,
-                      }}
-                    >
-                      Order No. {}
-                      <span>{eachOrder.displayId}</span>
-                    </h6>
-                    <h6>Quantity : {Math.floor(Math.random() * 50)}</h6>
-                  </Grid>
+                      <h6
+                        style={{
+                          marginBottom: 25,
+                          marginRight: 50,
+                        }}
+                      >
+                        Order No. {}
+                        <span>{eachOrder.displayId}</span>
+                      </h6>
+                      <h6>Quantity : {Math.floor(Math.random() * 50)}</h6>
+                    </Grid>
 
-                  <Grid
-                    item
-                    xs={4}
-                    style={{
-                      marginTop: 15,
-                      marginBottom: 20,
-                    }}
-                  >
-                    <h6
+                    <Grid
+                      item
+                      xs={4}
                       style={{
-                        marginBottom: 25,
+                        marginTop: 15,
+                        marginBottom: 20,
                       }}
                     >
-                      Order Date :{Math.floor(Math.random() * 30) + 1} Feb 2021
-                    </h6>
-                    <h6>
-                      Dimensions : {Math.floor(Math.random() * 100)} x
-                      {Math.floor(Math.random() * 100)} x{" "}
-                      {Math.floor(Math.random() * 100)}
-                      cm
-                    </h6>
-                  </Grid>
+                      <h6
+                        style={{
+                          marginBottom: 25,
+                        }}
+                      >
+                        Order Date :{Math.floor(Math.random() * 30) + 1} Feb
+                        2021
+                      </h6>
+                      <h6>
+                        Dimensions : {Math.floor(Math.random() * 100)} x
+                        {Math.floor(Math.random() * 100)} x{" "}
+                        {Math.floor(Math.random() * 100)}
+                        cm
+                      </h6>
+                    </Grid>
 
-                  <Grid item xs={2}>
-                    <Button
-                      style={{
-                        maxWidth: "150px",
-                        minWidth: "150px",
-                        maxHeight: "50px",
-                        marginTop: 5,
-                        marginBottom: 7,
-                      }}
-                      component={Link}
-                      to={`assignment/${eachOrder.ServiceOrderId}/${eachOrder.customerOrderId}`}
-                      variant="contained"
-                      color="default"
-                      startIcon={<LocalShippingIcon />}
-                      // component={Link}
-                      // to="/track"
-                    >
-                      Assign
-                    </Button>
-                    <Button
-                      style={{
-                        minWidth: "150px",
-                        maxWidth: "150px",
-                        maxHeight: "50px",
-                        marginTop: 7,
-                        marginBottom: 5,
-                      }}
-                      component={Link}
-                      to={`order/${eachOrder.customerOrderId}`}
-                      variant="contained"
-                      color="default"
-                      // className={classes.allocationButton}
-                      startIcon={<ClassTwoToneIcon />}
-                    >
-                      Details
-                    </Button>
+                    <Grid item xs={2}>
+                      <Button
+                        style={{
+                          maxWidth: "150px",
+                          minWidth: "150px",
+                          maxHeight: "50px",
+                          marginTop: 5,
+                          marginBottom: 7,
+                        }}
+                        component={Link}
+                        to={`assignment/${eachOrder.ServiceOrderId}/${eachOrder.customerOrderId}`}
+                        variant="contained"
+                        color="default"
+                        startIcon={<LocalShippingIcon />}
+                        // component={Link}
+                        // to="/track"
+                      >
+                        Assign
+                      </Button>
+                      <Button
+                        style={{
+                          minWidth: "150px",
+                          maxWidth: "150px",
+                          maxHeight: "50px",
+                          marginTop: 7,
+                          marginBottom: 5,
+                        }}
+                        component={Link}
+                        to={`order/${eachOrder.customerOrderId}`}
+                        variant="contained"
+                        color="default"
+                        // className={classes.allocationButton}
+                        startIcon={<ClassTwoToneIcon />}
+                      >
+                        Details
+                      </Button>
+                    </Grid>
                   </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          </div>
-        ))}
-      </section>
-    </div>
-  );
+                </CardContent>
+              </Card>
+            </div>
+          ))}
+        </section>
+      </div>
+    );
+  }
 };
 
 export default MyOrders;

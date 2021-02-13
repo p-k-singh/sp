@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
  import {Auth,API} from 'aws-amplify'
  import axios from 'axios'
 import {Link} from 'react-router-dom'
+import InputAdornment from "@material-ui/core/InputAdornment";
 import {
     TextField,
     Grid,
@@ -107,82 +108,102 @@ const CompanyKYC = (props) => {
         )
     }
     
-        return(
-            <div style={{overflow:'hidden'}} >
-                {/* <Typography fullWidth className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }}>
+        return (
+          <div style={{ overflow: "hidden" }}>
+            {/* <Typography fullWidth className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }}>
                             Pending KYC
                         </Typography> */}
-                        <form>
-                          
-                {/* <Typography className={classes.formHeadings} >Company Details</Typography> */}
-                    <Grid container spacing={3} style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}>
-                    
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            type="text"
-                            id="registeredName"
-                            name="registeredName"
-                            label="Registered Name"
-                            value={myState.registeredName}
-                            onChange={(event)=>fieldsChange(event)}
-                            fullWidth                            
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            type="text"
-                            id="registeredAddress"
-                            name="registeredAddress"
-                            label="Registered Address"
-                            value={myState.registeredAddress}
-                            onChange={(event)=>fieldsChange(event)}
-                            fullWidth                            
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            type="email"
-                            id="registeredEmail"
-                            name="registeredEmail"
-                            label="Offcial Email Id"
-                            value={myState.registeredEmail}
-                            onChange={(event)=>fieldsChange(event)}
-                            fullWidth                            
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            type="number"
-                            id="registeredContactNo"
-                            name="registeredContactNo"
-                            label="Contact number"
-                            value={myState.registeredContactNo}
-                            onChange={(event)=>fieldsChange(event)}
-                            fullWidth                            
-                        />
-                    </Grid>
-                    
-                    <Typography className={classes.formHeadings} >Documents Upload</Typography>
-                        <Grid container spacing={3} style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}>
-                         <Grid item xs={12} >
-                        <label>Registration  Proof: </label>
-                        <input   style={{marginLeft:'15px'}} type="file" onChange={(event) => onRegistrationProofChange(event)}  /> 
-                        </Grid>
-                        
-                        </Grid>
+            <form>
+              {/* <Typography className={classes.formHeadings} >Company Details</Typography> */}
+              <Grid
+                container
+                spacing={3}
+                style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}
+              >
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    type="text"
+                    id="registeredName"
+                    name="registeredName"
+                    label="Registered Name"
+                    value={myState.registeredName}
+                    onChange={(event) => fieldsChange(event)}
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    type="text"
+                    id="registeredAddress"
+                    name="registeredAddress"
+                    label="Registered Address"
+                    value={myState.registeredAddress}
+                    onChange={(event) => fieldsChange(event)}
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    type="email"
+                    id="registeredEmail"
+                    name="registeredEmail"
+                    label="Offcial Email Id"
+                    value={myState.registeredEmail}
+                    onChange={(event) => fieldsChange(event)}
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                 
+                  <TextField
+                    type="number"
+                    id="registeredContactNo"
+                    name="registeredContactNo"
+                    label="Contact number"
+                    value={myState.registeredContactNo}
+                    onChange={(event) => fieldsChange(event)}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">+91</InputAdornment>
+                      ),
+                    }}
+                    fullWidth
+                  />
+                </Grid>
 
+                <Typography className={classes.formHeadings}>
+                  Documents Upload
+                </Typography>
+                <Grid
+                  container
+                  spacing={3}
+                  style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}
+                >
+                  <Grid item xs={12}>
+                    <label>Registration Proof: </label>
+                    <input
+                      style={{ marginLeft: "15px" }}
+                      type="file"
+                      onChange={(event) => onRegistrationProofChange(event)}
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
 
-                    </Grid>                    
-                
-                <Button 
-                    onClick={submitKYC}
-                    className="row"
-                    variant='contained' style={{float:'right',backgroundColor:'#f9a825', marginBottom:'10px'}}
-            >Submit KYC</Button>
-            
-            
-        </form>
-            </div>
+              <Button
+                onClick={submitKYC}
+                className="row"
+                variant="contained"
+                style={{
+                  float: "right",
+                  backgroundColor: "#f9a825",
+                  marginBottom: "10px",
+                }}
+              >
+                Submit KYC
+              </Button>
+            </form>
+          </div>
         );
     
 }
