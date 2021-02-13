@@ -92,9 +92,8 @@ const AddTocapacity = (props) => {
   const [assetActive, setAssetActive] = useState(true);
 
   /**Validators */
-  const [pinValidator,setPinValidator] = useState("")
-  const [capacityValidator,setCapacityValidator] = useState("")
-
+  const [pinValidator, setPinValidator] = useState("");
+  const [capacityValidator, setCapacityValidator] = useState("");
 
   const capabilityOptions = {
     options: constants.capabilityOptions,
@@ -119,11 +118,10 @@ const AddTocapacity = (props) => {
     setTruckNumber(event.target.value);
   };
   const onSizeChangeController = (event) => {
-    if(event.target.value<0){
-      setCapacityValidator("Capacity cannot be negative")
-    }
-    else{
-      setCapacityValidator("")
+    if (event.target.value < 0) {
+      setCapacityValidator("Capacity cannot be negative");
+    } else {
+      setCapacityValidator("");
     }
     setSize(event.target.value);
   };
@@ -314,9 +312,7 @@ const AddTocapacity = (props) => {
               required
               type="number"
               error={capacityValidator !== ""}
-                helperText={
-                  capacityValidator === "" ? " " : capacityValidator
-              }
+              helperText={capacityValidator === "" ? " " : capacityValidator}
               id="size"
               name="size"
               label="Capacity"
@@ -340,7 +336,6 @@ const AddTocapacity = (props) => {
             />
           </Grid>
           <Tooltip title="Features available in selected Asset" arrow>
-            
             <Grid item xs={12} sm={12}>
               <Multiselect
                 style={{ borderLeft: "0px" }}
@@ -454,9 +449,7 @@ const AddTocapacity = (props) => {
               required
               type="number"
               error={pinValidator !== ""}
-              helperText={
-                pinValidator === "" ? " " : pinValidator
-            }
+              helperText={pinValidator === "" ? " " : pinValidator}
               id="pin"
               name="pin"
               label="Pin Code"
@@ -475,7 +468,6 @@ const AddTocapacity = (props) => {
         >
           <Typography component="div">
             <Grid component="label" container alignItems="center" spacing={1}>
-              <Grid item>Inactive</Grid>
               <Grid item>
                 <Tooltip title="Asset is available for service or not">
                   <AntSwitch

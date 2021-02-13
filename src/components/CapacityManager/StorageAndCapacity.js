@@ -41,18 +41,14 @@
 // const StorageAndCapacity = () => {
 //     const [trucksCapacity,setTrucksCapacity] = useState(0)
 //     const [storageCapacity,setStorageCapacity] = useState(0)
-    
+
 //     const [display,setDisplay] = useState('')
-    
 
 //     useEffect(()=>{
 //         setTrucksCapacity(600)
 //         setStorageCapacity(250)
 //     },[])
 
-   
-   
- 
 //    const changeDisplaySetting = (disp) => {
 //        if(display===disp){
 //            setDisplay('')
@@ -72,22 +68,22 @@
 //                 <div className="row" >
 //                 <tr style={{marginTop:'20px',marginBottom:'20px',marginLeft:'20px'}}>
 //                     <th scope="row">Total Truck capacity: </th>
-//                         <td>{trucksCapacity} tons 
-//                         </td>   
+//                         <td>{trucksCapacity} tons
+//                         </td>
 //                 </tr>
 //                 </div>
 //                 <div className="row">
 //                 <tr style={{marginTop:'20px',marginBottom:'20px',marginLeft:'20px'}}>
 //                     <th scope="row">Total Storage capacity: </th>
-                        
+
 //                         <td>{storageCapacity} tons
-//                         </td>   
+//                         </td>
 //                 </tr>
 //                 </div>
 //                 {display==='storage' && <Button onClick={()=>changeDisplaySetting('')} variant='contained' style={{backgroundColor:'#f9a825',marginBottom:'20px'}} >Hide Details</Button>}
 //                         {display!=='storage' && <Button onClick={()=>changeDisplaySetting('storage')} variant='contained' style={{backgroundColor:'#f9a825',marginBottom:'20px'}} >Show Details</Button>}
 //                         <Button
-//                                  style={{marginBottom:'20px'}}   
+//                                  style={{marginBottom:'20px'}}
 //                                     variant="contained"
 //                                     color="default"
 //                                     onClick={()=>changeDisplaySetting('addForm')}
@@ -106,6 +102,8 @@
 // export default StorageAndCapacity
 import React, { useEffect, useState } from "react";
 import InfoIcon from "@material-ui/icons/Info";
+import EditIcon from "@material-ui/icons/Edit";
+
 import {
   TextField,
   Button,
@@ -130,9 +128,9 @@ const useStyles = makeStyles((theme) => ({
     height: 50,
     padding: 10,
     paddingLeft: 55,
-    borderBottomStyle:'solid',
-    borderWidth:"1px",
-    borderRadius:'5px'
+    borderBottomStyle: "solid",
+    borderWidth: "1px",
+    borderRadius: "5px",
   },
   allocationButton: {
     animationName: "$blinker",
@@ -190,6 +188,11 @@ const StorageAndCapacity = () => {
               >
                 <th scope="row">Total Truck capacity: </th>
                 <td>{trucksCapacity} tons</td>
+                <td>
+                  <Tooltip title="Edit">
+                    <EditIcon style={{ color: "grey", marginLeft: 20 }} />
+                  </Tooltip>
+                </td>
               </tr>
             </div>
             <div className="row">
@@ -203,6 +206,11 @@ const StorageAndCapacity = () => {
                 <th scope="row">Total Storage capacity: </th>
 
                 <td>{storageCapacity} tons</td>
+                <td>
+                  <Tooltip title="Edit">
+                    <EditIcon style={{ color: "grey", marginLeft: 20 }} />
+                  </Tooltip>
+                </td>
               </tr>
             </div>
             {display === "storage" && (
