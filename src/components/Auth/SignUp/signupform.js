@@ -55,11 +55,12 @@ const SignUp = (props) => {
                 username,
                 password,
                 attributes: {
-                    name: `${firstName} ${lastName}`
+                    name: `${firstName} ${lastName}`,
+                    
                   }
                
             })
-            .catch("error occured");
+            
 
             try {
                 await Auth.signIn(username, password);

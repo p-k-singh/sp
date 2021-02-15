@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -26,9 +26,13 @@ import {
     ListItem,
     ListItemText,
     ListItemIcon,
+    Badge
 } from '@material-ui/core';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+
 import Help from '@material-ui/icons/Help';
 import { Auth } from 'aws-amplify';
+import { w3cwebsocket as W3CWebSocket } from "websocket";
 
 
 const drawerWidth = 240;
@@ -132,7 +136,12 @@ export default function Dashboard() {
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
     const [menuOpen,setMenuOpen] = React.useState(false);
+    const [notificationMenuOpen,setNotificationMenuOpen] = useState(false)
     const [anchorEl,setAnchorEl] = React.useState(null);
+    const [anchorElNotification,setAnchorElNotification] = React.useState(null);
+    const [username,setUsername] = React.useState('');
+    const [numberOfNotifications,setNumberOfNotifications] = useState(0);
+    const [notifications,setNotifications]=useState('abf96696-e920-4c59-93f5-8870263ae2bf');
     const { userHasAuthenticated } = useAppContext();
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -145,11 +154,19 @@ export default function Dashboard() {
         setMenuOpen(!menuOpen);
         setAnchorEl(event.currentTarget);
       };
+    const handleNotificationMenu = (event) => {
+        setNotificationMenuOpen(!notificationMenuOpen)
+        setAnchorElNotification(event.currentTarget);
+    }
     
       const handleClose = () => {
         setMenuOpen(!menuOpen);
         setAnchorEl(null);
       };
+    const handleNotificationClose = () => {
+        setNotificationMenuOpen(!notificationMenuOpen)
+        setAnchorElNotification(null);
+    }
       
       const handleLogout = () => {
           handleClose()
@@ -162,12 +179,37 @@ export default function Dashboard() {
         }
       }
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+    useEffect(async ()=>{
+        //async function checkUse
+        var currentUser = await Auth.currentUserInfo();
+      var currentUsername = currentUser.username;
+      setUsername(currentUsername)
+      const client = new W3CWebSocket('wss://kb14hb5n02.execute-api.ap-south-1.amazonaws.com/staging?userName='+currentUsername);
+        client.onopen = () => {
+            console.log('WebSocket Client Connected');
+          };
+          client.onmessage = (message) => {
+              
+              var orderId = JSON.parse(message.data).orderId
+              setNotifications(orderId)
+              setNumberOfNotifications(numberOfNotifications+1)
+            //console.log(message.data.orderId);
+            console.log(orderId)
+          };
+      //console.log(user)
+        
+    },[])
+    
 
     return (
         <div className={classes.root}>
             <CssBaseline />
             <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
                 <Toolbar className={classes.toolbar}>
+                {/* <MenuItem> */}
+                    
+                
+                {/* </MenuItem> */}
                     <IconButton
                         edge="start"
                         color="inherit"
@@ -180,8 +222,44 @@ export default function Dashboard() {
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
                         <Link to='/' variant="h6" style={{color:'#fff',textDecoration:'none'}}>GoFlexe</Link>
           </Typography>
-          {/* <Link>GoFlexe</Link> */}
-
+          
+          <IconButton aria-label="show 17 new notifications" color="inherit"
+            aria-haspopup="true"
+            onClick={handleNotificationMenu}
+            color="inherit"
+          >
+              {numberOfNotifications===0?<NotificationsIcon style={{width:'30',height:'30'}} />:
+                  <Badge badgeContent={numberOfNotifications} color="secondary">
+                <NotificationsIcon style={{width:'30',height:'30'}} />
+              </Badge>
+                }
+            </IconButton>
+            <Menu
+                id="menu-appbar"
+                anchorEl={anchorElNotification}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                style={{marginTop:'50px',maxWidth:'1400px'}}
+                open={notificationMenuOpen}
+                onClose={handleNotificationClose}
+              >
+                <Button
+                    component={Link}
+                    to={`accept-order/${notifications}`}
+                    fullWidth
+                    onClick={handleNotificationClose}
+                    variant='text'
+                >new order</Button>
+                
+                
+              </Menu>
 
           <IconButton
                 aria-label="account of current user"
