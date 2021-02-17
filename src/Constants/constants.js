@@ -57,18 +57,69 @@ const constants = {
       {name:'West Bengal',id:'WB'}
     ],
 
-    /**Capacity Manager */
+    PermitStates:[
+      {label:'All India Permit',value:'AI'},
+      {label:'Andaman and Nicobar Islands',value:'AN'},
+      {label:'Andhra Pradesh',value:'AP'},
+      {label:'Arunachal Pradesh',value:'AR'},
+      {label:'Assam',value:'AS'},
+      {label:'Bihar',value:'BR'},
+      {label:'Chandigarh',value:'CH'},
+      {label:'Chhattisgarh',value:'CG'},
+      {label:'Dadra and Nagar Haveli',value:'DN'},
+      {label:'Daman and Diu',value:'DD'},
+      {label:'Delhi',value:'DL'},
+      {label:'Goa',value:'GA'},
+      {label:'Gujarat',value:'GJ'},
+      {label:'Haryana',value:'HR'},
+      {label:'Himachal Pradesh',value:'HP'},
+      {label:'Jammu and Kashmi',value:'JK'},
+      {label:'Jharkhand',value:'JH'},
+      {label:'Karnataka',value:'KA'},
+      {label:'Kerala',value:'KL'},
+      {label:'Lakshadweep',value:'LD'},
+      {label:'Madhya Pradesh',value:'MP'},
+      {label:'Maharashtra',value:'MH'},
+      {label:'Manipur',value:'MN'},
+      {label:'Meghalaya',value:'ML'},
+      {label:'Mizoram',value:'MZ'},
+      {label:'Nagaland',value:'NL'},
+      {label:'Odisha',value:'OR'},
+      {label:'Puducherry',value:'PY'},
+      {label:'Punjab',value:'PB'},
+      {label:'Rajasthan',value:'RJ'},
+      {label:'Sikkim',value:'SK'},
+      {label:'Tamil Nadu',value:'TN'},
+      {label:'Telangana',value:'TG'},
+      {label:'Tripura',value:'TR'},
+      {label:'Uttar Pradesh',value:'UP'},
+      {label:'Uttarakhand',value:'UT'},
+      {label:'West Bengal',value:'WB'}
+    ],
+
+    /**Capacity Manager OLD */
     capacityType:[
       {name:'Truck',value:'truck'},
       {name:'Warehouse',value:'warehouse'}
+    ],
+    /** Capacity Manager NEW */
+    CapacityType:[
+      {label:'Truck',value:'truck'},
+      {label:'Warehouse',value:'warehouse'}
     ],
     capabilityOptions: [
       {name: 'GPS', id: 1,key:'gps',value:'',unit:''},
       {name: 'Freezer', id: 2,key:'freezer',value:'',unit:''},
       {name:'Fastag',id:3,key:'fastag',value:'',unit:''},
       {name:'AC',id:4,key:'ac',value:'',unit:''},
-      
     ],
+    truckCapabilityOptions: [
+      {label:'GPS',value:'gps',data:'',unit:''},
+      {label:'Freezer',value:'freezer',data:'',unit:''},
+      {label:'Fastag',value:'fastag',data:'',unit:''},
+      {label:'AC',value:'ac',data:'',unit:''},
+    ],
+    /**warehouse capability OLD */
     warehouseCapabilityOptions:[
       {name:'Trained Staff',id:1,key:'trainedStaff',value:'',unit:'kg'},
       {name:'Safety',id:2,key:'safety',value:'',unit:'cm'},
@@ -78,9 +129,23 @@ const constants = {
       {name:'Emergency Protocols',id:6,key:'emergencyProtocols',value:'',unit:'inches'},
       {name:'Customer Service',id:7,key:'customerService',value:'',unit:'number'}
     ],
+    /**warehouse capability NEW */
+    WarehouseCapabilityOptions:[
+      {label:'Trained Staff',value:'trainedStaff',data:'',unit:''},
+      {label:'Safety',value:'safety',data:'',unit:''},
+      {label:'Market Proximity',value:'marketProximity',data:'',unit:''},
+      {label:'Parking',value:'parking',data:'',unit:''},
+      {label:'Mechanical Appliances',value:'mechanicalAppliances',data:'',unit:''},
+      {label:'Emergency Protocols',value:'emergencyProtocols',data:'',unit:''},
+      {label:'Customer Service',value:'customerService',data:'',unit:''}
+    ],
     capacityUnits:[
       {name:'Sqft.',value:'sqft'},
       {name:'Tons',value:'tons'}
+    ],
+    lengthDimensions:[
+      {label:'Sqft',value:'sqft'},
+      {label:'Tons',value:'tons'}
     ],
     userManagerRoles:[
       {name:'',value:''},
@@ -88,6 +153,10 @@ const constants = {
       {name:'Executive',value:'executive'},
       {name:'Finance',value:'finance'}
     ],
+    ownerShip:[
+      {label:'Self',value:'self'},
+      {label:'Outsourced',value:'outsourced'}
+    ]
     
 
 }

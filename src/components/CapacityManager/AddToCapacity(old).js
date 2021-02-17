@@ -8,13 +8,14 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Tooltip from "@material-ui/core/Tooltip";
 import InfoIcon from "@material-ui/icons/Info";
-import Select from "react-select";
+
 import {
   TextField,
   Grid,
   CardContent,
   FormControl,
   InputLabel,
+  Select,
   Button,
   Switch,
   Card,
@@ -98,20 +99,14 @@ const AddTocapacity = (props) => {
   const capabilityOptions = {
     options: constants.capabilityOptions,
   };
-  const selectStyles = {
-    menu: (base) => ({
-      ...base,
-      zIndex: 100,
-    }),
-  };
   const warehouseCapabilityOptions = {
     options: constants.warehouseCapabilityOptions,
   };
 
   const typeChangeController = (event) => {
-    setType(event);
+    setType(event.target.value);
     setCapability([]);
-    if (event.value === "truck") {
+    if (event.target.value === "truck") {
       setUnit("tons");
     } else {
       setUnit("sqft");
@@ -135,7 +130,7 @@ const AddTocapacity = (props) => {
   //     setUnit(event.target.value)
   // }
   const ownershipChangeController = (event) => {
-    setOwnership(event);
+    setOwnership(event.target.value);
   };
   const onLocationChangeController = (event) => {
     setLocation(event.target.value);
@@ -158,30 +153,34 @@ const AddTocapacity = (props) => {
     }
     setPin(event.target.value);
   };
+  const onMultiSelect = (selectedList, selectedItem) => {
+    // selectedList.map((select) => alert(select.name))
+    setCapability(selectedList);
+  };
+  const onMultiRemove = (selectedList, removedItem) => {
+    // alert(selectedList)
+    setCapability(selectedList);
+  };
   const onAvailableFromChangeController = (event) => {
     setAvailableFrom(event.target.value);
   };
   const onAvailableToChangeController = (event) => {
     setAvailableTo(event.target.value);
   };
-  const onCapabilitiesChange = (event) => {
-      //alert(event)
-      setCapability(event)
-  }
   const submitCapacity = async () => {
     setLoading(true);
     var currentUser = await Auth.currentUserInfo();
     var owner = currentUser.username;
     const data = {
       owner: owner,
-      type: type.value,
+      type: type,
       assetNumber: truckNumber,
       capacity: size,
       unit: unit,
       capabilities: capability,
       availableFromDateTime: availableFrom,
       availableToDateTime: availableTo,
-      ownershipType: ownership.value,
+      ownershipType: ownership,
       location: location,
       active: assetActive,
       pincode: pin,
@@ -203,31 +202,60 @@ const AddTocapacity = (props) => {
     setLoading(false);
     props.changeDisplaySetting("storage");
   };
-  const setCapabilityKeyValues = (event,idx) => {
-    var items=capability.slice()
-    items[idx].data=event.target.value
-    setCapability(items)
-  }
   const renderCapabilityForm = () => {
     return (
+      // <Card variant='outlined' style={{minWidth:'90000'}} >
       <Container style={{ marginTop: 20 }}>
         <Grid
           container
           spacing={3}
           style={{ paddingLeft: 50, paddingRight: 50, paddingBottom: 50 }}
         >
-          {capability.map((row,idx) => (
+          {capability.map((row) => (
             <Grid item xs={12} sm={4}>
-              <TextField value={row.data} id={row.label} name={row.value}
-               onChange={(event)=>setCapabilityKeyValues(event,idx)}
-              label={row.label} helperText={row.unit} />
+              {/* <th >Name</th>
+                        <td>                  */}
+              <TextField id={row.name} label={row.name} helperText={row.unit} />
+              {/* <Input defaultValue="Disabled" variant='outlined' inputProps={{ 'aria-label': 'description' }} />  */}
+              {/* </td> */}
             </Grid>
+            // <TableRow>
+
+            //     {/* <Input defaultValue="Disabled" variant='outlined' inputProps={{ 'aria-label': 'description' }} /> */}
+            // </TableRow>
           ))}
           <Grid item xs={12} sm={4}></Grid>
         </Grid>
       </Container>
       // </Card>
     );
+    //     return(
+    //         <TableContainer width={'50%'} component={Paper} >
+    //   <Table className={classes.table} size="small" aria-label="a dense table">
+    //     <TableHead>
+    //       <TableRow>
+    //         <TableCell>Dessert (100g serving)</TableCell>
+    //         <TableCell >Calories</TableCell>
+
+    //       </TableRow>
+    //     </TableHead>
+    //     <TableBody>
+    //       {capability.map((row) => (
+    //         <TableRow key={row.name}>
+    //           <TableCell >{"rowName"} </TableCell>
+    //           <TableCell >{'absdds'}</TableCell>
+    //         </TableRow>
+    //       ))}
+    //     </TableBody>
+    //   </Table>
+    // </TableContainer>
+    //         // <form className={classes.root} noValidate autoComplete="off">
+    //         // <Input defaultValue="Hello world" inputProps={{ 'aria-label': 'description' }} />
+    //         // {/* <Input placeholder="Placeholder" inputProps={{ 'aria-label': 'description' }} /> */}
+    //         // {/* <Input defaultValue="Disabled" disabled inputProps={{ 'aria-label': 'description' }} />
+    //         // <Input defaultValue="Error" error inputProps={{ 'aria-label': 'description' }} /> */}
+    //         // </form>
+    //     )
   };
   if (loading === true) {
     return <Spinner />;
@@ -243,18 +271,7 @@ const AddTocapacity = (props) => {
           style={{ paddingLeft: 50, paddingRight: 50, paddingTop: 20 }}
         >
           <Grid item xs={12} sm={6}>
-          <Select
-            styles={selectStyles}
-            className="basic-single"
-            classNamePrefix="Type"
-            isSearchable
-            name="type"
-            placeholder="Type"
-            value={type}
-            onChange={(event) => typeChangeController(event)}
-            options={constants.CapacityType}
-          />
-            {/* <FormControl
+            <FormControl
               style={{ minWidth: 400 }}
               className={classes.formControl}
             >
@@ -268,13 +285,13 @@ const AddTocapacity = (props) => {
                   id: "age-native-simple",
                 }}
               >
-                {constants.CapacityType.map((d) => (
-                  <option value={d.value}>{d.label}</option>
+                {constants.capacityType.map((d) => (
+                  <option value={d.value}>{d.name}</option>
                 ))}
               </Select>
-            </FormControl> */}
+            </FormControl>
           </Grid>
-          {type.value === "truck" && (
+          {type === "truck" && (
             <Grid item xs={12} sm={6}>
               <TextField
                 required
@@ -285,13 +302,11 @@ const AddTocapacity = (props) => {
                 fullWidth
                 value={truckNumber}
                 onChange={(event) => onTruckNumberChangeController(event)}
-                variant='outlined'
-                size='small'
                 autoComplete="shipping address-line1"
               />
             </Grid>
           )}
-          {type.value !== "truck" && <Grid item xs={12} sm={6}></Grid>}
+          {type !== "truck" && <Grid item xs={12} sm={6}></Grid>}
           {/* <Grid item xs={12} sm={6}></Grid> */}
           <Grid item xs={12} sm={6}>
             <TextField
@@ -305,8 +320,6 @@ const AddTocapacity = (props) => {
               fullWidth
               value={size}
               onChange={(event) => onSizeChangeController(event)}
-              variant='outlined'
-                size='small'
               autoComplete="shipping address-line1"
             />
           </Grid>
@@ -319,14 +332,13 @@ const AddTocapacity = (props) => {
               label="Unit"
               fullWidth
               value={unit}
-              variant='outlined'
-                size='small'
+              //    onChange={(event)=>onSizeChangeController(event)}
               autoComplete="shipping address-line1"
             />
           </Grid>
           <Tooltip title="Features available in selected Asset" arrow>
             <Grid item xs={12} sm={12}>
-              {/* <Multiselect
+              <Multiselect
                 style={{ borderLeft: "0px" }}
                 options={
                   type === "truck"
@@ -338,19 +350,7 @@ const AddTocapacity = (props) => {
                 onRemove={onMultiRemove} // Function will trigger on remove event
                 displayValue="name" // Property name to display in the dropdown options
                 placeholder="Capabilities"
-              /> */}
-              
-              <Select
-                isMulti
-                styles={selectStyles}
-                name="capabilities"
-               value={ capability}
-                options={type.value==='truck'?constants.truckCapabilityOptions:constants.WarehouseCapabilityOptions}
-                placeholder="Capabilities(Select multiple)"
-                className="basic-multi-select"
-                onChange={(event) => onCapabilitiesChange(event)}
-                classNamePrefix="select"
-                />
+              />
             </Grid>
           </Tooltip>
           {renderCapabilityForm()}
@@ -381,8 +381,6 @@ const AddTocapacity = (props) => {
               type="datetime-local"
               className={classes.textField}
               onChange={(event) => onAvailableFromChangeController(event)}
-              variant='outlined'
-                size='small'
               InputLabelProps={{
                 shrink: true,
               }}
@@ -395,8 +393,6 @@ const AddTocapacity = (props) => {
               type="datetime-local"
               className={classes.textField}
               onChange={(event) => onAvailableToChangeController(event)}
-              variant='outlined'
-                size='small'
               InputLabelProps={{
                 shrink: true,
               }}
@@ -418,18 +414,7 @@ const AddTocapacity = (props) => {
             >
               <InputLabel htmlFor="age-native-simple">Ownership</InputLabel>
               <Tooltip title="Whether the asset is owned or outsourced to another company">
-              <Select
-            styles={selectStyles}
-            className="basic-single"
-            classNamePrefix="ownership"
-            isSearchable
-            name="ownership"
-            placeholder="Ownership"
-            value={ownership}
-            onChange={(event) => ownershipChangeController(event)}
-            options={constants.ownerShip}
-          />
-                {/* <Select
+                <Select
                   native
                   value={ownership}
                   onChange={ownershipChangeController}
@@ -441,7 +426,7 @@ const AddTocapacity = (props) => {
                   <option aria-label="None" value="" />
                   <option value={"self"}>Self</option>
                   <option value={"outsourced"}>Outsourced</option>
-                </Select> */}
+                </Select>
               </Tooltip>
             </FormControl>
           </Grid>
@@ -456,8 +441,6 @@ const AddTocapacity = (props) => {
                 fullWidth
                 value={location}
                 onChange={(event) => onLocationChangeController(event)}
-                variant='outlined'
-                size='small'
                 autoComplete="shipping address-line1"
               />
             </Tooltip>
@@ -474,8 +457,6 @@ const AddTocapacity = (props) => {
               fullWidth
               value={pin}
               onChange={(event) => onPinChangeController(event)}
-              variant='outlined'
-                size='small'
               autoComplete="shipping address-line1"
             />
           </Grid>
