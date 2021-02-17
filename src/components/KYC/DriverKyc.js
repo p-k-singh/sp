@@ -38,6 +38,9 @@ const TruckKYC = (props) => {
     setLicenceId(event.target.value);
   };
   const onphoneChange = (event) => {
+    if (event.target.value < 0) {
+      event.target.value = 0;
+    }
     setPhone(event.target.value);
   };
   const onDriverNameChange = (event) => {
@@ -158,7 +161,7 @@ const TruckKYC = (props) => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                type="text"
+                type="number"
                 id="phone"
                 name="phone"
                 label="Enter Phone Number"

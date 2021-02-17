@@ -73,6 +73,9 @@ const TruckKYC = (props) => {
         setTruckNumber(event.target.value)
     }
     const onTruckCapacityChange = (event) => {
+       if (event.target.value < 0) {
+         event.target.value = 0;
+       }
         setCapacity(event.target.value)
     }
   
