@@ -32,6 +32,19 @@ const AccountInfoForm = (props) => {
     ifscCode: "",
   });
   const submitKYC = () => {
+    if (myState.accountHolderName == "") {
+      alert("Account Holder's Name cannot be empty");
+      return;
+    }
+    if (myState.accountNumber == "") {
+      alert("Account Number cannot be empty");
+      return;
+    }
+    if (myState.ifscCode == "") {
+      alert("IFS code cannot be empty");
+      return;
+    }
+
     setLoading(true);
     Auth.currentUserInfo()
       .then((userDetails) => {

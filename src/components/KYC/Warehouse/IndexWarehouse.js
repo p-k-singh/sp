@@ -94,6 +94,31 @@ const TruckKYC = (props) => {
   };
 
   const submitKYCChained = () => {
+    if (propertyName == null || propertyName == "") {
+      alert("Property Name cannot be empty.");
+      return;
+    }
+    if (capacity == null || capacity == 0) {
+      alert("Capacity cannot be empty.");
+      return;
+    }
+    if (pan == null || pan == "") {
+      alert("PAN Number cannot be empty.");
+      return;
+    }
+    if (panDoc == null || panDoc == "") {
+      alert("Please upload PAN Proof.");
+      return;
+    }
+    if (gstinDoc == null || gstinDoc == "") {
+      alert("Please upload GSTIN Proof.");
+      return;
+    }
+    if (registrationDoc == null || registrationDoc == "") {
+      alert("Please upload Registration Document.");
+      return;
+    }
+
     setLoading(true);
     var tempRCLink;
     var tempPermitLink;

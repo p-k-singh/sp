@@ -146,11 +146,11 @@ const AddTocapacity = (props) => {
       smaller = 100000;
     var check = 1;
     if (pickupPinCode < smaller || pickupPinCode > greater) {
-      setPinValidator("Must be of 6 digits");
+      setPinValidator("Pincode must be of 6 digits");
       check = 0;
     }
     if (pickupPinCode < 0) {
-      setPinValidator("Cannot be negative");
+      setPinValidator("Pincode Cannot be negative");
       check = 0;
     }
     if (check === 1) {
@@ -165,10 +165,58 @@ const AddTocapacity = (props) => {
     setAvailableTo(event.target.value);
   };
   const onCapabilitiesChange = (event) => {
-      //alert(event)
-      setCapability(event)
-  }
+    //alert(event)
+    setCapability(event);
+  };
   const submitCapacity = async () => {
+    if (type.value == null || type.value == "") {
+      alert("Please select Asset type.");
+      return;
+    }
+    if (capacityValidator !== "") {
+      alert(capacityValidator);
+      return;
+    }
+    if (size == null || size == 0) {
+      alert("Capacity cannot be blank.");
+      return;
+    }
+    if (
+      (type.value === "truck" && truckNumber == "") ||
+      (type.value === "truck" && truckNumber == null)
+    ) {
+      alert("Truck Number cannot be empty.");
+      return;
+    }
+    if (capability == null || capability == "") {
+      alert("Please select capabilities of the selected Asset.");
+      return;
+    }
+    if (
+      availableTo == null ||
+      availableTo == "" ||
+      availableFrom == null ||
+      availableFrom == ""
+    ) {
+      alert("Availability Dates cannot be empty");
+      return;
+    }
+    if (ownership.value == null || ownership.value == "") {
+      alert("Ownership cannot be empty");
+      return;
+    }
+    if (pinValidator !== "") {
+      alert(pinValidator);
+      return;
+    }
+    if (location == null || location == "") {
+      alert("Base Location cannot be blank");
+      return;
+    }
+    if (pin == null || pin == 0) {
+      alert("Pin cannot be Empty");
+      return;
+    }
     setLoading(true);
     var currentUser = await Auth.currentUserInfo();
     var owner = currentUser.username;
@@ -203,11 +251,11 @@ const AddTocapacity = (props) => {
     setLoading(false);
     props.changeDisplaySetting("storage");
   };
-  const setCapabilityKeyValues = (event,idx) => {
-    var items=capability.slice()
-    items[idx].data=event.target.value
-    setCapability(items)
-  }
+  const setCapabilityKeyValues = (event, idx) => {
+    var items = capability.slice();
+    items[idx].data = event.target.value;
+    setCapability(items);
+  };
   const renderCapabilityForm = () => {
     return (
       <Container style={{ marginTop: 20 }}>
@@ -216,11 +264,16 @@ const AddTocapacity = (props) => {
           spacing={3}
           style={{ paddingLeft: 50, paddingRight: 50, paddingBottom: 50 }}
         >
-          {capability.map((row,idx) => (
+          {capability.map((row, idx) => (
             <Grid item xs={12} sm={4}>
-              <TextField value={row.data} id={row.label} name={row.value}
-               onChange={(event)=>setCapabilityKeyValues(event,idx)}
-              label={row.label} helperText={row.unit} />
+              <TextField
+                value={row.data}
+                id={row.label}
+                name={row.value}
+                onChange={(event) => setCapabilityKeyValues(event, idx)}
+                label={row.label}
+                helperText={row.unit}
+              />
             </Grid>
           ))}
           <Grid item xs={12} sm={4}></Grid>
@@ -243,17 +296,17 @@ const AddTocapacity = (props) => {
           style={{ paddingLeft: 50, paddingRight: 50, paddingTop: 20 }}
         >
           <Grid item xs={12} sm={6}>
-          <Select
-            styles={selectStyles}
-            className="basic-single"
-            classNamePrefix="Type"
-            isSearchable
-            name="type"
-            placeholder="Type"
-            value={type}
-            onChange={(event) => typeChangeController(event)}
-            options={constants.CapacityType}
-          />
+            <Select
+              styles={selectStyles}
+              className="basic-single"
+              classNamePrefix="Type"
+              isSearchable
+              name="type"
+              placeholder="Type"
+              value={type}
+              onChange={(event) => typeChangeController(event)}
+              options={constants.CapacityType}
+            />
             {/* <FormControl
               style={{ minWidth: 400 }}
               className={classes.formControl}
@@ -285,8 +338,8 @@ const AddTocapacity = (props) => {
                 fullWidth
                 value={truckNumber}
                 onChange={(event) => onTruckNumberChangeController(event)}
-                variant='outlined'
-                size='small'
+                variant="outlined"
+                size="small"
                 autoComplete="shipping address-line1"
               />
             </Grid>
@@ -305,8 +358,8 @@ const AddTocapacity = (props) => {
               fullWidth
               value={size}
               onChange={(event) => onSizeChangeController(event)}
-              variant='outlined'
-                size='small'
+              variant="outlined"
+              size="small"
               autoComplete="shipping address-line1"
             />
           </Grid>
@@ -319,8 +372,8 @@ const AddTocapacity = (props) => {
               label="Unit"
               fullWidth
               value={unit}
-              variant='outlined'
-                size='small'
+              variant="outlined"
+              size="small"
               autoComplete="shipping address-line1"
             />
           </Grid>
@@ -339,18 +392,22 @@ const AddTocapacity = (props) => {
                 displayValue="name" // Property name to display in the dropdown options
                 placeholder="Capabilities"
               /> */}
-              
+
               <Select
                 isMulti
                 styles={selectStyles}
                 name="capabilities"
-               value={ capability}
-                options={type.value==='truck'?constants.truckCapabilityOptions:constants.WarehouseCapabilityOptions}
+                value={capability}
+                options={
+                  type.value === "truck"
+                    ? constants.truckCapabilityOptions
+                    : constants.WarehouseCapabilityOptions
+                }
                 placeholder="Capabilities(Select multiple)"
                 className="basic-multi-select"
                 onChange={(event) => onCapabilitiesChange(event)}
                 classNamePrefix="select"
-                />
+              />
             </Grid>
           </Tooltip>
           {renderCapabilityForm()}
@@ -381,8 +438,8 @@ const AddTocapacity = (props) => {
               type="datetime-local"
               className={classes.textField}
               onChange={(event) => onAvailableFromChangeController(event)}
-              variant='outlined'
-                size='small'
+              variant="outlined"
+              size="small"
               InputLabelProps={{
                 shrink: true,
               }}
@@ -395,8 +452,8 @@ const AddTocapacity = (props) => {
               type="datetime-local"
               className={classes.textField}
               onChange={(event) => onAvailableToChangeController(event)}
-              variant='outlined'
-                size='small'
+              variant="outlined"
+              size="small"
               InputLabelProps={{
                 shrink: true,
               }}
@@ -418,17 +475,17 @@ const AddTocapacity = (props) => {
             >
               <InputLabel htmlFor="age-native-simple">Ownership</InputLabel>
               <Tooltip title="Whether the asset is owned or outsourced to another company">
-              <Select
-            styles={selectStyles}
-            className="basic-single"
-            classNamePrefix="ownership"
-            isSearchable
-            name="ownership"
-            placeholder="Ownership"
-            value={ownership}
-            onChange={(event) => ownershipChangeController(event)}
-            options={constants.ownerShip}
-          />
+                <Select
+                  styles={selectStyles}
+                  className="basic-single"
+                  classNamePrefix="ownership"
+                  isSearchable
+                  name="ownership"
+                  placeholder="Ownership"
+                  value={ownership}
+                  onChange={(event) => ownershipChangeController(event)}
+                  options={constants.ownerShip}
+                />
                 {/* <Select
                   native
                   value={ownership}
@@ -456,8 +513,8 @@ const AddTocapacity = (props) => {
                 fullWidth
                 value={location}
                 onChange={(event) => onLocationChangeController(event)}
-                variant='outlined'
-                size='small'
+                variant="outlined"
+                size="small"
                 autoComplete="shipping address-line1"
               />
             </Tooltip>
@@ -474,8 +531,8 @@ const AddTocapacity = (props) => {
               fullWidth
               value={pin}
               onChange={(event) => onPinChangeController(event)}
-              variant='outlined'
-                size='small'
+              variant="outlined"
+              size="small"
               autoComplete="shipping address-line1"
             />
           </Grid>
@@ -488,16 +545,23 @@ const AddTocapacity = (props) => {
         >
           <Typography component="div">
             <Grid component="label" container alignItems="center" spacing={1}>
-              <Grid item>
-                <Tooltip title="Asset is available for service or not">
-                  <AntSwitch
-                    checked={assetActive}
-                    onChange={handleAssetActive}
-                    name="checkedC"
-                  />
-                </Tooltip>
-              </Grid>
+              <Tooltip
+                title="Asset is available for service or not"
+                placement="left"
+              >
+                <InfoIcon
+                  style={{ color: "lightgrey", marginLeft: 10 }}
+                  fontSize="small"
+                />
+              </Tooltip>
               <Grid item>Active</Grid>
+              <Grid item>
+                <AntSwitch
+                  checked={assetActive}
+                  onChange={handleAssetActive}
+                  name="checkedC"
+                />
+              </Grid>
             </Grid>
           </Typography>
         </Grid>
@@ -509,6 +573,7 @@ const AddTocapacity = (props) => {
           float: "right",
           backgroundColor: "#f9a825",
           marginBottom: "20px",
+          marginRight: 30,
         }}
       >
         Submit

@@ -59,6 +59,24 @@ const TruckKYC = (props) => {
   }
 
   const submitKYCChained = () => {
+    if (driverName == "" || driverName == null) {
+      alert("Driver Name cannot be Empty");
+      return;
+    }
+    if (licenceId == "" || licenceId == null) {
+      alert("License ID cannot be Empty");
+      return;
+    }
+
+    if (phone == 0 || phone == null) {
+      alert("Phone Number cannot be Empty");
+      return;
+    }
+    if (dl == "" || dl == null) {
+      alert("Please upload Driving License proof");
+      return;
+    }
+
     setLoading(true);
     var tempLink;
     const metaData = {
