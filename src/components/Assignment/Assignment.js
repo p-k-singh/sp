@@ -7,12 +7,16 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import "./Assignment.css";
 import Spinner from "../UI/Spinner";
 import Tooltip from "@material-ui/core/Tooltip";
+import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 import {
   TextField,
   Grid,
   Card,
   Button,
   IconButton,
+  InputLabel,
+  FormControl,
   Divider,
 } from "@material-ui/core";
 // import Select from 'react-select'
@@ -45,12 +49,12 @@ const useStyles = makeStyles({
 const Assignment = (props) => {
   const classes = useStyles();
   // const [truckNumber,setTruckNumber]=useState([]);
-  const [trucks, setTrucks] = useState([]);
-  const [drivers, setDrivers] = useState([]);
+  const [chosenTrucks, setChosenTrucks] = useState([]);
+  const [chosenDrivers, setChosenDrivers] = useState([]);
   const {
     match: { params },
   } = props;
-  const [capability, setCapability] = useState([]);
+  const [capability, setCapability] = useState([null]);
   const [loading, setLoading] = useState("true");
   const [capacityRequired, setCapacityRequired] = useState();
   const [capacityAlloted, setCapacityAlloted] = useState(0);
@@ -60,6 +64,13 @@ const Assignment = (props) => {
   const [myTrucks, setMyTrucks] = useState([]);
   const [myDrivers, setMyDrivers] = useState([]);
 
+  const selectStyles = {
+    menu: (base) => ({
+      ...base,
+      zIndex: 100,
+    }),
+  };
+
   useEffect(() => {
     // loadCapabilities()
     fetchCapacityRequired();
@@ -67,11 +78,12 @@ const Assignment = (props) => {
   }, []);
   useEffect(() => {
     var sum = 0;
-    for (var i = 0; i < trucks.length; i++) {
-      if (trucks[i].details !== null) sum += Number(trucks[i].details.capacity);
+    
+    for (var i = 0; i < chosenTrucks.length; i++) {
+      if (chosenTrucks[i] !== null) sum += Number(chosenTrucks[i].value.capacity);
     }
     setCapacityAlloted(sum);
-  }, [trucks]);
+  }, [chosenTrucks]);
 
   function fetchCapacityRequired() {
     const url =
@@ -82,7 +94,7 @@ const Assignment = (props) => {
       .then((resp) => {
         var weightPerUnit = resp.data.Item.weightPerUnit;
         var noOfUnits = resp.data.Item.noOfUnits;
-        console.log(weightPerUnit + "" + noOfUnits);
+        console.log(resp);
         setCapacityRequired((noOfUnits * weightPerUnit) / 1000);
       })
       .catch((err) => {
@@ -101,13 +113,12 @@ const Assignment = (props) => {
         )
           .then((resp) => {
             console.log(resp);
-            var temp = myTrucks.slice();
+            var temp = []
             for (var i = 0; i < resp.length; i++) {
               temp.push({
-                truckNumber: resp[i].assetNumber,
-                capacity:
-                  resp[i].capacity === undefined ? 0 : Number(resp[i].capacity),
-                capabilities: resp[i].capabilities,
+                label:resp[i].assetNumber+'('+resp[i].capacity+' tons)',
+                value:resp[i],
+                isNew:false
               });
             }
             setMyTrucks(temp);
@@ -131,8 +142,11 @@ const Assignment = (props) => {
               var temp = myDrivers.slice();
               for (var i = 0; i < resp[0].drivers.length; i++) {
                 temp.push({
-                  name: resp[0].drivers[i].name,
-                  phone: resp[0].drivers[i].phone,
+                  label:resp[0].drivers[i].name,
+                  value:resp[0].drivers[i].name,
+                  phone: Number(resp[0].drivers[i].phone),
+                  isNew:false,
+                  licenseId:resp[0].drivers[i].licenseId
                 });
               }
               setMyDrivers(temp);
@@ -150,9 +164,70 @@ const Assignment = (props) => {
         setLoading("error");
       });
   }
+  // function loadData() {
+  //   setLoading("true");
+  //   //fetching truck details
+  //   Auth.currentUserInfo()
+  //     .then((currentUser) => {
+  //       var owner = currentUser.username;
+  //       API.get(
+  //         "GoFlexeOrderPlacement",
+  //         `/capacity?type=owner&ownerId=${owner}&asset=truck`
+  //       )
+  //         .then((resp) => {
+  //           console.log(resp);
+  //           var temp = myTrucks.slice();
+  //           for (var i = 0; i < resp.length; i++) {
+  //             temp.push({
+  //               truckNumber: resp[i].assetNumber,
+  //               capacity:
+  //                 resp[i].capacity === undefined ? 0 : Number(resp[i].capacity),
+  //               capabilities: resp[i].capabilities,
+  //             });
+  //           }
+  //           setMyTrucks(temp);
+  //           console.log(temp);
+  //           //console.log(myTrucks)
+  //         })
+  //         .catch((err) => console.log(err));
+  //     })
+  //     .catch((err) => console.log(err));
+  //   //fetching driver details
+  //   Auth.currentUserInfo()
+  //     .then((userDetails) => {
+  //       API.get(
+  //         "GoFlexeOrderPlacement",
+  //         `/kyc/info?type=serviceprovider&id=${userDetails.username}`
+  //       )
+  //         .then((resp) => {
+  //           console.log(resp);
+  //           if (resp.length === 0) {
+  //           } else {
+  //             var temp = myDrivers.slice();
+  //             for (var i = 0; i < resp[0].chosenDrivers.length; i++) {
+  //               temp.push({
+  //                 name: resp[0].chosenDrivers[i].name,
+  //                 phone: resp[0].chosenDrivers[i].phone,
+  //               });
+  //             }
+  //             setMyDrivers(temp);
+  //             console.log(temp);
+  //           }
+  //           setLoading("false");
+  //         })
+  //         .catch((err) => {
+  //           console.log(err);
+  //           setLoading("error");
+  //         });
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       setLoading("error");
+  //     });
+  // }
 
   const submitButtonHandler = () => {
-    alert(JSON.stringify(trucks) + JSON.stringify(drivers));
+    //alert(JSON.stringify(chosenTrucks) + JSON.stringify(chosenDrivers));
     // const truckNumbersArray=[];
     // for(var i=0;i<numberOfTrucks;i++){
     //     const truck={
@@ -162,89 +237,123 @@ const Assignment = (props) => {
     // }
     // alert(JSON.stringify(truckNumbersArray));
   };
-  const onTruckNumberChanged = (event, value, reason, i) => {
-    var items = trucks.slice();
-    items[i].details = value;
-    if (value !== null)
-      for (var j = 0; j < myTrucks.length; j++) {
-        if (value.truckNumber === myTrucks[j].truckNumber) {
-          items[i].capabilities = myTrucks[j].capabilities;
-          break;
-        }
-      }
-    else {
-      items[i].capabilities = [];
-    }
-    setTrucks(items);
-    for (i = 0; i < items.length; i++) {
-      if (items[i].details !== null)
-        console.log(i + items[i].details.truckNumber);
-    }
-  };
-  const onDriverChanged = (event, value, reason, i) => {
-    var items = drivers.slice();
-    items[i].details = value;
-    if (value !== null) {
-      for (var j = 0; j < myDrivers.length; j++) {
-        if (value.name === myDrivers[j].name) {
-          items[i].phone = myDrivers[j].phone;
-          break;
-        }
-      }
+  const onTruckNumberChanged = (newValue,i) => {
+    var items = chosenTrucks.slice();
+    if (newValue === null) {
+      items[i] = null;
     } else {
-      items[i].phone = "";
+      if (newValue.__isNew__ === true) {
+        var temp = {
+          value: {
+            capacity:0,
+            capabilities:[],
+            assetNumber:'',
+            location:'',
+            ownershipType:'self',
+          },
+          isNew: true,
+          label: newValue.label,
+        };
+        items[i] = temp;
+      } else {
+        var temp = {
+          value: newValue.value,
+          isNew: false,
+          label: newValue.label,
+        };
+        items[i] = temp;
+      }
     }
-    setDrivers(items);
+    setChosenTrucks(items);
   };
-  const onMultiSelect = (selectedList, selectedItem, i) => {
-    var items = trucks.slice();
-    items[i].capabilities = selectedList;
-    setTrucks(items);
+  const onDriverChanged = (newValue, i) => {
+    var items = chosenDrivers.slice();
+    if (newValue === null) {
+      items[i] = null;
+    } else {
+      if (newValue.__isNew__ === true) {
+        var temp = {
+          value: newValue.label,
+          isNew: true,
+          label: newValue.label,
+          phone:null,
+          licenseId:'none'
+        };
+        items[i] = temp;
+      } else {
+        var temp = {
+          value: newValue.label,
+          isNew: false,
+          label: newValue.label,
+          phone:newValue.phone,
+          licenseId:newValue.licenseId
+        };
+        items[i] = temp;
+      }
+    }
+    setChosenDrivers(items);
+    // var items = chosenDrivers.slice();
+    // items[i].details = value;
+    // if (value !== null) {
+    //   for (var j = 0; j < myDrivers.length; j++) {
+    //     if (value.name === myDrivers[j].name) {
+    //       items[i].phone = myDrivers[j].phone;
+    //       break;
+    //     }
+    //   }
+    // } else {
+    //   items[i].phone = "";
+    // }
+    // setChosenDrivers(items);
   };
-  const onMultiRemove = (selectedList, removedItem, i) => {
-    var items = trucks.slice();
-    items[i].capabilities = selectedList;
-    setTrucks(items);
-  };
+  // const onMultiSelect = (selectedList, selectedItem, i) => {
+  //   var items = chosenTrucks.slice();
+  //   items[i].capabilities = selectedList;
+  //   setChosenTrucks(items);
+  // };
+  // const onMultiRemove = (selectedList, removedItem, i) => {
+  //   var items = chosenTrucks.slice();
+  //   items[i].capabilities = selectedList;
+  //   setChosenTrucks(items);
+  // };
   // const handleNumberChanged = ( event,idx) => {
-  //     var items = trucks.slice()
+  //     var items = chosenTrucks.slice()
   //     items[idx].number  = event.target.value;
-  //     setTrucks(items);
+  //     setChosenTrucks(items);
   // }
   const handleItemDeleted = (i) => {
-    var items = trucks.slice();
+    var items = chosenTrucks.slice();
     items.splice(i, 1);
-    setTrucks(items);
-    var items1 = drivers.slice();
+    setChosenTrucks(items);
+    var items1 = chosenDrivers.slice();
     items1.splice(i, 1);
-    setTrucks(items);
-    setDrivers(items1);
+    //setChosenTrucks(items);
+    setChosenDrivers(items1);
     // for( i =0;i<items.length;i++){
     //     if(items[i].details!==null)
     //     console.log(i+items[i].details.truckNumber+items1[i].details.name)
     // }
   };
   const addTruck = () => {
-    var items1 = trucks.slice();
-    var items2 = drivers.slice();
-    items1.push({
-      details: null,
-      capabilities: [],
-    });
-    items2.push({
-      details: null,
-      phone: "",
-    });
-    setTrucks(items1);
-    setDrivers(items2);
+    var items1 = chosenTrucks.slice();
+    var items2 = chosenDrivers.slice();
+    items1.push(null);
+    items2.push(null);
+    setChosenTrucks(items1);
+    setChosenDrivers(items2);
   };
   const onPhoneChangeController = (event, i) => {
-    var items = drivers.slice();
+    var items = chosenDrivers.slice();
     items[i].phone = event.target.value;
-    setDrivers(items);
+    setChosenDrivers(items);
   };
+  const onCapabilityChange = (event,i) => {
+    var items = chosenTrucks.slice()
+    items[i].value.capabilities=event
+    setChosenTrucks(items)
+  }
 
-  var list = trucks.map((e, i) => (
+  var list = chosenTrucks.map((e, i) => (
     <div
       style={
         i % 2 === 1
@@ -256,13 +365,21 @@ const Assignment = (props) => {
 
       <Grid container spacing={3} style={{ marginLeft: 30 }}>
         <Grid item xs={12} sm={4}>
-          <Autocomplete
+        <CreatableSelect
+            isClearable
+            value={chosenTrucks[i]}
+            onChange={(newValue) => onTruckNumberChanged(newValue, i)}
+            options={myTrucks}
+            placeholder="Truck Number"
+            styles={selectStyles}
+          />
+          {/* <Autocomplete
             id={`combo-box-demo${i}`}
             options={myTrucks}
             getOptionLabel={(option) =>
               option.truckNumber + `(${option.capacity}tons)`
             }
-            value={trucks[i].details}
+            value={chosenTrucks[i].details}
             onChange={(event, value, reason) =>
               onTruckNumberChanged(event, value, reason, i)
             }
@@ -273,22 +390,34 @@ const Assignment = (props) => {
             renderInput={(params) => (
               <TextField {...params} label="Truck Number" variant="outlined" />
             )}
-          />
+          /> */}
         </Grid>
         <Tooltip title="Features available in Truck" arrow placement="top">
           <Grid item xs={12} sm={4}>
-            <Multiselect
+          <Select
+            isMulti
+            styles={selectStyles}
+            name="categories"
+            value={chosenTrucks[i]===null?null:chosenTrucks[i].value.capabilities}
+            options={constants.truckCapabilityOptions}
+            placeholder="Category(Select Multiple)"
+            isDisabled={chosenTrucks[i] === null || !chosenTrucks[i].isNew}
+            className="basic-multi-select"
+            onChange={(event) => onCapabilityChange(event, i)}
+            classNamePrefix="select"
+          />
+            {/* <Multiselect
               style={{
                 searchBox: { minHeight: "55px" },
                 multiselectContainer: { height: "80px" },
               }}
-              selectedValues={trucks[i].capabilities} // Preselected value to persist in dropdown
+              selectedValues={chosenTrucks[i].capabilities} // Preselected value to persist in dropdown
               options={capabilityOptions.options} // Options to display in the dropdown
               onSelect={(list, item) => onMultiSelect(list, item, i)} // Function will trigger on select event
               onRemove={(list, item) => onMultiRemove(list, item, i)} // Function will trigger on remove event
               displayValue="name" // Property name to display in the dropdown options
               placeholder="Capabilities"
-            />
+            /> */}
           </Grid>
         </Tooltip>
         <Grid item xs={12} sm={2} style={{ marginLeft : 50 }}>
@@ -298,12 +427,84 @@ const Assignment = (props) => {
             </Tooltip>
           </IconButton>
         </Grid>
+        </Grid>
+        {chosenTrucks[i]!==null && chosenTrucks[i].isNew && 
+        <Grid container spacing={3} style={{ marginLeft: 30 }}>
+            <Grid item xs={12} sm={4}>
+               <TextField
+              required
+              type="number"
+              //error={capacityValidator !== ""}
+              //helperText={capacityValidator === "" ? " " : capacityValidator}
+              id="size"
+              name="size"
+              label="Capacity(in tons)"
+              fullWidth
+              //value={size}
+              //onChange={(event) => onSizeChangeController(event)}
+              variant='outlined'
+                size='small'
+              autoComplete="shipping address-line1"
+            />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+            <Tooltip title="Home Loaction of the Asset">
+              <TextField
+                required
+                type="text"
+                id="location"
+                name="location"
+                label="Base Location"
+                fullWidth
+                //value={location}
+                //onChange={(event) => onLocationChangeController(event)}
+                variant='outlined'
+                size='small'
+                autoComplete="shipping address-line1"
+              />
+            </Tooltip>
+          </Grid>
+       
         <Grid item xs={12} sm={4}>
-          <Autocomplete
+        <FormControl
+          
+          className={classes.formControl}
+        >
+          <InputLabel htmlFor="age-native-simple">Ownership</InputLabel>
+          <Tooltip title="Whether the asset is owned or outsourced to another company">
+          <Select
+        styles={selectStyles}
+        className="basic-single"
+        classNamePrefix="ownership"
+        isSearchable
+        name="ownership"
+        placeholder="Ownership"
+        //value={ownership}
+        //onChange={(event) => ownershipChangeController(event)}
+        options={constants.ownerShip}
+      />
+          </Tooltip>
+        </FormControl>
+      </Grid>
+        </Grid>
+    }
+
+<Grid container spacing={3} style={{ marginLeft: 30 }}>
+        <Grid item xs={12} sm={4}>
+        <CreatableSelect
+            isClearable
+            value={chosenDrivers[i]}
+            onChange={(newValue) => onDriverChanged(newValue, i)}
+            options={myDrivers}
+            placeholder="Driver Name"
+            styles={selectStyles}
+          />
+
+          {/* <Autocomplete
             id={`driversList${i}`}
             options={myDrivers}
             getOptionLabel={(option) => option.name}
-            value={drivers[i].details}
+            value={chosenDrivers[i].details}
             onChange={(event, value, reason) =>
               onDriverChanged(event, value, reason, i)
             }
@@ -314,19 +515,40 @@ const Assignment = (props) => {
                 <TextField {...params} label="Driver Name" variant="outlined" />
               </Tooltip>
             )}
-          />
+          /> */}
         </Grid>
         <Grid item xs={12} sm={4}>
           <TextField
             fullWidth
+            type="number"
             id="outlined-basic"
             label="Phone"
-            value={drivers[i].phone}
+            value={chosenDrivers[i]===null?'':chosenDrivers[i].phone}
             variant="outlined"
+            disabled={chosenDrivers[i]===null}
+            size='small'
+            InputLabelProps={{ shrink: true }} 
             onChange={(event) => onPhoneChangeController(event, i)}
           />
         </Grid>
+        {chosenDrivers[i]!==null && chosenDrivers[i].isNew && 
+        <Grid item xs={12} sm={3}>
+        <TextField
+        required
+        type="text"
+        id="licenseId"
+        name="licenseId"
+        label="License Id"
+        fullWidth
+        //value={location}
+        //onChange={(event) => onLocationChangeController(event)}
+        variant='outlined'
+        size='small'
+        autoComplete="shipping address-line1"
+      />
       </Grid>
+        }
+        </Grid>
     </div>
   ));
 
