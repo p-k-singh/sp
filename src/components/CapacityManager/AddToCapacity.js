@@ -573,7 +573,7 @@ const AddTocapacity = (props) => {
           float: "right",
           backgroundColor: "#f9a825",
           marginBottom: "20px",
-          marginRight: 30,
+         marginRight:30
         }}
       >
         Submit
