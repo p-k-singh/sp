@@ -90,7 +90,7 @@ const AddTocapacity = (props) => {
   const [availableFrom, setAvailableFrom] = useState("");
   const [availableTo, setAvailableTo] = useState("");
   const [assetActive, setAssetActive] = useState(true);
-
+  const [pindata, setpindata] = useState("");
   /**Validators */
   const [pinValidator, setPinValidator] = useState("");
   const [capacityValidator, setCapacityValidator] = useState("");
@@ -98,6 +98,21 @@ const AddTocapacity = (props) => {
   const capabilityOptions = {
     options: constants.capabilityOptions,
   };
+  const api_url = "https://api.postalpincode.in/pincode/301411";
+
+  // Defining async function
+  async function getapi(url) {
+    // Storing response
+
+    const response = await fetch(url);
+
+    // Storing data in form of JSON
+    var data = await response.json();
+    console.log(data);
+    setpindata(data);
+  }
+  // Calling that async function
+  getapi(api_url);
   const selectStyles = {
     menu: (base) => ({
       ...base,
@@ -408,6 +423,7 @@ const AddTocapacity = (props) => {
                 onChange={(event) => onCapabilitiesChange(event)}
                 classNamePrefix="select"
               />
+              
             </Grid>
           </Tooltip>
           {renderCapabilityForm()}
@@ -573,7 +589,7 @@ const AddTocapacity = (props) => {
           float: "right",
           backgroundColor: "#f9a825",
           marginBottom: "20px",
-         marginRight:30
+          marginRight: 30,
         }}
       >
         Submit

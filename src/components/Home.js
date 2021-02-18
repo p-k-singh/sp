@@ -69,9 +69,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const data = [
-  { name: "Free", Trucks: 24 },
-  { name: "Alloted ", Trucks: 52 },
-  { name: "In Transit", Trucks: 16 },
+  { name: "Amount Recieved", Payment: 24000 },
+  { name: "Amount Pending ", Payment: 52000 },
 ];
 const delayData = [
   { name: "Delayed Trucks", Quantity: 12 },
@@ -92,6 +91,7 @@ const renderCustomizedLabel = ({
   outerRadius,
   percent,
   name,
+  Payment,
 }) => {
   const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
@@ -106,7 +106,8 @@ const renderCustomizedLabel = ({
       dominantBaseline="central"
     >
       {/* {`${(percent * 100).toFixed(0)}%`} */}
-      {name}
+      {Payment}
+      {/* {name} */}
     </text>
   );
 };
@@ -143,7 +144,7 @@ class Home extends Component {
               <Grid item sm={2}>
                 <CardContent style={{ paddingTop: 10, paddingBottom: 10 }}>
                   <div class="circle" style={{ background: "#062B79" }}>
-                    <h3 style={{ padding: 20, fontSize: 50 }}>20</h3>
+                    <h3 style={{ padding: 20, fontSize: 50 }}>3.5</h3>
                   </div>
                   <div
                     style={{
@@ -154,7 +155,7 @@ class Home extends Component {
                       fontWeight: 700,
                     }}
                   >
-                    Total Orders fullfilled
+                    Customer Rating
                   </div>
                 </CardContent>
               </Grid>{" "}
@@ -173,7 +174,7 @@ class Home extends Component {
                       fontWeight: 700,
                     }}
                   >
-                    Total orders to be fulfiled
+                    Total orders fulfiled
                   </div>
                 </CardContent>
               </Grid>{" "}
@@ -221,7 +222,7 @@ class Home extends Component {
         </div>
         <div>
           <Grid container spacing={3} style={{ paddingTop: 10 }}>
-            <Grid item xs={12} sm={8}>
+            <Grid item xs={12} sm={6}>
               <div>
                 <Card Style={{ marginBottom: 20 }}>
                   <CardContent>
@@ -234,33 +235,13 @@ class Home extends Component {
                         fontWeight: 700,
                       }}
                     >
-                      Asset Dashboard
+                      Total Revenue
                     </div>
-
-                    <BarChart
-                      width={550}
-                      height={190}
-                      data={data}
-                      margin={{
-                        top: 5,
-                        right: 30,
-                        left: 20,
-                        bottom: 5,
-                      }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-
-                      <YAxis dataKey="Trucks" />
-                      <Tooltip />
-                      <Legend />
-                      <Bar dataKey="Trucks" fill="#82ca9d" />
-                    </BarChart>
                   </CardContent>
                 </Card>
               </div>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={12} sm={6}>
               <Card>
                 <CardContent>
                   <div
@@ -270,38 +251,71 @@ class Home extends Component {
                       paddingBottom: 10,
                       textAlign: "center",
                       fontWeight: 700,
+                      borderBottom: `1px solid lightgrey`,
                     }}
                   >
-                    Trucks
+                    Payments
                   </div>
+
                   <div>
-                    <PieChart width={300} height={200}>
-                      <Pie
-                        isAnimationActive={false}
-                        dataKey="Trucks"
-                        data={data}
-                        cx={135}
-                        cy={100}
-                        labelLine={false}
-                        label={renderCustomizedLabel}
-                        outerRadius={80}
+                    <Grid container>
+                      <Grid item xs={12} sm={7}>
+                        <PieChart width={300} height={200}>
+                          <Pie
+                            isAnimationActive={false}
+                            dataKey="Payment"
+                            data={data}
+                            cx={135}
+                            cy={100}
+                            labelLine={true}
+                            label={renderCustomizedLabel}
+                            outerRadius={80}
+                          >
+                            {data.map((entry, index) => (
+                              <Cell
+                                key={`cell-${index}`}
+                                fill={COLORS[index % COLORS.length]}
+                              />
+                            ))}
+                          </Pie>
+                          <Tooltip />
+                        </PieChart>
+                      </Grid>
+                      <Grid item xs={12} sm={1} style={{ marginTop: 75 }}>
+                        <div
+                          style={{
+                            background: "#0088FE",
+                            width: 10,
+                            marginBottom: 35,
+                            height: 10,
+                          }}
+                        ></div>
+                        <div
+                          style={{
+                            background: "#FF8042",
+                            width: 10,
+
+                            height: 10,
+                          }}
+                        ></div>
+                      </Grid>
+                      <Grid
+                        item
+                        xs={12}
+                        sm={4}
+                        style={{ marginTop: 70, fontWeight: 600, fontSize: 12 }}
                       >
-                        {data.map((entry, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={COLORS[index % COLORS.length]}
-                          />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
+                        <div style={{ marginBottom: 30 }}>Amount Pending</div>
+                        <div>Amount Recieved</div>
+                      </Grid>
+                    </Grid>
                   </div>
                 </CardContent>
               </Card>
             </Grid>
           </Grid>
         </div>
-        <div>
+        {/* <div>
           <Grid container spacing={3} style={{ paddingTop: 10 }}>
             <Grid
               item
@@ -386,7 +400,7 @@ class Home extends Component {
               </Card>
             </Grid>
           </Grid>
-        </div>
+        </div> */}
         <div>
           <Grid container spacing={3} style={{ paddingTop: 20 }}>
             <Grid
@@ -572,7 +586,7 @@ class Home extends Component {
                         fontWeight: 700,
                       }}
                     >
-                      Asset Dashboard
+                      Total Revenue
                     </div>
 
                     <BarChart

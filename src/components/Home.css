@@ -15,6 +15,10 @@
   justify-content: center;
   color: rgb(255, 255, 255);
 }
+.square {
+  width: 10;
+  height: 10;
+}
 
 .circle > div {
   text-align: center;
