@@ -12,6 +12,7 @@
     "@testing-library/user-event": "^12.1.10",
     "aws-amplify": "^3.3.16",
     "axios": "^0.21.1",
+    "google-maps-react": "^2.0.6",
     "multiselect-react-dropdown": "^1.6.3",
     "react": "^17.0.1",
     "react-d3-speedometer": "^1.0.1",

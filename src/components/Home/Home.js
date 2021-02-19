@@ -25,11 +25,16 @@
 // export default Home
 
 import React, { Component, useEffect, useState } from "react";
+import Accordion from "@material-ui/core/Accordion";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
+import { Map, GoogleApiWrapper } from "google-maps-react";
 import { API } from "aws-amplify";
 import "./Home.css";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
+import { Marker } from "google-maps-react";
 import { Link } from "react-router-dom";
 import {
   LineChart,
@@ -55,6 +60,7 @@ import { BarChart, Bar } from "recharts";
 import { PureComponent } from "react";
 import { Sector, Cell } from "recharts";
 import { PieChart, Pie } from "recharts";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -114,6 +120,36 @@ const renderCustomizedLabel = ({
 };
 
 class Home extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      stores: [
+        { lat: 47.49855629475769, lng: -122.14184416996333 },
+        { latitude: 47.359423, longitude: -122.021071 },
+        { latitude: 47.2052192687988, longitude: -121.988426208496 },
+        { latitude: 47.6307081, longitude: -122.1434325 },
+        { latitude: 47.3084488, longitude: -122.2140121 },
+        { latitude: 47.5524695, longitude: -122.0425407 },
+      ],
+    };
+  }
+
+  displayMarkers = () => {
+    return this.state.stores.map((store, index) => {
+      return (
+        <Marker
+          key={index}
+          id={index}
+          position={{
+            lat: store.latitude,
+            lng: store.longitude,
+          }}
+          onClick={() => console.log("You clicked me!")}
+        />
+      );
+    });
+  };
   static jsfiddleUrl = "https://jsfiddle.net/alidingling/30763kr7/";
   render() {
     return (
@@ -146,7 +182,9 @@ class Home extends Component {
                 <Button component={Link} to={`kpi`}>
                   <CardContent style={{ paddingTop: 10, paddingBottom: 10 }}>
                     <div class="circle" style={{ background: "#062B79" }}>
-                      <h3 style={{ padding: 20, fontSize: 50 }}>3.5</h3>
+                      <h3 style={{ padding: 20, paddingTop: 25, fontSize: 50 }}>
+                        3.5
+                      </h3>
                     </div>
                     <div
                       style={{
@@ -171,7 +209,7 @@ class Home extends Component {
                     </div>
                     <div
                       style={{
-                        padding: 15,
+                        padding: 17,
                         paddingTop: 10,
                         paddingBottom: 0,
                         textAlign: "center",
@@ -289,7 +327,7 @@ class Home extends Component {
                                 fontSize: 30,
                               }}
                             >
-                              Rs. 2773
+                              ₹ 956700
                             </h6>
                           </Grid>
                         </Grid>
@@ -373,95 +411,43 @@ class Home extends Component {
             </Grid>
           </Grid>
         </div>
-        {/* <div>
-          <Grid container spacing={3} style={{ paddingTop: 10 }}>
-            <Grid
-              item
-              xs={12}
-              sm={4}
-              style={{
-                paddingTop: 10,
-                paddingBottom: 0,
-                textAlign: "center",
-                fontWeight: 700,
-              }}
-            >
-              <Card
-              // style={{
-              //   borderRadius: 0,
-              //   backgroundColor: "lightgrey",
-              //   boxShadow: "none",
-              // }}
-              >
-                <CardContent
-                  style={{
-                    padding: 10,
-                    borderBottom: `1px solid lightgrey`,
-                  }}
-                >
-                  Total amount to be recieved
-                </CardContent>
-                <div class="paymentText" style={{ padding: 40 }}>
-                  Rs. 2773
+        <div>
+          <Card style={{ marginBottom: 20, marginTop: 20 }}>
+            <Grid container spacing={3} style={{ marginTop: 10 }}>
+              <Grid item sm={12}>
+                <div>
+                  <Typography
+                    style={{
+                      borderBottom: `1px solid black`,
+                      fontSize: 20,
+                      height: 50,
+                      padding: 10,
+                      paddingLeft: 30,
+                      fontWeight: 700,
+                    }}
+                    fullWidth
+                  >
+                    Asset Dashboard
+                  </Typography>
                 </div>
-              </Card>
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={4}
-              style={{
-                paddingTop: 10,
-                paddingBottom: 0,
-                textAlign: "center",
-                fontWeight: 700,
-              }}
-            >
-              <Card>
-                <CardContent
-                  style={{
-                    padding: 10,
-                    borderBottom: `1px solid lightgrey`,
-                  }}
+                <Map
+                  google={this.props.google}
+                  zoom={8}
+                  style={{ height: 800, width: 950 }}
+                  initialCenter={{ lat: 47.444, lng: -122.176 }}
                 >
-                  {" "}
-                  Amount Recieved
-                </CardContent>
-                <div class="paymentText" style={{ padding: 40 }}>
-                  Rs. 2773
-                </div>
-              </Card>
+                  {this.displayMarkers()}
+                </Map>
+              </Grid>
             </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={4}
-              style={{
-                paddingTop: 10,
-                paddingBottom: 0,
-                textAlign: "center",
-                fontWeight: 700,
-              }}
-            >
-              <Card>
-                <CardContent
-                  style={{
-                    padding: 10,
-                    borderBottom: `1px solid lightgrey`,
-                  }}
-                >
-                  Amount Pending
-                </CardContent>
-                <div class="paymentText" style={{ padding: 40 }}>
-                  Rs. 2773
-                </div>
-              </Card>
-            </Grid>
-          </Grid>
-        </div> */}
+          </Card>
+        </div>
       </div>
     );
   }
 }
 
-export default Home;
+export default GoogleApiWrapper({
+  // apiKey: "AIzaSyA4sApR940lanPlHAQ2DPfawJAqB2QfCaE",
+  apiKey: "AIzaSyCw1Cu5QmZqsFLWq-D7m12E3Qqjjj13xWY",
+})(Home);

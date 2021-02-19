@@ -133,7 +133,8 @@ const labels = {
 };
 
 function KYC() {
-  const [value, setValue] = React.useState(0);
+  const [Deliveryvalue, setDeliveryValue] = React.useState(3.5);
+  const [Pickupvalue, setPickupValue] = React.useState(4.5);
   const [hover, setHover] = React.useState(-1);
   return (
     <div className="KYC container">
@@ -179,16 +180,16 @@ function KYC() {
               > */}
                 <Grid item sm={4}>
                   <Rating
-                    value={value}
+                    value={Deliveryvalue}
                     name="rating"
                     precision={0.5}
                     onChange={(event, newValue) => {
-                      setValue(newValue);
+                      setDeliveryValue(newValue);
                     }}
                     onChangeActive={(event, newHover) => {
                       setHover(newHover);
                     }}
-                    onClick={setValue}
+                    onClick={setDeliveryValue}
                   />
                 </Grid>
                 {/* <Grid item sm={2}>
@@ -223,16 +224,16 @@ function KYC() {
               > */}
                 <Grid item sm={4}>
                   <Rating
-                    value={value}
+                    value={Pickupvalue}
                     name="rating"
                     precision={0.5}
-                    onChange={(event, newValue) => {
-                      setValue(newValue);
+                    onChange={(event, ewValue) => {
+                      setPickupValue(ewValue);
                     }}
                     onChangeActive={(event, newHover) => {
                       setHover(newHover);
                     }}
-                    onClick={setValue}
+                    onClick={setPickupValue}
                   />
                 </Grid>
                 {/* <Grid item sm={2}>
@@ -394,16 +395,16 @@ function KYC() {
               > */}
                 <Grid item sm={4}>
                   <Rating
-                    value={value}
+                    value={Pickupvalue}
                     name="rating"
                     precision={0.5}
                     onChange={(event, newValue) => {
-                      setValue(newValue);
+                      setPickupValue(newValue);
                     }}
                     onChangeActive={(event, newHover) => {
                       setHover(newHover);
                     }}
-                    onClick={setValue}
+                    onClick={setPickupValue}
                   />
                 </Grid>
               </Grid>
