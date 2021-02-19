@@ -58,11 +58,18 @@ const Assignment = (props) => {
   const [loading, setLoading] = useState("true");
   const [capacityRequired, setCapacityRequired] = useState();
   const [capacityAlloted, setCapacityAlloted] = useState(0);
-  const capabilityOptions = {
-    options: constants.capabilityOptions,
-  };
+  const [allotedDrivers,setAllotedDrivers] = useState()
+  const [allotedTrucks,setAllotedTrucks] = useState(null)
   const [myTrucks, setMyTrucks] = useState([]);
   const [myDrivers, setMyDrivers] = useState([]);
+  const [currentUser,setCurrentUser] = useState(null)
+  const [estimatedPickupDate, setEstimatedPickupDate] = useState('');
+  const [estimatedDeliveryDate, setEstimatedDeliveryDate] = useState('');
+
+  
+
+
+  var count = 0;
 
   const selectStyles = {
     menu: (base) => ({
@@ -73,9 +80,18 @@ const Assignment = (props) => {
 
   useEffect(() => {
     // loadCapabilities()
+    const setUser = async () => {
+      var currentUser = await Auth.currentUserInfo();
+      var owner = currentUser.username;
+      setCurrentUser(owner)
+    }
+    setUser()
     fetchCapacityRequired();
     loadData();
   }, []);
+
+
+
   useEffect(() => {
     var sum = 0;
     
@@ -92,15 +108,25 @@ const Assignment = (props) => {
     axios
       .get(url)
       .then((resp) => {
-        var weightPerUnit = resp.data.Item.weightPerUnit;
-        var noOfUnits = resp.data.Item.noOfUnits;
+        var sum = 0
+        resp.data.Item.items.map(item => {
+          if(item.measurable===true){
+            sum+=(item.noOfUnits * item.weightPerUnit)
+          }
+          else{
+            sum+=(item.totalWeight)
+          }
+        })
+        
         console.log(resp);
-        setCapacityRequired((noOfUnits * weightPerUnit) / 1000);
+        setCapacityRequired((sum) / 1000);
       })
       .catch((err) => {
         console.log(err);
       });
   }
+
+
   function loadData() {
     setLoading("true");
     //fetching truck details
@@ -146,7 +172,8 @@ const Assignment = (props) => {
                   value:resp[0].drivers[i].name,
                   phone: Number(resp[0].drivers[i].phone),
                   isNew:false,
-                  licenseId:resp[0].drivers[i].licenseId
+                  licenceId:resp[0].drivers[i].licenceId,
+                  licenceUrl:resp[0].drivers[i].licenceUrl
                 });
               }
               setMyDrivers(temp);
@@ -164,78 +191,212 @@ const Assignment = (props) => {
         setLoading("error");
       });
   }
-  // function loadData() {
-  //   setLoading("true");
-  //   //fetching truck details
-  //   Auth.currentUserInfo()
-  //     .then((currentUser) => {
-  //       var owner = currentUser.username;
-  //       API.get(
-  //         "GoFlexeOrderPlacement",
-  //         `/capacity?type=owner&ownerId=${owner}&asset=truck`
-  //       )
-  //         .then((resp) => {
-  //           console.log(resp);
-  //           var temp = myTrucks.slice();
-  //           for (var i = 0; i < resp.length; i++) {
-  //             temp.push({
-  //               truckNumber: resp[i].assetNumber,
-  //               capacity:
-  //                 resp[i].capacity === undefined ? 0 : Number(resp[i].capacity),
-  //               capabilities: resp[i].capabilities,
-  //             });
+
+  const onPickupDateChangeController=(event)=>{
+      var pickupDate=event.target.value;
+      setEstimatedPickupDate(pickupDate) 
+  }
+
+  const onDeliveryDateChangeController=(event)=>{
+      var deliveryDate=event.target.value;
+      setEstimatedDeliveryDate(deliveryDate);
+  }
+
+  const submitNewTrucks = async () => {
+    var today = new Date()
+    var thisYearDate = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+    var nextYearDate = (today.getFullYear()+1) + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+    let promiseList = []
+    for(var i=0;i<chosenTrucks.length;i++){
+      if(chosenTrucks[i]===null){
+        alert(`Please Choose a truck number for  truck ${i+1}`)
+         return new Promise(resolve => {
+          return  resolve(`Please Choose a truck number for  truck ${i+1}`)
+      })}
+      if(chosenTrucks[i].isNew===true){
+        const data = {
+          owner: currentUser,
+          type: 'truck',
+          assetNumber: chosenTrucks[i].label,
+          capacity: chosenTrucks[i].value.capacity,
+          unit: 'tons',
+          capabilities: chosenTrucks[i].value.capabilities,
+          availableFromDateTime: thisYearDate,
+          availableToDateTime: nextYearDate,
+          ownershipType: chosenTrucks[i].value.ownershipType===null?'self':chosenTrucks[i].value.ownershipType.value,
+          location: chosenTrucks[i].value.location,
+          active: true,
+          pincode: '-',
+        };
+        const payload = {
+          body: data,
+        };
+        
+        promiseList.push( API.post("GoFlexeOrderPlacement", `/capacity`, payload)
+          .then((response) => {
+            // Add your code here
+            console.log(response);
+            
+          })
+          .catch((error) => {
+            console.log(error.response);
+            
+          })
+        )
+      }
+    }
+   return await Promise.all(promiseList)
+  //   return new Promise(resolve => {
+  //     return  resolve('done')
+  // })
+  }
+  const submitNewDrivers = async () => {
+    let promiseList = []
+    var items = []
+    for(var i=0;i<chosenDrivers.length;i++){
+      
+      if(chosenDrivers[i]===null){
+        alert(`Please Choose  Driver  ${i+1}`)
+        return `Please Choose  Driver  ${i+1}`
+      }
+      items.push({
+        name: chosenDrivers[i].label,
+        phone: chosenDrivers[i].phone,
+        licenceUrl: chosenDrivers[i].licenceUrl,
+        licenceId: chosenDrivers[i].licenceId,
+      })
+      if(chosenDrivers[i].isNew===true){
+        const payload = {
+          body: {
+            id: currentUser,
+            type: "serviceprovider",
+            drivers: [
+              {
+                name: chosenDrivers[i].label,
+                phone: chosenDrivers[i].phone,
+                licenceUrl: 'none',
+                licenceId: chosenDrivers[i].licenceId,
+              },
+            ],
+          },
+        };
+        promiseList.push(API.post("GoFlexeOrderPlacement", "/kyc/info", payload)
+          .then((resp) => console.log(resp))
+          .catch((err) => console.log(err))
+        )
+      }
+    }
+    setAllotedDrivers(items)
+    return await Promise.all(promiseList)
+  }
+  useEffect(()=>{
+    if(count===0 && allotedTrucks!==null){
+      count+=1
+      console.log(allotedTrucks)
+      console.log(allotedDrivers)
+  
+      const payload={
+        body:{
+            username:currentUser,
+            serviceOrderId:params.id,
+            drivers:allotedDrivers,
+            trucks:allotedTrucks,
+            estimatedPickupDate:estimatedPickupDate,
+            estimatedDeliveryDate:estimatedDeliveryDate   
+    }
+  }
+    API
+    .post("GoFlexeOrderPlacement", `/serviceorder`, payload)
+    .then(res=>{
+        console.log(res)
+    })
+    .catch(err=>console.log(err))
+    }
+    
+
+
+  },[allotedTrucks])
+
+
+  const includeAllTrucks = async () => {
+    var temp = []
+    try{
+      const resp =await API.get( "GoFlexeOrderPlacement",
+      `/capacity?type=owner&ownerId=${currentUser}&asset=truck`)
+      
+       console.log(resp);
+         
+        for(var j=0;j<chosenTrucks.length;j++){
+            //alert(chosenTrucks[j].value.assetNumber)
+            for(var k=0;k<resp.length;k++){
+              if(chosenTrucks[j].value.assetNumber===resp[k].assetNumber){
+                temp.push({
+                  assetId:resp[k].assetId,
+                  assetNumber:resp[k].assetNumber,
+                  capacityUsed:resp[k].capacity,
+                  ownerId:currentUser,
+                })
+              }
+            }
+          console.log(temp);
+          setAllotedTrucks(temp)
+        }
+    }
+    catch(err){
+      alert('An error occured,Try again later')
+    }
+  }
+
+
+  // const includeAllDrivers = async () => {
+  //     API.get(
+  //       "GoFlexeOrderPlacement",
+  //       `/kyc/info?type=serviceprovider&id=${currentUser}`
+  //     )
+  //       .then((resp) => {
+  //         console.log(resp);
+  //         if (resp.length === 0) {
+  //         } else {
+  //           var temp = []
+  //           for(var j=0;j<chosenDrivers.length;j++){
+  //           //alert(chosenTrucks[j].value.assetNumber)
+  //           for(var k=0;k<resp[0].drivers.length;k++){
+  //             //alert(chosenDrivers[j].licenceId+resp[0].drivers[k].licenceId)
+  //             if(chosenDrivers[j].licenceId===resp[0].drivers[k].licenceId){
+  //             temp.push(resp[0].drivers[k])
   //           }
-  //           setMyTrucks(temp);
-  //           console.log(temp);
-  //           //console.log(myTrucks)
-  //         })
-  //         .catch((err) => console.log(err));
-  //     })
-  //     .catch((err) => console.log(err));
-  //   //fetching driver details
-  //   Auth.currentUserInfo()
-  //     .then((userDetails) => {
-  //       API.get(
-  //         "GoFlexeOrderPlacement",
-  //         `/kyc/info?type=serviceprovider&id=${userDetails.username}`
-  //       )
-  //         .then((resp) => {
-  //           console.log(resp);
-  //           if (resp.length === 0) {
-  //           } else {
-  //             var temp = myDrivers.slice();
-  //             for (var i = 0; i < resp[0].chosenDrivers.length; i++) {
-  //               temp.push({
-  //                 name: resp[0].chosenDrivers[i].name,
-  //                 phone: resp[0].chosenDrivers[i].phone,
-  //               });
-  //             }
-  //             setMyDrivers(temp);
-  //             console.log(temp);
-  //           }
-  //           setLoading("false");
-  //         })
-  //         .catch((err) => {
-  //           console.log(err);
-  //           setLoading("error");
-  //         });
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //       setLoading("error");
-  //     });
+  //         }
+  //       }
+  //      // setMyTrucks(temp);
+  //       console.log(temp);
+  //       }
+          
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //       });
+  //       return Promise.resolve('done')
   // }
 
-  const submitButtonHandler = () => {
-    //alert(JSON.stringify(chosenTrucks) + JSON.stringify(chosenDrivers));
-    // const truckNumbersArray=[];
-    // for(var i=0;i<numberOfTrucks;i++){
-    //     const truck={
-    //         truckNumber: truckNumber[i],
-    //     }
-    //     truckNumbersArray.push(truck);
+
+  const submitButtonHandler = async () => {
+    setLoading("uploading")
+    await submitNewTrucks();
+    await submitNewDrivers();
+   
+    var msg =  await includeAllTrucks()
+    //  submitNewDrivers();
+    //console.log(allotedDrivers)
+    // try{
+    //   await submitNewTrucks()
+    //   await includeAllTrucks()
+    //   console.log(allotedTrucks)
     // }
-    // alert(JSON.stringify(truckNumbersArray));
+    // catch(err){
+    //   console.log(err)
+    //   alert('An error occured. Try again later')
+    // }
+      setLoading("false")
   };
   const onTruckNumberChanged = (newValue,i) => {
     var items = chosenTrucks.slice();
@@ -247,9 +408,9 @@ const Assignment = (props) => {
           value: {
             capacity:0,
             capabilities:[],
-            assetNumber:'',
+            assetNumber:newValue.label,
             location:'',
-            ownershipType:'self',
+            ownershipType:null,
           },
           isNew: true,
           label: newValue.label,
@@ -277,7 +438,8 @@ const Assignment = (props) => {
           isNew: true,
           label: newValue.label,
           phone:null,
-          licenseId:'none'
+          licenceId:'',
+          licenceUrl:'none'
         };
         items[i] = temp;
       } else {
@@ -286,53 +448,22 @@ const Assignment = (props) => {
           isNew: false,
           label: newValue.label,
           phone:newValue.phone,
-          licenseId:newValue.licenseId
+          licenceId:newValue.licenceId,
+          licenceUrl:newValue.licenceUrl
         };
+        //alert(newValue.licenceId)
         items[i] = temp;
       }
     }
     setChosenDrivers(items);
-    // var items = chosenDrivers.slice();
-    // items[i].details = value;
-    // if (value !== null) {
-    //   for (var j = 0; j < myDrivers.length; j++) {
-    //     if (value.name === myDrivers[j].name) {
-    //       items[i].phone = myDrivers[j].phone;
-    //       break;
-    //     }
-    //   }
-    // } else {
-    //   items[i].phone = "";
-    // }
-    // setChosenDrivers(items);
   };
-  // const onMultiSelect = (selectedList, selectedItem, i) => {
-  //   var items = chosenTrucks.slice();
-  //   items[i].capabilities = selectedList;
-  //   setChosenTrucks(items);
-  // };
-  // const onMultiRemove = (selectedList, removedItem, i) => {
-  //   var items = chosenTrucks.slice();
-  //   items[i].capabilities = selectedList;
-  //   setChosenTrucks(items);
-  // };
-  // const handleNumberChanged = ( event,idx) => {
-  //     var items = chosenTrucks.slice()
-  //     items[idx].number  = event.target.value;
-  //     setChosenTrucks(items);
-  // }
   const handleItemDeleted = (i) => {
     var items = chosenTrucks.slice();
     items.splice(i, 1);
     setChosenTrucks(items);
     var items1 = chosenDrivers.slice();
     items1.splice(i, 1);
-    //setChosenTrucks(items);
     setChosenDrivers(items1);
-    // for( i =0;i<items.length;i++){
-    //     if(items[i].details!==null)
-    //     console.log(i+items[i].details.truckNumber+items1[i].details.name)
-    // }
   };
   const addTruck = () => {
     var items1 = chosenTrucks.slice();
@@ -351,6 +482,28 @@ const Assignment = (props) => {
     var items = chosenTrucks.slice()
     items[i].value.capabilities=event
     setChosenTrucks(items)
+  }
+  const onCapacityChangeController = (event,i) => {
+    var items = chosenTrucks.slice()
+    items[i].value.capacity = event.target.value;
+    if(items[i].value.capacity<0)
+    items[i].value.capacity =0 
+    setChosenTrucks(items)
+  }
+  const onLocationChangeController = (event,i) => {
+    var items = chosenTrucks.slice()
+    items[i].value.location = event.target.value;
+    setChosenTrucks(items)
+  }
+  const ownershipChangeController = (event,i) => {
+    var items  = chosenTrucks.slice()
+    items[i].value.ownershipType=event
+    setChosenTrucks(items)
+  }
+  const onLicenseIdChangeController = (event,i) => {
+    var items = chosenDrivers.slice()
+    items[i].licenceId = event.target.value
+    setChosenDrivers(items)
   }
 
   var list = chosenTrucks.map((e, i) => (
@@ -373,24 +526,6 @@ const Assignment = (props) => {
             placeholder="Truck Number"
             styles={selectStyles}
           />
-          {/* <Autocomplete
-            id={`combo-box-demo${i}`}
-            options={myTrucks}
-            getOptionLabel={(option) =>
-              option.truckNumber + `(${option.capacity}tons)`
-            }
-            value={chosenTrucks[i].details}
-            onChange={(event, value, reason) =>
-              onTruckNumberChanged(event, value, reason, i)
-            }
-            getOptionSelected={(option, value) =>
-              option.truckNumber === value.truckNumber
-            }
-            style={{ width: 300 }}
-            renderInput={(params) => (
-              <TextField {...params} label="Truck Number" variant="outlined" />
-            )}
-          /> */}
         </Grid>
         <Tooltip title="Features available in Truck" arrow placement="top">
           <Grid item xs={12} sm={4}>
@@ -440,8 +575,8 @@ const Assignment = (props) => {
               name="size"
               label="Capacity(in tons)"
               fullWidth
-              //value={size}
-              //onChange={(event) => onSizeChangeController(event)}
+              value={chosenTrucks[i].value.capacity}
+              onChange={(event) => onCapacityChangeController(event,i)}
               variant='outlined'
                 size='small'
               autoComplete="shipping address-line1"
@@ -456,8 +591,8 @@ const Assignment = (props) => {
                 name="location"
                 label="Base Location"
                 fullWidth
-                //value={location}
-                //onChange={(event) => onLocationChangeController(event)}
+                value={chosenTrucks[i].value.location}
+                onChange={(event) => onLocationChangeController(event,i)}
                 variant='outlined'
                 size='small'
                 autoComplete="shipping address-line1"
@@ -479,8 +614,8 @@ const Assignment = (props) => {
         isSearchable
         name="ownership"
         placeholder="Ownership"
-        //value={ownership}
-        //onChange={(event) => ownershipChangeController(event)}
+        value={chosenTrucks[i].value.ownershipType}
+        onChange={(event) => ownershipChangeController(event,i)}
         options={constants.ownerShip}
       />
           </Tooltip>
@@ -500,22 +635,6 @@ const Assignment = (props) => {
             styles={selectStyles}
           />
 
-          {/* <Autocomplete
-            id={`driversList${i}`}
-            options={myDrivers}
-            getOptionLabel={(option) => option.name}
-            value={chosenDrivers[i].details}
-            onChange={(event, value, reason) =>
-              onDriverChanged(event, value, reason, i)
-            }
-            getOptionSelected={(option, value) => option.name === value.name}
-            style={{ width: 300 }}
-            renderInput={(params) => (
-              <Tooltip title="Same as on Driving License">
-                <TextField {...params} label="Driver Name" variant="outlined" />
-              </Tooltip>
-            )}
-          /> */}
         </Grid>
         <Grid item xs={12} sm={4}>
           <TextField
@@ -536,12 +655,12 @@ const Assignment = (props) => {
         <TextField
         required
         type="text"
-        id="licenseId"
-        name="licenseId"
+        id="licenceId"
+        name="licenceId"
         label="License Id"
         fullWidth
-        //value={location}
-        //onChange={(event) => onLocationChangeController(event)}
+        value={chosenDrivers[i].licenceId}
+        onChange={(event) => onLicenseIdChangeController(event,i)}
         variant='outlined'
         size='small'
         autoComplete="shipping address-line1"
@@ -552,13 +671,18 @@ const Assignment = (props) => {
     </div>
   ));
 
-  if (loading === true) {
+  if (loading === "true") {
     return (
       <React.Fragment>
         <h1>Loading your truck details</h1>
         <Spinner />
       </React.Fragment>
     );
+  }
+  if(loading === "uploading"){
+    return(
+      <Spinner />
+    )
   }
 
   return (
@@ -587,7 +711,7 @@ const Assignment = (props) => {
                   id="datetime-pickup"
                   label={constants.estimatedPickup}
                   type="datetime-local"
-                  //   onChange={(event)=>onPickupDateChangeController(event)}
+                   onChange={(event)=>onPickupDateChangeController(event)}
                   className={classes.textField}
                   InputLabelProps={{
                     shrink: true,
@@ -599,7 +723,7 @@ const Assignment = (props) => {
                 <TextField
                   id="datetime-delivery"
                   label={constants.estimatedDelivery}
-                  //  onChange={(event)=>onDeliveryDateChangeController(event)}
+                  onChange={(event)=>onDeliveryDateChangeController(event)}
                   type="datetime-local"
                   className={classes.textField}
                   InputLabelProps={{
@@ -638,7 +762,7 @@ const Assignment = (props) => {
               </Grid>
               <Grid item xs={12} sm={4}>
                 Capacity Left:{" "}
-                {Math.max(capacityRequired - capacityAlloted, 0).toFixed(3)}tons
+                {(capacityRequired - capacityAlloted).toFixed(3)}tons
               </Grid>
             </Grid>
             <Button
