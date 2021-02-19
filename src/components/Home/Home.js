@@ -79,6 +79,7 @@ const data = [
   { name: "Amount Recieved", Payment: 24000 },
   { name: "Amount Pending ", Payment: 52000 },
 ];
+
 const delayData = [
   { name: "Delayed Trucks", Quantity: 12 },
   { name: "Delayed Orders ", Quantity: 52 },
@@ -120,6 +121,10 @@ const renderCustomizedLabel = ({
 };
 
 class Home extends Component {
+  //   const [Deliveryvalue, setDeliveryValue] = React.useState(3.5);
+  //  const [Pickupvalue, setPickupValue] = React.useState(4.5);
+  //  const [hover, setHover] = React.useState(-1);
+
   constructor(props) {
     super(props);
 
@@ -150,6 +155,7 @@ class Home extends Component {
       );
     });
   };
+
   static jsfiddleUrl = "https://jsfiddle.net/alidingling/30763kr7/";
   render() {
     return (
@@ -195,7 +201,7 @@ class Home extends Component {
                         fontWeight: 700,
                       }}
                     >
-                      Customer Rating
+                      Performance Rating
                     </div>
                   </CardContent>
                 </Button>
@@ -327,7 +333,7 @@ class Home extends Component {
                                 fontSize: 30,
                               }}
                             >
-                              ₹ 956700
+                              ₹ 9,56,789
                             </h6>
                           </Grid>
                         </Grid>

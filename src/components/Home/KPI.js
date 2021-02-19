@@ -152,7 +152,7 @@ function KYC() {
               }}
               fullWidth
             >
-              Ontime Delivery
+              Ratings
             </Typography>
 
             <div>
@@ -192,12 +192,9 @@ function KYC() {
                     onClick={setDeliveryValue}
                   />
                 </Grid>
-                {/* <Grid item sm={2}>
-                  {" "}
-                  {value !== null && (
-                    <Box ml={2}>{labels[hover !== -1 ? hover : value]}</Box>
-                  )}
-                </Grid> */}
+                <Grid item sm={4}>
+                  Orders Delivered : 352
+                </Grid>
               </Grid>
             </div>
             <div>
@@ -236,12 +233,44 @@ function KYC() {
                     onClick={setPickupValue}
                   />
                 </Grid>
-                {/* <Grid item sm={2}>
-                  {" "}
-                  {value !== null && (
-                    <Box ml={2}>{labels[hover !== -1 ? hover : value]}</Box>
-                  )}
-                </Grid> */}
+                <Grid item sm={4}>
+                  Orders Picked Up : 322
+                </Grid>
+              </Grid>
+            </div>
+            <div>
+              <Grid container spacing={3} style={{ paddingLeft: 30 }}>
+                <Grid
+                  item
+                  sm={4}
+                  style={{
+                    marginTop: 6,
+                    fontSize: 15,
+                    fontWeight: 600,
+                  }}
+                >
+                  Customer Feedback
+                </Grid>
+                {/* <Box
+                align="left"
+                component="fieldset"
+                mb={3}
+                borderColor="transparent"
+              > */}
+                <Grid item sm={4}>
+                  <Rating
+                    value={Deliveryvalue}
+                    name="rating"
+                    precision={0.5}
+                    onChange={(event, newValue) => {
+                      setDeliveryValue(newValue);
+                    }}
+                    onChangeActive={(event, newHover) => {
+                      setHover(newHover);
+                    }}
+                    onClick={setDeliveryValue}
+                  />
+                </Grid>
               </Grid>
             </div>
           </Card>
@@ -281,16 +310,18 @@ function KYC() {
                 >
                   <div style={{ height: 200 }}>
                     <ReactSpeedometer
-                      maxValue={10}
-                      value={7.5}
+                      maxValue={5}
+                      value={3.5}
                       needleColor="red"
-                      startColor="green"
+                      startColor="orange"
                       segments={5}
-                      endColor="blue"
+                      endColor="green"
                       textColor="grey"
                     />
                   </div>
-                  <div style={{ paddingLeft: 120 }}>Damage</div>
+                  <div style={{ paddingLeft: 30 }}>
+                    Orders delivered without Damage
+                  </div>
                 </Grid>
                 {/* <Box
                 align="left"
@@ -311,16 +342,18 @@ function KYC() {
                 >
                   <div style={{ height: 200 }}>
                     <ReactSpeedometer
-                      maxValue={10}
-                      value={9}
+                      maxValue={5}
+                      value={4.5}
                       needleColor="red"
-                      startColor="green"
+                      startColor="orange"
                       segments={5}
-                      endColor="blue"
+                      endColor="green"
                       textColor="grey"
                     />
                   </div>
-                  <div style={{ paddingLeft: 120 }}>Pilferage</div>
+                  <div style={{ paddingLeft: 30 }}>
+                    Orders delivered with 0 Pilferage
+                  </div>
                 </Grid>
               </Grid>
             </div>
@@ -371,131 +404,10 @@ function KYC() {
                 marginBottom: 15,
                 borderTop: `1px solid lightgrey`,
               }}
-            >
-              <Grid
-                container
-                spacing={3}
-                style={{ marginTop: 10, paddingLeft: 30 }}
-              >
-                <Grid
-                  item
-                  sm={4}
-                  style={{
-                    fontSize: 15,
-                    fontWeight: 600,
-                  }}
-                >
-                  Customer Feedback
-                </Grid>
-                {/* <Box
-                align="left"
-                component="fieldset"
-                mb={3}
-                borderColor="transparent"
-              > */}
-                <Grid item sm={4}>
-                  <Rating
-                    value={Pickupvalue}
-                    name="rating"
-                    precision={0.5}
-                    onChange={(event, newValue) => {
-                      setPickupValue(newValue);
-                    }}
-                    onChangeActive={(event, newHover) => {
-                      setHover(newHover);
-                    }}
-                    onClick={setPickupValue}
-                  />
-                </Grid>
-              </Grid>
-            </div>
+            ></div>
           </Card>
         </div>
       </div>
-      {/* <div>
-        <Grid container spacing={3} style={{ paddingTop: 20 }}>
-          <Grid item xs={12} sm={4}>
-            <Card>
-              <CardContent>
-                <div
-                  style={{
-                    padding: 5,
-                    paddingTop: 10,
-                    paddingBottom: 10,
-                    textAlign: "center",
-                    fontSize: 12,
-                    fontWeight: 700,
-                  }}
-                >
-                  Total Products vs Damaged Products
-                </div>
-                <div>
-                  <PieChart width={300} height={200}>
-                    <Pie
-                      isAnimationActive={false}
-                      dataKey="products"
-                      data={damagedData}
-                      cx={135}
-                      cy={100}
-                      labelLine={false}
-                      label={renderCustomizedLabel}
-                      outerRadius={80}
-                    >
-                      {damagedData.map((entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS[index % COLORS.length]}
-                        />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </div>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} sm={8}>
-            <div>
-              <Card Style={{ marginBottom: 20 }}>
-                <CardContent>
-                  <div
-                    style={{
-                      padding: 5,
-                      paddingTop: 10,
-                      paddingBottom: 20,
-                      textAlign: "center",
-                      fontWeight: 700,
-                    }}
-                  >
-                    Delay
-                  </div>
-
-                  <BarChart
-                    width={550}
-                    height={190}
-                    data={delayData}
-                    margin={{
-                      top: 5,
-                      right: 30,
-                      left: 20,
-                      bottom: 5,
-                    }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-
-                    <YAxis dataKey="Quantity" />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="Quantity" fill="#df4759" />
-                  </BarChart>
-                </CardContent>
-              </Card>
-            </div>
-          </Grid>
-        </Grid>
-      </div> */}
     </div>
   );
 }
