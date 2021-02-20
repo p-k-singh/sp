@@ -7,12 +7,16 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import "./Assignment.css";
 import Spinner from "../UI/Spinner";
 import Tooltip from "@material-ui/core/Tooltip";
+import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 import {
   TextField,
   Grid,
   Card,
   Button,
   IconButton,
+  InputLabel,
+  FormControl,
   Divider,
 } from "@material-ui/core";
 // import Select from 'react-select'
@@ -45,33 +49,53 @@ const useStyles = makeStyles({
 const Assignment = (props) => {
   const classes = useStyles();
   // const [truckNumber,setTruckNumber]=useState([]);
-  const [trucks, setTrucks] = useState([]);
-  const [drivers, setDrivers] = useState([]);
+  const [chosenTrucks, setChosenTrucks] = useState([]);
+  const [chosenDrivers, setChosenDrivers] = useState([]);
   const {
     match: { params },
   } = props;
-  const [capability, setCapability] = useState([]);
+  const [capability, setCapability] = useState([null]);
   const [loading, setLoading] = useState("true");
   const [capacityRequired, setCapacityRequired] = useState();
   const [capacityAlloted, setCapacityAlloted] = useState(0);
-  const capabilityOptions = {
-    options: constants.capabilityOptions,
-  };
+  const [allotedDrivers, setAllotedDrivers] = useState();
+  const [allotedTrucks, setAllotedTrucks] = useState(null);
   const [myTrucks, setMyTrucks] = useState([]);
   const [myDrivers, setMyDrivers] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [estimatedPickupDate, setEstimatedPickupDate] = useState("");
+  const [estimatedDeliveryDate, setEstimatedDeliveryDate] = useState("");
+
+  var count = 0;
+
+  const selectStyles = {
+    menu: (base) => ({
+      ...base,
+      zIndex: 100,
+    }),
+  };
 
   useEffect(() => {
     // loadCapabilities()
+    const setUser = async () => {
+      var currentUser = await Auth.currentUserInfo();
+      var owner = currentUser.username;
+      setCurrentUser(owner);
+    };
+    setUser();
     fetchCapacityRequired();
     loadData();
   }, []);
+
   useEffect(() => {
     var sum = 0;
-    for (var i = 0; i < trucks.length; i++) {
-      if (trucks[i].details !== null) sum += Number(trucks[i].details.capacity);
+
+    for (var i = 0; i < chosenTrucks.length; i++) {
+      if (chosenTrucks[i] !== null)
+        sum += Number(chosenTrucks[i].value.capacity);
     }
     setCapacityAlloted(sum);
-  }, [trucks]);
+  }, [chosenTrucks]);
 
   function fetchCapacityRequired() {
     const url =
@@ -80,15 +104,23 @@ const Assignment = (props) => {
     axios
       .get(url)
       .then((resp) => {
-        var weightPerUnit = resp.data.Item.weightPerUnit;
-        var noOfUnits = resp.data.Item.noOfUnits;
-        console.log(weightPerUnit + "" + noOfUnits);
-        setCapacityRequired((noOfUnits * weightPerUnit) / 1000);
+        var sum = 0;
+        resp.data.Item.items.map((item) => {
+          if (item.measurable === true) {
+            sum += item.noOfUnits * item.weightPerUnit;
+          } else {
+            sum += item.totalWeight;
+          }
+        });
+
+        console.log(resp);
+        setCapacityRequired(sum / 1000);
       })
       .catch((err) => {
         console.log(err);
       });
   }
+
   function loadData() {
     setLoading("true");
     //fetching truck details
@@ -101,13 +133,12 @@ const Assignment = (props) => {
         )
           .then((resp) => {
             console.log(resp);
-            var temp = myTrucks.slice();
+            var temp = [];
             for (var i = 0; i < resp.length; i++) {
               temp.push({
-                truckNumber: resp[i].assetNumber,
-                capacity:
-                  resp[i].capacity === undefined ? 0 : Number(resp[i].capacity),
-                capabilities: resp[i].capabilities,
+                label: resp[i].assetNumber + "(" + resp[i].capacity + " tons)",
+                value: resp[i],
+                isNew: false,
               });
             }
             setMyTrucks(temp);
@@ -131,8 +162,12 @@ const Assignment = (props) => {
               var temp = myDrivers.slice();
               for (var i = 0; i < resp[0].drivers.length; i++) {
                 temp.push({
-                  name: resp[0].drivers[i].name,
-                  phone: resp[0].drivers[i].phone,
+                  label: resp[0].drivers[i].name,
+                  value: resp[0].drivers[i].name,
+                  phone: Number(resp[0].drivers[i].phone),
+                  isNew: false,
+                  licenceId: resp[0].drivers[i].licenceId,
+                  licenceUrl: resp[0].drivers[i].licenceUrl,
                 });
               }
               setMyDrivers(temp);
@@ -151,100 +186,328 @@ const Assignment = (props) => {
       });
   }
 
-  const submitButtonHandler = () => {
-    alert(JSON.stringify(trucks) + JSON.stringify(drivers));
-    // const truckNumbersArray=[];
-    // for(var i=0;i<numberOfTrucks;i++){
-    //     const truck={
-    //         truckNumber: truckNumber[i],
-    //     }
-    //     truckNumbersArray.push(truck);
-    // }
-    // alert(JSON.stringify(truckNumbersArray));
-  };
-  const onTruckNumberChanged = (event, value, reason, i) => {
-    var items = trucks.slice();
-    items[i].details = value;
-    if (value !== null)
-      for (var j = 0; j < myTrucks.length; j++) {
-        if (value.truckNumber === myTrucks[j].truckNumber) {
-          items[i].capabilities = myTrucks[j].capabilities;
-          break;
-        }
-      }
-    else {
-      items[i].capabilities = [];
-    }
-    setTrucks(items);
-    for (i = 0; i < items.length; i++) {
-      if (items[i].details !== null)
-        console.log(i + items[i].details.truckNumber);
-    }
-  };
-  const onDriverChanged = (event, value, reason, i) => {
-    var items = drivers.slice();
-    items[i].details = value;
-    if (value !== null) {
-      for (var j = 0; j < myDrivers.length; j++) {
-        if (value.name === myDrivers[j].name) {
-          items[i].phone = myDrivers[j].phone;
-          break;
-        }
-      }
-    } else {
-      items[i].phone = "";
-    }
-    setDrivers(items);
-  };
-  const onMultiSelect = (selectedList, selectedItem, i) => {
-    var items = trucks.slice();
-    items[i].capabilities = selectedList;
-    setTrucks(items);
-  };
-  const onMultiRemove = (selectedList, removedItem, i) => {
-    var items = trucks.slice();
-    items[i].capabilities = selectedList;
-    setTrucks(items);
-  };
-  // const handleNumberChanged = ( event,idx) => {
-  //     var items = trucks.slice()
-  //     items[idx].number  = event.target.value;
-  //     setTrucks(items);
-  // }
-  const handleItemDeleted = (i) => {
-    var items = trucks.slice();
-    items.splice(i, 1);
-    setTrucks(items);
-    var items1 = drivers.slice();
-    items1.splice(i, 1);
-    setTrucks(items);
-    setDrivers(items1);
-    // for( i =0;i<items.length;i++){
-    //     if(items[i].details!==null)
-    //     console.log(i+items[i].details.truckNumber+items1[i].details.name)
-    // }
-  };
-  const addTruck = () => {
-    var items1 = trucks.slice();
-    var items2 = drivers.slice();
-    items1.push({
-      details: null,
-      capabilities: [],
-    });
-    items2.push({
-      details: null,
-      phone: "",
-    });
-    setTrucks(items1);
-    setDrivers(items2);
-  };
-  const onPhoneChangeController = (event, i) => {
-    var items = drivers.slice();
-    items[i].phone = event.target.value;
-    setDrivers(items);
+  const onPickupDateChangeController = (event) => {
+    var pickupDate = event.target.value;
+    setEstimatedPickupDate(pickupDate);
   };
 
-  var list = trucks.map((e, i) => (
+  const onDeliveryDateChangeController = (event) => {
+    var deliveryDate = event.target.value;
+    setEstimatedDeliveryDate(deliveryDate);
+  };
+
+  const submitNewTrucks = async () => {
+    var today = new Date();
+    var thisYearDate =
+      today.getFullYear() +
+      "-" +
+      (today.getMonth() + 1) +
+      "-" +
+      today.getDate();
+    var nextYearDate =
+      today.getFullYear() +
+      1 +
+      "-" +
+      (today.getMonth() + 1) +
+      "-" +
+      today.getDate();
+    let promiseList = [];
+    for (var i = 0; i < chosenTrucks.length; i++) {
+      if (chosenTrucks[i] === null) {
+        alert(`Please Choose a truck number for  truck ${i + 1}`);
+        return new Promise((resolve) => {
+          return resolve(`Please Choose a truck number for  truck ${i + 1}`);
+        });
+      }
+      if (chosenTrucks[i].isNew === true) {
+        const data = {
+          owner: currentUser,
+          type: "truck",
+          assetNumber: chosenTrucks[i].label,
+          capacity: chosenTrucks[i].value.capacity,
+          unit: "tons",
+          capabilities: chosenTrucks[i].value.capabilities,
+          availableFromDateTime: thisYearDate,
+          availableToDateTime: nextYearDate,
+          ownershipType:
+            chosenTrucks[i].value.ownershipType === null
+              ? "self"
+              : chosenTrucks[i].value.ownershipType.value,
+          location: chosenTrucks[i].value.location,
+          active: true,
+          pincode: "-",
+        };
+        const payload = {
+          body: data,
+        };
+
+        promiseList.push(
+          API.post("GoFlexeOrderPlacement", `/capacity`, payload)
+            .then((response) => {
+              // Add your code here
+              console.log(response);
+            })
+            .catch((error) => {
+              console.log(error.response);
+            })
+        );
+      }
+    }
+    return await Promise.all(promiseList);
+    //   return new Promise(resolve => {
+    //     return  resolve('done')
+    // })
+  };
+  const submitNewDrivers = async () => {
+    let promiseList = [];
+    var items = [];
+    for (var i = 0; i < chosenDrivers.length; i++) {
+      if (chosenDrivers[i] === null) {
+        alert(`Please Choose  Driver  ${i + 1}`);
+        return `Please Choose  Driver  ${i + 1}`;
+      }
+      items.push({
+        name: chosenDrivers[i].label,
+        phone: chosenDrivers[i].phone,
+        licenceUrl: chosenDrivers[i].licenceUrl,
+        licenceId: chosenDrivers[i].licenceId,
+      });
+      if (chosenDrivers[i].isNew === true) {
+        const payload = {
+          body: {
+            id: currentUser,
+            type: "serviceprovider",
+            drivers: [
+              {
+                name: chosenDrivers[i].label,
+                phone: chosenDrivers[i].phone,
+                licenceUrl: "none",
+                licenceId: chosenDrivers[i].licenceId,
+              },
+            ],
+          },
+        };
+        promiseList.push(
+          API.post("GoFlexeOrderPlacement", "/kyc/info", payload)
+            .then((resp) => console.log(resp))
+            .catch((err) => console.log(err))
+        );
+      }
+    }
+    setAllotedDrivers(items);
+    return await Promise.all(promiseList);
+  };
+  useEffect(() => {
+    if (count === 0 && allotedTrucks !== null) {
+      count += 1;
+      console.log(allotedTrucks);
+      console.log(allotedDrivers);
+
+      const payload = {
+        body: {
+          username: currentUser,
+          serviceOrderId: params.id,
+          drivers: allotedDrivers,
+          trucks: allotedTrucks,
+          estimatedPickupDate: estimatedPickupDate,
+          estimatedDeliveryDate: estimatedDeliveryDate,
+        },
+      };
+      API.post("GoFlexeOrderPlacement", `/serviceorder`, payload)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => console.log(err));
+    }
+  }, [allotedTrucks]);
+
+  const includeAllTrucks = async () => {
+    var temp = [];
+    try {
+      const resp = await API.get(
+        "GoFlexeOrderPlacement",
+        `/capacity?type=owner&ownerId=${currentUser}&asset=truck`
+      );
+
+      console.log(resp);
+
+      for (var j = 0; j < chosenTrucks.length; j++) {
+        //alert(chosenTrucks[j].value.assetNumber)
+        for (var k = 0; k < resp.length; k++) {
+          if (chosenTrucks[j].value.assetNumber === resp[k].assetNumber) {
+            temp.push({
+              assetId: resp[k].assetId,
+              assetNumber: resp[k].assetNumber,
+              capacityUsed: resp[k].capacity,
+              ownerId: currentUser,
+            });
+          }
+        }
+        console.log(temp);
+        setAllotedTrucks(temp);
+      }
+    } catch (err) {
+      alert("An error occured,Try again later");
+    }
+  };
+
+  // const includeAllDrivers = async () => {
+  //     API.get(
+  //       "GoFlexeOrderPlacement",
+  //       `/kyc/info?type=serviceprovider&id=${currentUser}`
+  //     )
+  //       .then((resp) => {
+  //         console.log(resp);
+  //         if (resp.length === 0) {
+  //         } else {
+  //           var temp = []
+  //           for(var j=0;j<chosenDrivers.length;j++){
+  //           //alert(chosenTrucks[j].value.assetNumber)
+  //           for(var k=0;k<resp[0].drivers.length;k++){
+  //             //alert(chosenDrivers[j].licenceId+resp[0].drivers[k].licenceId)
+  //             if(chosenDrivers[j].licenceId===resp[0].drivers[k].licenceId){
+  //             temp.push(resp[0].drivers[k])
+  //           }
+  //         }
+  //       }
+  //      // setMyTrucks(temp);
+  //       console.log(temp);
+  //       }
+
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //       });
+  //       return Promise.resolve('done')
+  // }
+
+  const submitButtonHandler = async () => {
+    setLoading("uploading");
+    await submitNewTrucks();
+    await submitNewDrivers();
+
+    var msg = await includeAllTrucks();
+    //  submitNewDrivers();
+    //console.log(allotedDrivers)
+    // try{
+    //   await submitNewTrucks()
+    //   await includeAllTrucks()
+    //   console.log(allotedTrucks)
+    // }
+    // catch(err){
+    //   console.log(err)
+    //   alert('An error occured. Try again later')
+    // }
+    setLoading("false");
+  };
+  const onTruckNumberChanged = (newValue, i) => {
+    var items = chosenTrucks.slice();
+    if (newValue === null) {
+      items[i] = null;
+    } else {
+      if (newValue.__isNew__ === true) {
+        var temp = {
+          value: {
+            capacity: 0,
+            capabilities: [],
+            assetNumber: newValue.label,
+            location: "",
+            ownershipType: null,
+          },
+          isNew: true,
+          label: newValue.label,
+        };
+        items[i] = temp;
+      } else {
+        var temp = {
+          value: newValue.value,
+          isNew: false,
+          label: newValue.label,
+        };
+        items[i] = temp;
+      }
+    }
+    setChosenTrucks(items);
+  };
+  const onDriverChanged = (newValue, i) => {
+    var items = chosenDrivers.slice();
+    if (newValue === null) {
+      items[i] = null;
+    } else {
+      if (newValue.__isNew__ === true) {
+        var temp = {
+          value: newValue.label,
+          isNew: true,
+          label: newValue.label,
+          phone: null,
+          licenceId: "",
+          licenceUrl: "none",
+        };
+        items[i] = temp;
+      } else {
+        var temp = {
+          value: newValue.label,
+          isNew: false,
+          label: newValue.label,
+          phone: newValue.phone,
+          licenceId: newValue.licenceId,
+          licenceUrl: newValue.licenceUrl,
+        };
+        //alert(newValue.licenceId)
+        items[i] = temp;
+      }
+    }
+    setChosenDrivers(items);
+  };
+  const handleItemDeleted = (i) => {
+    var items = chosenTrucks.slice();
+    items.splice(i, 1);
+    setChosenTrucks(items);
+    var items1 = chosenDrivers.slice();
+    items1.splice(i, 1);
+    setChosenDrivers(items1);
+  };
+  const addTruck = () => {
+    var items1 = chosenTrucks.slice();
+    var items2 = chosenDrivers.slice();
+    items1.push(null);
+    items2.push(null);
+    setChosenTrucks(items1);
+    setChosenDrivers(items2);
+  };
+  const onPhoneChangeController = (event, i) => {
+    var items = chosenDrivers.slice();
+    items[i].phone = event.target.value;
+    setChosenDrivers(items);
+  };
+  const onCapabilityChange = (event, i) => {
+    var items = chosenTrucks.slice();
+    items[i].value.capabilities = event;
+    setChosenTrucks(items);
+  };
+  const onCapacityChangeController = (event, i) => {
+    var items = chosenTrucks.slice();
+    items[i].value.capacity = event.target.value;
+    if (items[i].value.capacity < 0) items[i].value.capacity = 0;
+    setChosenTrucks(items);
+  };
+  const onLocationChangeController = (event, i) => {
+    var items = chosenTrucks.slice();
+    items[i].value.location = event.target.value;
+    setChosenTrucks(items);
+  };
+  const ownershipChangeController = (event, i) => {
+    var items = chosenTrucks.slice();
+    items[i].value.ownershipType = event;
+    setChosenTrucks(items);
+  };
+  const onLicenseIdChangeController = (event, i) => {
+    var items = chosenDrivers.slice();
+    items[i].licenceId = event.target.value;
+    setChosenDrivers(items);
+  };
+
+  var list = chosenTrucks.map((e, i) => (
     <div
       style={
         i % 2 === 1
@@ -256,87 +519,169 @@ const Assignment = (props) => {
 
       <Grid container spacing={3} style={{ marginLeft: 30 }}>
         <Grid item xs={12} sm={4}>
-          <Autocomplete
-            id={`combo-box-demo${i}`}
+          <CreatableSelect
+            isClearable
+            value={chosenTrucks[i]}
+            onChange={(newValue) => onTruckNumberChanged(newValue, i)}
             options={myTrucks}
-            getOptionLabel={(option) =>
-              option.truckNumber + `(${option.capacity}tons)`
-            }
-            value={trucks[i].details}
-            onChange={(event, value, reason) =>
-              onTruckNumberChanged(event, value, reason, i)
-            }
-            getOptionSelected={(option, value) =>
-              option.truckNumber === value.truckNumber
-            }
-            style={{ width: 300 }}
-            renderInput={(params) => (
-              <TextField {...params} label="Truck Number" variant="outlined" />
-            )}
+            placeholder="Truck Number"
+            styles={selectStyles}
           />
         </Grid>
         <Tooltip title="Features available in Truck" arrow placement="top">
           <Grid item xs={12} sm={4}>
-            <Multiselect
+            <Select
+              isMulti
+              styles={selectStyles}
+              name="categories"
+              value={
+                chosenTrucks[i] === null
+                  ? null
+                  : chosenTrucks[i].value.capabilities
+              }
+              options={constants.truckCapabilityOptions}
+              placeholder="Category(Select Multiple)"
+              isDisabled={chosenTrucks[i] === null || !chosenTrucks[i].isNew}
+              className="basic-multi-select"
+              onChange={(event) => onCapabilityChange(event, i)}
+              classNamePrefix="select"
+            />
+            {/* <Multiselect
               style={{
                 searchBox: { minHeight: "55px" },
                 multiselectContainer: { height: "80px" },
               }}
-              selectedValues={trucks[i].capabilities} // Preselected value to persist in dropdown
+              selectedValues={chosenTrucks[i].capabilities} // Preselected value to persist in dropdown
               options={capabilityOptions.options} // Options to display in the dropdown
               onSelect={(list, item) => onMultiSelect(list, item, i)} // Function will trigger on select event
               onRemove={(list, item) => onMultiRemove(list, item, i)} // Function will trigger on remove event
               displayValue="name" // Property name to display in the dropdown options
               placeholder="Capabilities"
-            />
+            /> */}
           </Grid>
         </Tooltip>
-        <Grid item xs={12} sm={2} style={{ marginLeft : 50 }}>
+        <Grid item xs={12} sm={2} style={{ marginLeft: 50 }}>
           <IconButton onClick={() => handleItemDeleted(i)}>
             <Tooltip title="Delete">
               <DeleteIcon style={{ fontSize: "30" }} />
             </Tooltip>
           </IconButton>
         </Grid>
-        <Grid item xs={12} sm={4}>
-          <Autocomplete
-            id={`driversList${i}`}
-            options={myDrivers}
-            getOptionLabel={(option) => option.name}
-            value={drivers[i].details}
-            onChange={(event, value, reason) =>
-              onDriverChanged(event, value, reason, i)
-            }
-            getOptionSelected={(option, value) => option.name === value.name}
-            style={{ width: 300 }}
-            renderInput={(params) => (
-              <Tooltip title="Same as on Driving License">
-                <TextField {...params} label="Driver Name" variant="outlined" />
+      </Grid>
+      {chosenTrucks[i] !== null && chosenTrucks[i].isNew && (
+        <Grid container spacing={3} style={{ marginLeft: 30 }}>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              required
+              type="number"
+              //error={capacityValidator !== ""}
+              //helperText={capacityValidator === "" ? " " : capacityValidator}
+              id="size"
+              name="size"
+              label="Capacity(in tons)"
+              fullWidth
+              value={chosenTrucks[i].value.capacity}
+              onChange={(event) => onCapacityChangeController(event, i)}
+              variant="outlined"
+              size="small"
+              autoComplete="shipping address-line1"
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <Tooltip title="Home Loaction of the Asset">
+              <TextField
+                required
+                type="text"
+                id="location"
+                name="location"
+                label="Base Location"
+                fullWidth
+                value={chosenTrucks[i].value.location}
+                onChange={(event) => onLocationChangeController(event, i)}
+                variant="outlined"
+                size="small"
+                autoComplete="shipping address-line1"
+              />
+            </Tooltip>
+          </Grid>
+
+          <Grid item xs={12} sm={4}>
+            <FormControl className={classes.formControl}>
+              <InputLabel htmlFor="age-native-simple">Ownership</InputLabel>
+              <Tooltip title="Whether the asset is owned or outsourced to another company">
+                <Select
+                  styles={selectStyles}
+                  className="basic-single"
+                  classNamePrefix="ownership"
+                  isSearchable
+                  name="ownership"
+                  placeholder="Ownership"
+                  value={chosenTrucks[i].value.ownershipType}
+                  onChange={(event) => ownershipChangeController(event, i)}
+                  options={constants.ownerShip}
+                />
               </Tooltip>
-            )}
+            </FormControl>
+          </Grid>
+        </Grid>
+      )}
+
+      <Grid container spacing={3} style={{ marginLeft: 30 }}>
+        <Grid item xs={12} sm={4}>
+          <CreatableSelect
+            isClearable
+            value={chosenDrivers[i]}
+            onChange={(newValue) => onDriverChanged(newValue, i)}
+            options={myDrivers}
+            placeholder="Driver Name"
+            styles={selectStyles}
           />
         </Grid>
         <Grid item xs={12} sm={4}>
           <TextField
             fullWidth
+            type="number"
             id="outlined-basic"
             label="Phone"
-            value={drivers[i].phone}
+            value={chosenDrivers[i] === null ? "" : chosenDrivers[i].phone}
             variant="outlined"
+            disabled={chosenDrivers[i] === null}
+            size="small"
+            InputLabelProps={{ shrink: true }}
             onChange={(event) => onPhoneChangeController(event, i)}
           />
         </Grid>
+        {chosenDrivers[i] !== null && chosenDrivers[i].isNew && (
+          <Grid item xs={12} sm={3}>
+            <TextField
+              required
+              type="text"
+              id="licenceId"
+              name="licenceId"
+              label="License Id"
+              fullWidth
+              value={chosenDrivers[i].licenceId}
+              onChange={(event) => onLicenseIdChangeController(event, i)}
+              variant="outlined"
+              size="small"
+              autoComplete="shipping address-line1"
+            />
+          </Grid>
+        )}
       </Grid>
     </div>
   ));
 
-  if (loading === true) {
+  if (loading === "true") {
     return (
       <React.Fragment>
         <h1>Loading your truck details</h1>
         <Spinner />
       </React.Fragment>
     );
+  }
+  if (loading === "uploading") {
+    return <Spinner />;
   }
 
   return (
@@ -365,7 +710,7 @@ const Assignment = (props) => {
                   id="datetime-pickup"
                   label={constants.estimatedPickup}
                   type="datetime-local"
-                  //   onChange={(event)=>onPickupDateChangeController(event)}
+                  onChange={(event) => onPickupDateChangeController(event)}
                   className={classes.textField}
                   InputLabelProps={{
                     shrink: true,
@@ -377,7 +722,7 @@ const Assignment = (props) => {
                 <TextField
                   id="datetime-delivery"
                   label={constants.estimatedDelivery}
-                  //  onChange={(event)=>onDeliveryDateChangeController(event)}
+                  onChange={(event) => onDeliveryDateChangeController(event)}
                   type="datetime-local"
                   className={classes.textField}
                   InputLabelProps={{
@@ -415,8 +760,8 @@ const Assignment = (props) => {
                 Capacity Alloted: {capacityAlloted}tons
               </Grid>
               <Grid item xs={12} sm={4}>
-                Capacity Left:{" "}
-                {Math.max(capacityRequired - capacityAlloted, 0).toFixed(3)}tons
+                Capacity Left: {(capacityRequired - capacityAlloted).toFixed(3)}
+                tons
               </Grid>
             </Grid>
             <Button
@@ -437,7 +782,9 @@ const Assignment = (props) => {
             display: "flex",
             flexDirection: "row",
             justifyContent: "flex-end",
-            margin: 20,
+            marginTop: 50,
+            margin: 30,
+            marginBottom: 100,
           }}
         >
           <Button
