@@ -217,6 +217,7 @@ const StorageAndCapacity = (props) => {
             <Grid container style={{ paddingTop: 30, paddingBottom: 30 }}>
               <Grid item xs={12} sm={8}>
                 <Accordion
+                  style={{ boxShadow: "none" }}
                   expanded={expanded === "panel1"}
                   onChange={handleChange("panel1")}
                 >
@@ -259,6 +260,7 @@ const StorageAndCapacity = (props) => {
             <Grid container style={{ paddingTop: 10, paddingBottom: 30 }}>
               <Grid item xs={12} sm={8}>
                 <Accordion
+                  style={{ boxShadow: "none" }}
                   expanded={expanded === "panel2"}
                   onChange={handleChange("panel2")}
                 >

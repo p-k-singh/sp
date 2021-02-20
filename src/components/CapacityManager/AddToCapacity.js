@@ -79,7 +79,9 @@ const AddTocapacity = (props) => {
   const classes = useStyles();
 
   const [type, setType] = useState("truck");
+
   const [truckNumber, setTruckNumber] = useState();
+  const [RatePerKM, setRatePerKM] = useState();
   const [size, setSize] = useState();
   const [unit, setUnit] = useState("tons");
   const [ownership, setOwnership] = useState("self");
@@ -182,6 +184,9 @@ const AddTocapacity = (props) => {
   const onCapabilitiesChange = (event) => {
     //alert(event)
     setCapability(event);
+  };
+  const onRatePerKMChangeController = (event) => {
+    setRatePerKM(event.target.value);
   };
   const submitCapacity = async () => {
     if (type.value == null || type.value == "") {
@@ -423,10 +428,29 @@ const AddTocapacity = (props) => {
                 onChange={(event) => onCapabilitiesChange(event)}
                 classNamePrefix="select"
               />
-              
             </Grid>
           </Tooltip>
           {renderCapabilityForm()}
+        </Grid>
+        <Grid
+          container
+          spacing={3}
+          style={{ paddingLeft: 50, paddingRight: 50, paddingTop: 20 }}
+        >
+          <Grid item xs={12} sm={6}>
+            <TextField
+              required
+              type="text"
+              id="RatePerKM"
+              name="RatePerKM"
+              label="Rate / Km"
+              fullWidth
+              value={RatePerKM}
+              onChange={(event) => onRatePerKMChangeController(event)}
+              variant="outlined"
+              size="small"
+            />
+          </Grid>
         </Grid>
 
         <Typography className={classes.formHeadings}>

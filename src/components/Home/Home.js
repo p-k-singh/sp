@@ -177,12 +177,15 @@ const Home = (props) => {
             <Grid item sm={2}>
               <Button component={Link} to={`kpi`}>
                 <CardContent style={{ paddingTop: 0, paddingBottom: 0 }}>
-                  <div class="circle" style={{ background: "#062B79" }}>
+                  <div
+                    class="circle"
+                    style={{ background: "#062B79", margin: 10 }}
+                  >
                     <h3
                       style={{
                         padding: 20,
-                        paddingTop: 30,
-                        paddingBottom: 30,
+                        paddingBottom: 23,
+                        paddingTop: 23,
                         fontSize: 50,
                       }}
                     >
@@ -192,22 +195,24 @@ const Home = (props) => {
                   <div
                     style={{
                       padding: 5,
-                      paddingTop: 10,
+                      paddingTop: 0,
                       paddingBottom: 0,
                       textAlign: "center",
                       fontWeight: 700,
                     }}
                   >
-                    Rating
+                    Performance Rating
                     <div>
                       <Rating
-                        value={value}
+                        style={{
+                          fontSize: 10,
+                          padding: 0,
+                        }}
+                        size="small"
                         name="rating"
                         precision={0.5}
-                        onChange={(event, newValue) => {
-                          setValue(newValue);
-                        }}
-                        onClick={setValue}
+                        value={value}
+                        readOnly
                       />
                     </div>
                   </div>

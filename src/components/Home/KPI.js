@@ -172,12 +172,7 @@ function KYC() {
                 >
                   Ontime Delivery
                 </Grid>
-                {/* <Box
-                align="left"
-                component="fieldset"
-                mb={3}
-                borderColor="transparent"
-              > */}
+              
                 <Grid item sm={4}>
                   <Rating
                     value={Deliveryvalue}
