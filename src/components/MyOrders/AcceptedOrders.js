@@ -2,8 +2,19 @@ import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Divider from "@material-ui/core/Divider";
 import "./MyOrders.css";
+import constants from "../../Constants/constants";
+import {
+  TextField,
+  Checkbox,
+  Grid,
+  Card,
+  Button,
+  IconButton,
+  FormControlLabel,
+  Switch,
+} from "@material-ui/core";
 import { Link } from "react-router-dom";
-import Button from "@material-ui/core/Button";
+
 import TodayIcon from "@material-ui/icons/Today";
 import Typography from "@material-ui/core/Typography";
 import LocalShippingIcon from "@material-ui/icons/LocalShipping";
@@ -11,7 +22,6 @@ import ClassTwoToneIcon from "@material-ui/icons/ClassTwoTone";
 import { API, Auth } from "aws-amplify";
 import Spinner from "../UI/Spinner";
 import CardContent from "@material-ui/core/CardContent";
-import { Grid, Card } from "@material-ui/core";
 const useStyles = makeStyles((theme) => ({
   "@keyframes blinker": {
     from: { opacity: 1 },
@@ -85,6 +95,31 @@ const MyOrders = () => {
                                     My Active Orders
                     </Typography>   */}
         <section className="">
+          <div>
+            <Grid
+              container
+              spacing={10}
+              style={{ paddingTop: 20, paddingBottom: 30, paddingLeft: 70 }}
+            >
+              {constants.orders.map((orders) => {
+                return (
+                  <Grid item xs={12} sm={4}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          //checked={state.checkedB}
+                          //onChange={handleChange}
+                          name={orders.name}
+                          color="primary"
+                        />
+                      }
+                      label={orders.name}
+                    />
+                  </Grid>
+                );
+              })}
+            </Grid>
+          </div>
           {activeOrders.map((eachOrder) => (
             <div>
               <Card
@@ -152,7 +187,6 @@ const MyOrders = () => {
                       </h6>
                       <h6>Quantity : {Math.floor(Math.random() * 50)}</h6>
                     </Grid>
-
                     <Grid
                       item
                       xs={4}

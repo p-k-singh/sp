@@ -60,7 +60,7 @@ const PaymentIndex = () => {
 
   const fullPayToAccountDashboard = (
     <React.Fragment>
-      <Card>
+      <Card style={{ padding: 5 }}>
         <Typography style={{ fontSize: 20, marginBottom: 20 }}>
           Total Amount to be recieved: 10,000 INR
         </Typography>
@@ -69,35 +69,15 @@ const PaymentIndex = () => {
           Account Details -
         </Typography>
         <div className="row" style={{ fontSize: 16, marginBottom: 20 }}>
-          <div className="col col-xs-12 col-sm-6" style={{ marginBottom: 6 }}>
+          <div className="col col-xs-12 col-sm-12" style={{ marginBottom: 6 }}>
             Account Number: 7814289632
           </div>
-          <div className="col col-xs-12 col-sm-6">
+          <div className="col col-xs-12 col-sm-12" style={{ marginBottom: 6 }}>
             Account Holder Name: GoFlexe Ltd.
           </div>
-          <div className="col col-xs-12 col-sm-6">IFSC Code: BNK0123456</div>
+          <div className="col col-xs-12 col-sm-12">IFSC Code: BNK0123456</div>
         </div>
-        <div className="row">
-          <div>
-            <p
-              style={{
-                marginLeft: 20,
-                marginRight: 8,
-                marginTop: 8,
-                fontSize: 18,
-              }}
-            >
-              Reference Id:
-            </p>
-          </div>
-          <div>
-            <TextField
-              variant="outlined"
-              id="standard-size-small"
-              size="small"
-            />
-          </div>
-        </div>
+
         <div
           style={{
             display: "flex",
@@ -405,18 +385,12 @@ const PaymentIndex = () => {
                     control={<Radio color="primary" />}
                     label="Cash"
                   />
-                  <FormControlLabel
-                    value="Others"
-                    control={<Radio color="primary" />}
-                    label="Others"
-                  />
                 </RadioGroup>
               </FormControl>
             </Grid>
             <Grid item xs={12} sm={8}>
               {paymentMode === "accountTransfer" && fullPayToAccountDashboard}
               {paymentMode === "cash" && cashPayment}
-              {paymentMode === "Others" && OthersPayment}
             </Grid>
           </Grid>
         </form>
