@@ -8,6 +8,8 @@ import "./Assignment.css";
 import Spinner from "../UI/Spinner";
 import Tooltip from "@material-ui/core/Tooltip";
 import Select from "react-select";
+
+
 import CreatableSelect from "react-select/creatable";
 import {
   TextField,
@@ -65,6 +67,8 @@ const Assignment = (props) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [estimatedPickupDate, setEstimatedPickupDate] = useState("");
   const [estimatedDeliveryDate, setEstimatedDeliveryDate] = useState("");
+  const [desiredDeliveryDate, setDesiredDeliveryDate] = useState("");
+  const [desiredPickupDate, setDesiredPickupDate] = useState("");
 
   var count = 0;
 
@@ -105,6 +109,9 @@ const Assignment = (props) => {
       .get(url)
       .then((resp) => {
         var sum = 0;
+        console.log(resp);
+        setDesiredDeliveryDate(resp.data.Item.deliveryDate);
+        setDesiredPickupDate(resp.data.Item.pickupdate);
         resp.data.Item.items.map((item) => {
           if (item.measurable === true) {
             sum += item.noOfUnits * item.weightPerUnit;
@@ -114,8 +121,10 @@ const Assignment = (props) => {
         });
 
         console.log(resp);
+
         setCapacityRequired(sum / 1000);
       })
+
       .catch((err) => {
         console.log(err);
       });
@@ -123,32 +132,69 @@ const Assignment = (props) => {
 
   function loadData() {
     setLoading("true");
+
     //fetching truck details
     Auth.currentUserInfo()
+
       .then((currentUser) => {
         var owner = currentUser.username;
         API.get(
           "GoFlexeOrderPlacement",
           `/capacity?type=owner&ownerId=${owner}&asset=truck`
         )
+
           .then((resp) => {
             console.log(resp);
             var temp = [];
+
             for (var i = 0; i < resp.length; i++) {
-              temp.push({
-                label: resp[i].assetNumber + "(" + resp[i].capacity + " tons)",
-                value: resp[i],
-                isNew: false,
-              });
+              var isValid = false;
+              var toparts = resp[i].availableToDateTime
+                .substring(0, 10)
+                .split("-");
+
+              var availableTo = new Date(
+                toparts[0],
+                toparts[1] - 1,
+                toparts[2]
+              );
+
+              var fromparts = resp[i].availableFromDateTime
+                .substring(0, 10)
+                .split("-");
+
+              var availablefrom = new Date(
+                fromparts[0],
+                fromparts[1] - 1,
+                fromparts[2]
+              );
+              var pickupParts = desiredPickupDate.substring(0, 10).split("-");
+              var ComparePickup = new Date(pickupParts[0], pickupParts[1] - 1, pickupParts[2]);
+              
+              if (ComparePickup <= availableTo && ComparePickup >= availablefrom) {
+                isValid = true;
+              }
+
+              if (isValid === true) {
+                temp.push({
+                  label:
+                    resp[i].assetNumber + "(" + resp[i].capacity + " tons)",
+                  value: resp[i],
+                  isNew: false,
+                });
+              }
             }
             setMyTrucks(temp);
             console.log(temp);
             //console.log(myTrucks)
           })
+
           .catch((err) => console.log(err));
       })
       .catch((err) => console.log(err));
+
     //fetching driver details
+
     Auth.currentUserInfo()
       .then((userDetails) => {
         API.get(
@@ -519,14 +565,19 @@ const Assignment = (props) => {
 
       <Grid container spacing={3} style={{ marginLeft: 30 }}>
         <Grid item xs={12} sm={4}>
-          <CreatableSelect
-            isClearable
-            value={chosenTrucks[i]}
-            onChange={(newValue) => onTruckNumberChanged(newValue, i)}
-            options={myTrucks}
-            placeholder="Truck Number"
-            styles={selectStyles}
-          />
+          <Tooltip
+            title="Only available trucks on Pickup date are shown"
+            placement="top"
+          >
+            <CreatableSelect
+              isClearable
+              value={chosenTrucks[i]}
+              onChange={(newValue) => onTruckNumberChanged(newValue, i)}
+              options={myTrucks}
+              placeholder="Truck Number"
+              styles={selectStyles}
+            />
+          </Tooltip>
         </Grid>
         <Tooltip title="Features available in Truck" arrow placement="top">
           <Grid item xs={12} sm={4}>
@@ -716,6 +767,7 @@ const Assignment = (props) => {
                     shrink: true,
                   }}
                 />
+                <p>Desired Pickup: {desiredPickupDate}</p>
               </Grid>
 
               <Grid item xs={12} sm={6}>
@@ -729,6 +781,7 @@ const Assignment = (props) => {
                     shrink: true,
                   }}
                 />
+                <p>Desired Delivery: {desiredDeliveryDate}</p>
               </Grid>
             </Grid>
             <Grid
