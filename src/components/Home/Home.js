@@ -172,120 +172,124 @@ const Home = (props) => {
               Shipment details
             </Typography>
           </div>
-          <Grid container spacing={3} style={{ marginTop: 10 }}>
-            <Grid item sm={0.5}></Grid>{" "}
-            <Grid item sm={2}>
-              <Button component={Link} to={`kpi`}>
-                <CardContent style={{ paddingTop: 0, paddingBottom: 0 }}>
-                  <div
-                    class="circle"
-                    style={{ background: "#062B79", margin: 10 }}
-                  >
-                    <h3
-                      style={{
-                        padding: 20,
-                        paddingBottom: 23,
-                        paddingTop: 23,
-                        fontSize: 50,
-                      }}
-                    >
-                      3.5
-                    </h3>
-                  </div>
-                  <div
-                    style={{
-                      padding: 5,
-                      paddingTop: 0,
-                      paddingBottom: 0,
-                      textAlign: "center",
-                      fontWeight: 700,
-                    }}
-                  >
-                    Performance Rating
-                    <div>
-                      <Rating
+          <Grid container spacing={0}>
+            <Grid item sm={12} xs={12}>
+              <Grid container spacing={3} style={{ marginTop: 10 }}>
+                <Grid item sm={0.5}></Grid>{" "}
+                <Grid item sm={2}>
+                  <Button component={Link} to={`kpi`}>
+                    <CardContent style={{ paddingTop: 0, paddingBottom: 0 }}>
+                      <div
+                        class="circle"
+                        style={{ background: "#062B79", margin: 10 }}
+                      >
+                        <h3
+                          style={{
+                            padding: 20,
+                            paddingBottom: 23,
+                            paddingTop: 23,
+                            fontSize: 50,
+                          }}
+                        >
+                          3.5
+                        </h3>
+                      </div>
+                      <div
                         style={{
-                          fontSize: 10,
-                          padding: 0,
+                          padding: 5,
+                          paddingTop: 0,
+                          paddingBottom: 0,
+                          textAlign: "center",
+                          fontWeight: 700,
                         }}
-                        size="small"
-                        name="rating"
-                        precision={0.5}
-                        value={value}
-                        readOnly
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Button>
-            </Grid>{" "}
-            <Grid item sm={1}></Grid>
-            <Grid item sm={2}>
-              <Button component={Link} to={"my-orders"}>
-                <CardContent style={{ paddingTop: 10, paddingBottom: 10 }}>
-                  <div class="circle" style={{ background: "green" }}>
-                    <h3 style={{ padding: 20, fontSize: 50 }}>12</h3>
-                  </div>
-                  <div
-                    style={{
-                      padding: 17,
-                      paddingTop: 10,
-                      paddingBottom: 0,
-                      textAlign: "center",
-                      fontWeight: 700,
-                    }}
-                  >
-                    Orders fulfilled
-                  </div>
-                </CardContent>
-              </Button>
-            </Grid>{" "}
-            <Grid item sm={1}></Grid>
-            <Grid item sm={2}>
-              <Button component={Link} to={"my-orders"}>
-                <CardContent style={{ paddingTop: 10, paddingBottom: 10 }}>
-                  <div class="circle" style={{ background: "orange" }}>
-                    <h3 style={{ padding: 20, fontSize: 50 }}>8</h3>
-                  </div>
-                  <div
-                    style={{
-                      padding: 15,
-                      paddingTop: 10,
-                      paddingBottom: 0,
-                      textAlign: "center",
-                      fontWeight: 700,
-                    }}
-                  >
-                    Upcoming pickup
-                  </div>
-                </CardContent>
-              </Button>
-            </Grid>{" "}
-            <Grid item sm={1}></Grid>
-            <Grid item sm={2}>
-              <Button component={Link} to={"my-orders"}>
-                <CardContent style={{ paddingTop: 10, paddingBottom: 10 }}>
-                  <div class="circle" style={{ background: "#C57A7A" }}>
-                    <h3 style={{ padding: 20, fontSize: 50 }}>5</h3>
-                  </div>
-                  <div
-                    style={{
-                      padding: 23,
-                      paddingTop: 10,
-                      paddingBottom: 0,
-                      textAlign: "center",
-                      fontWeight: 700,
-                    }}
-                  >
-                    In Transit
-                  </div>
-                </CardContent>
-              </Button>
+                      >
+                        Performance Rating
+                        <div>
+                          <Rating
+                            style={{
+                              fontSize: 10,
+                              padding: 0,
+                            }}
+                            size="small"
+                            name="rating"
+                            precision={0.5}
+                            value={value}
+                            readOnly
+                          />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Button>
+                </Grid>{" "}
+                <Grid item sm={1}></Grid>
+                <Grid item sm={2}>
+                  <Button component={Link} to={"my-orders"}>
+                    <CardContent style={{ paddingTop: 10, paddingBottom: 10 }}>
+                      <div class="circle" style={{ background: "green" }}>
+                        <h3 style={{ padding: 20, fontSize: 50 }}>12</h3>
+                      </div>
+                      <div
+                        style={{
+                          padding: 17,
+                          paddingTop: 10,
+                          paddingBottom: 0,
+                          textAlign: "center",
+                          fontWeight: 700,
+                        }}
+                      >
+                        Orders fulfilled
+                      </div>
+                    </CardContent>
+                  </Button>
+                </Grid>{" "}
+                <Grid item sm={1}></Grid>
+                <Grid item sm={2}>
+                  <Button component={Link} to={"my-orders"}>
+                    <CardContent style={{ paddingTop: 10, paddingBottom: 10 }}>
+                      <div class="circle" style={{ background: "orange" }}>
+                        <h3 style={{ padding: 20, fontSize: 50 }}>8</h3>
+                      </div>
+                      <div
+                        style={{
+                          padding: 15,
+                          paddingTop: 10,
+                          paddingBottom: 0,
+                          textAlign: "center",
+                          fontWeight: 700,
+                        }}
+                      >
+                        Upcoming pickup
+                      </div>
+                    </CardContent>
+                  </Button>
+                </Grid>{" "}
+                <Grid item sm={1}></Grid>
+                <Grid item sm={2}>
+                  <Button component={Link} to={"my-orders"}>
+                    <CardContent style={{ paddingTop: 10, paddingBottom: 10 }}>
+                      <div class="circle" style={{ background: "#C57A7A" }}>
+                        <h3 style={{ padding: 20, fontSize: 50 }}>5</h3>
+                      </div>
+                      <div
+                        style={{
+                          padding: 23,
+                          paddingTop: 10,
+                          paddingBottom: 0,
+                          textAlign: "center",
+                          fontWeight: 700,
+                        }}
+                      >
+                        In Transit
+                      </div>
+                    </CardContent>
+                  </Button>
+                </Grid>
+                <Grid item sm={1}></Grid>
+              </Grid>
             </Grid>
-            <Grid item sm={1}></Grid>
           </Grid>
         </Card>
-      </div>
+      </div>      
       <div>
         <Grid container spacing={3} style={{ paddingTop: 10 }}>
           <Grid item xs={12} sm={6}>

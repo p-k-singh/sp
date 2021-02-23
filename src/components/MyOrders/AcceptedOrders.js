@@ -185,7 +185,12 @@ const MyOrders = () => {
                         Order No. {}
                         <span>{eachOrder.displayId}</span>
                       </h6>
-                      <h6>Quantity : {Math.floor(Math.random() * 50)}</h6>
+                      <h6>
+                        Pickup Date :{" "}
+                        {String(
+                          new Date(eachOrder.estimatedPickupDate)
+                        ).substring(0, 11)}
+                      </h6>
                     </Grid>
                     <Grid
                       item
@@ -200,14 +205,13 @@ const MyOrders = () => {
                           marginBottom: 25,
                         }}
                       >
-                        Order Date :{Math.floor(Math.random() * 30) + 1} Feb
-                        2021
+                        Order Id :{eachOrder.ServiceOrderId.substring(0, 8)}
                       </h6>
                       <h6>
-                        Dimensions : {Math.floor(Math.random() * 100)} x
-                        {Math.floor(Math.random() * 100)} x{" "}
-                        {Math.floor(Math.random() * 100)}
-                        cm
+                        Delivery Date :{" "}
+                        {String(
+                          new Date(eachOrder.estimatedDeliveryDate)
+                        ).substring(0, 11)}
                       </h6>
                     </Grid>
 
