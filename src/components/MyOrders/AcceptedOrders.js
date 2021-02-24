@@ -152,7 +152,7 @@ const MyOrders = () => {
 
                     <Grid
                       item
-                      xs={3}
+                      xs={5}
                       style={{
                         marginTop: 15,
                         marginBottom: 20,
@@ -185,14 +185,12 @@ const MyOrders = () => {
                         Order No. {}
                         <span>{eachOrder.displayId}</span>
                       </h6>
+
                       <h6>
-                        Pickup Date :{" "}
-                        {String(
-                          new Date(eachOrder.estimatedPickupDate)
-                        ).substring(0, 11)}
+                        Order Id :{eachOrder.ServiceOrderId.substring(0, 8)}
                       </h6>
                     </Grid>
-                    <Grid
+                    {/* <Grid
                       item
                       xs={4}
                       style={{
@@ -204,18 +202,15 @@ const MyOrders = () => {
                         style={{
                           marginBottom: 25,
                         }}
-                      >
-                        Order Id :{eachOrder.ServiceOrderId.substring(0, 8)}
-                      </h6>
+                      ></h6>
                       <h6>
-                        Delivery Date :{" "}
-                        {String(
-                          new Date(eachOrder.estimatedDeliveryDate)
-                        ).substring(0, 11)}
-                      </h6>
-                    </Grid>
+                        {/* Delivery Date :{" "}
+                        {String(eachOrder.estimatedDeliveryDate).substring(
+                          0,
+                          10
+                        )} */}
 
-                    <Grid item xs={2}>
+                    <Grid item xs={4}>
                       <Button
                         style={{
                           maxWidth: "150px",

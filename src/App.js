@@ -20,7 +20,7 @@ import Help from "./components/Help/Help";
 import UserManager from "./components/UserManager/userManager";
 import AddUser from "./components/UserManager/AddUser";
 import ModifyRoleAccess from "./components/UserManager/ModifyRoleAccess";
-
+import CostManaager from "./components/Cost Manager"
 import Welcome from "./components/Auth/Welcome/welcomePage";
 import SignUp from "./components/Auth/SignUp/signupform.js";
 import Login from "./components/Auth/Login/loginform";
@@ -33,6 +33,7 @@ import { useEffect, useState } from "react";
 import Spinner from "./components/UI/Spinner";
 
 import { AppContext } from "./libs/contextLibs";
+import CostManager from "./components/Cost Manager";
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
@@ -148,6 +149,7 @@ function App() {
             <Route exact path="/profile" component={MyProfile} />
             <Route exact path="/help" component={Help} />
             <Route exact path="/userManager" component={UserManager} />
+
             <Route exact path="/addUser" component={AddUser} />
             <Route
               exact
@@ -168,6 +170,7 @@ function App() {
               }}
             />
             <Route path="/capacity" component={StorageAndCapacity} />
+            <Route path="/CostManager" component={CostManager} />
             <Route path="/my-orders" component={MyOrders} />
             <Redirect to="/" />
           </Switch>
