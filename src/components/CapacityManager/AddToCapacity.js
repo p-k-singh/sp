@@ -20,6 +20,7 @@ import {
   Card,
   Container,
 } from "@material-ui/core";
+import InputAdornment from "@material-ui/core/InputAdornment";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { Multiselect } from "multiselect-react-dropdown";
@@ -86,6 +87,9 @@ const AddTocapacity = (props) => {
   const [unit, setUnit] = useState("tons");
   const [ownership, setOwnership] = useState("self");
   const [location, setLocation] = useState();
+  const [ThirtyDaysPricing, setThirtyDaysPricing] = useState();
+  const [ImmidiatePricing, setImmidiatePricing] = useState();
+  const [DeliveryRange, setDeliveryRange] = useState();
   const [pin, setPin] = useState();
   const [capability, setCapability] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -100,21 +104,21 @@ const AddTocapacity = (props) => {
   const capabilityOptions = {
     options: constants.capabilityOptions,
   };
-  const api_url = "https://api.postalpincode.in/pincode/301411";
+  // const api_url = "https://api.postalpincode.in/pincode/301411";
 
-  // Defining async function
-  async function getapi(url) {
-    // Storing response
+  // // Defining async function
+  // async function getapi(url) {
+  //   // Storing response
 
-    const response = await fetch(url);
+  //   const response = await fetch(url);
 
-    // Storing data in form of JSON
-    var data = await response.json();
-    console.log(data);
-    setpindata(data);
-  }
-  // Calling that async function
-  getapi(api_url);
+  //   // Storing data in form of JSON
+  //   var data = await response.json();
+  //   console.log(data);
+  //   setpindata(data);
+  // }
+  // // Calling that async function
+  // getapi(api_url);
   const selectStyles = {
     menu: (base) => ({
       ...base,
@@ -156,6 +160,15 @@ const AddTocapacity = (props) => {
   };
   const onLocationChangeController = (event) => {
     setLocation(event.target.value);
+  };
+  const onImmidiatePricingChangeController = (event) => {
+    setImmidiatePricing(event.target.value);
+  };
+  const onThirtyDaysPricingController = (event) => {
+    setThirtyDaysPricing(event.target.value);
+  };
+  const onDeliveryRangeChangeController = (event) => {
+    setDeliveryRange(event.target.value);
   };
   const onPinChangeController = (event) => {
     var pickupPinCode = parseInt(event.target.value, 10);
@@ -253,6 +266,10 @@ const AddTocapacity = (props) => {
       location: location,
       active: assetActive,
       pincode: pin,
+      ThirtyDaysPricing: ThirtyDaysPricing,
+      ImmidiatePricing: ImmidiatePricing,
+      DeliveryRange: DeliveryRange,
+      RatePerKM: RatePerKM,
     };
     const payload = {
       body: data,
@@ -432,26 +449,6 @@ const AddTocapacity = (props) => {
           </Tooltip>
           {renderCapabilityForm()}
         </Grid>
-        <Grid
-          container
-          spacing={3}
-          style={{ paddingLeft: 50, paddingRight: 50, paddingTop: 20 }}
-        >
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              type="text"
-              id="RatePerKM"
-              name="RatePerKM"
-              label="Rate / Km"
-              fullWidth
-              value={RatePerKM}
-              onChange={(event) => onRatePerKMChangeController(event)}
-              variant="outlined"
-              size="small"
-            />
-          </Grid>
-        </Grid>
 
         <Typography className={classes.formHeadings}>
           Availability Details
@@ -500,6 +497,69 @@ const AddTocapacity = (props) => {
             />
           </Grid>
         </Grid>
+        <Typography className={classes.formHeadings}>
+          Pricing Details
+        </Typography>
+        <Grid
+          container
+          spacing={3}
+          style={{ padding: 50, paddingTop: 20, paddingBottom: 30 }}
+        >
+          <Grid item xs={12} sm={4}>
+            <TextField
+              fullWidth
+              label="30 Days Pricing"
+              type="text"
+              className={classes.textField}
+              onChange={(event) => onThirtyDaysPricingController(event)}
+              variant="outlined"
+              size="small"
+              InputProps={{
+                endAdornment: <InputAdornment position="end">₹</InputAdornment>,
+              }}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              fullWidth
+              label="Immidiate Payment Pricing"
+              type="text"
+              className={classes.textField}
+              onChange={(event) => onImmidiatePricingChangeController(event)}
+              variant="outlined"
+              InputProps={{
+                endAdornment: <InputAdornment position="end">₹</InputAdornment>,
+              }}
+              size="small"
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              fullWidth
+              label="Delivery Range"
+              type="text"
+              className={classes.textField}
+              onChange={(event) => onDeliveryRangeChangeController(event)}
+              variant="outlined"
+              size="small"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">Kg</InputAdornment>
+                ),
+              }}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </Grid>
+        </Grid>
+
         <Typography className={classes.formHeadings}>
           Additional Details
         </Typography>
@@ -576,7 +636,20 @@ const AddTocapacity = (props) => {
               autoComplete="shipping address-line1"
             />
           </Grid>
-          <Grid item xs={12} sm={6}></Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              required
+              type="text"
+              id="RatePerKM"
+              name="RatePerKM"
+              label="Rate / Km"
+              fullWidth
+              value={RatePerKM}
+              onChange={(event) => onRatePerKMChangeController(event)}
+              variant="outlined"
+              size="small"
+            />
+          </Grid>
         </Grid>
         <Grid
           container

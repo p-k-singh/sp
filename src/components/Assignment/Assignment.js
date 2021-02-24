@@ -9,7 +9,6 @@ import Spinner from "../UI/Spinner";
 import Tooltip from "@material-ui/core/Tooltip";
 import Select from "react-select";
 
-
 import CreatableSelect from "react-select/creatable";
 import {
   TextField,
@@ -53,6 +52,7 @@ const Assignment = (props) => {
   // const [truckNumber,setTruckNumber]=useState([]);
   const [chosenTrucks, setChosenTrucks] = useState([]);
   const [chosenDrivers, setChosenDrivers] = useState([]);
+  const [CustomerEmail, setCustomerEmail] = useState([]);
   const {
     match: { params },
   } = props;
@@ -69,6 +69,7 @@ const Assignment = (props) => {
   const [estimatedDeliveryDate, setEstimatedDeliveryDate] = useState("");
   const [desiredDeliveryDate, setDesiredDeliveryDate] = useState("");
   const [desiredPickupDate, setDesiredPickupDate] = useState("");
+  const [CustomerDetails, setCustomerDetails] = useState("");
 
   var count = 0;
 
@@ -89,6 +90,7 @@ const Assignment = (props) => {
     setUser();
     fetchCapacityRequired();
     loadData();
+    getCustomerDetails();
   }, []);
 
   useEffect(() => {
@@ -112,6 +114,7 @@ const Assignment = (props) => {
         console.log(resp);
         setDesiredDeliveryDate(resp.data.Item.deliveryDate);
         setDesiredPickupDate(resp.data.Item.pickupdate);
+
         resp.data.Item.items.map((item) => {
           if (item.measurable === true) {
             sum += item.noOfUnits * item.weightPerUnit;
@@ -123,6 +126,29 @@ const Assignment = (props) => {
         console.log(resp);
 
         setCapacityRequired(sum / 1000);
+        API.get(
+          "GoFlexeOrderPlacement",
+          "/kyc/info?type=customer&id=ff7675f7-ac42-43f7-91e3-599624f1661a"
+        )
+          .then((resp) => {
+            console.log(resp);
+            if (resp.length === 0) {
+              setCustomerDetails(null);
+            } else {
+              if (resp[0].companyInfo !== undefined) {
+                setCustomerDetails(resp[0].companyInfo);
+              }
+            }
+            setLoading("false");
+          })
+          .catch((err) => {
+            console.log(err);
+            setLoading("false");
+          })
+          .catch((err) => {
+            console.log(err);
+            setLoading("false");
+          });
       })
 
       .catch((err) => {
@@ -169,9 +195,16 @@ const Assignment = (props) => {
                 fromparts[2]
               );
               var pickupParts = desiredPickupDate.substring(0, 10).split("-");
-              var ComparePickup = new Date(pickupParts[0], pickupParts[1] - 1, pickupParts[2]);
-              
-              if (ComparePickup <= availableTo && ComparePickup >= availablefrom) {
+              var ComparePickup = new Date(
+                pickupParts[0],
+                pickupParts[1] - 1,
+                pickupParts[2]
+              );
+
+              if (
+                ComparePickup <= availableTo &&
+                ComparePickup >= availablefrom
+              ) {
                 isValid = true;
               }
 
@@ -229,6 +262,33 @@ const Assignment = (props) => {
       .catch((err) => {
         console.log(err);
         setLoading("error");
+      });
+  }
+  function getCustomerDetails(userDetails) {
+    setLoading("true");
+
+    API.get(
+      "GoFlexeOrderPlacement",
+      `/kyc/info?type=customer&id=${CustomerEmail}`
+    )
+      .then((resp) => {
+        console.log(resp);
+        if (resp.length === 0) {
+          setCustomerDetails(null);
+        } else {
+          if (resp[0].companyInfo !== undefined) {
+            setCustomerDetails(resp[0].companyInfo);
+          }
+        }
+        setLoading("false");
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading("false");
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading("false");
       });
   }
 
