@@ -16,7 +16,7 @@ import AllocationForm from "./components/Allocation/AllocationForm";
 import AssignmentForm from "./components/Assignment/Assignment";
 import Track from "./components/Track/Track";
 import Help from "./components/Help/Help";
-
+import TaskManager from "./components/Track/TaskManager"
 import UserManager from "./components/UserManager/userManager";
 import AddUser from "./components/UserManager/AddUser";
 import ModifyRoleAccess from "./components/UserManager/ModifyRoleAccess";
@@ -171,6 +171,7 @@ function App() {
             />
             <Route path="/capacity" component={StorageAndCapacity} />
             <Route path="/CostManager" component={CostManager} />
+            <Route path="/TaskManager" component={TaskManager} />
             <Route path="/my-orders" component={MyOrders} />
             <Redirect to="/" />
           </Switch>

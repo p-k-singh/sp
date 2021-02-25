@@ -91,7 +91,7 @@ const CostManager = (props) => {
   const [ownership, setOwnership] = useState("self");
   const [location, setLocation] = useState();
   const [ThirtyDaysPricing, setThirtyDaysPricing] = useState();
-  const [ImmidiatePricing, setImmidiatePricing] = useState();
+  const [ImmediatePricing, setImmediatePricing] = useState();
   const [DeliveryRange, setDeliveryRange] = useState();
   const [pin, setPin] = useState();
   const [capability, setCapability] = useState([]);
@@ -164,8 +164,8 @@ const CostManager = (props) => {
   const onLocationChangeController = (event) => {
     setLocation(event.target.value);
   };
-  const onImmidiatePricingChangeController = (event) => {
-    setImmidiatePricing(event.target.value);
+  const onImmediatePricingChangeController = (event) => {
+    setImmediatePricing(event.target.value);
   };
   const onThirtyDaysPricingController = (event) => {
     setThirtyDaysPricing(event.target.value);
@@ -270,7 +270,7 @@ const CostManager = (props) => {
       active: assetActive,
       pincode: pin,
       ThirtyDaysPricing: ThirtyDaysPricing,
-      ImmidiatePricing: ImmidiatePricing,
+      ImmediatePricing: ImmediatePricing,
       DeliveryRange: DeliveryRange,
       RatePerKM: RatePerKM,
     };
@@ -447,10 +447,10 @@ const CostManager = (props) => {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Immidiate Payment Pricing"
+              label="Immediate Payment Pricing"
               type="text"
               className={classes.textField}
-              onChange={(event) => onImmidiatePricingChangeController(event)}
+              onChange={(event) => onImmediatePricingChangeController(event)}
               variant="outlined"
               InputProps={{
                 endAdornment: <InputAdornment position="end">₹</InputAdornment>,

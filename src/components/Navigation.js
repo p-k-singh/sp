@@ -5,19 +5,32 @@ import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
+import {
+  TextField,
+  Grid,
+  CardContent,
+  FormControl,
+  InputLabel,
+  Button,
+  Switch,
+  Card,
+  Container,
+} from "@material-ui/core";
+import LocalShippingIcon from "@material-ui/icons/LocalShipping";
+import AssignmentIcon from "@material-ui/icons/Assignment";
 import Toolbar from "@material-ui/core/Toolbar";
 import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
+import FormatListBulletedIcon from "@material-ui/icons/FormatListBulleted";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
 import GroupIcon from "@material-ui/icons/Group";
 import DashboardIcon from "@material-ui/icons/Dashboard";
 import BatteryFullIcon from "@material-ui/icons/BatteryFull";
 import PersonIcon from "@material-ui/icons/Person";
-import Button from "@material-ui/core/Button";
 import Menu from "@material-ui/core/Menu";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
@@ -28,6 +41,12 @@ import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 import Help from "@material-ui/icons/Help";
 import { Auth } from "aws-amplify";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
+import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
+import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import Avatar from "@material-ui/core/Avatar";
+import FolderIcon from "@material-ui/icons/Folder";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import DeleteIcon from "@material-ui/icons/Delete";
 
 const drawerWidth = 240;
 
@@ -124,6 +143,16 @@ export default function Dashboard() {
     { title: "My Orders", to: "/my-orders", icon: <AddShoppingCartIcon /> },
     { title: "Capacity Manager", to: "/capacity", icon: <BatteryFullIcon /> },
     { title: "Cost Manager", to: "/CostManager", icon: <MonetizationOnIcon /> },
+
+    {
+      title: "Tasks",
+      to: "/TaskManager",
+      icon: (
+        <Badge badgeContent={5} color="secondary">
+          <AssignmentIcon />
+        </Badge>
+      ),
+    },
     { title: "User Manager", to: "/userManager", icon: <GroupIcon /> },
     { title: "KYC", to: "/kyc", icon: <FileCopyIcon /> },
     { title: "Help", to: "/help", icon: <Help /> },
@@ -263,19 +292,81 @@ export default function Dashboard() {
               vertical: "top",
               horizontal: "right",
             }}
-            style={{ marginTop: "50px", maxWidth: "1400px" }}
+            style={{ marginTop: "50px", maxWidth: 1200 }}
             open={notificationMenuOpen}
             onClose={handleNotificationClose}
           >
-            <Button
-              component={Link}
-              to={`accept-order/${notifications}`}
-              fullWidth
-              onClick={handleNotificationClose}
-              variant="text"
-            >
-              new order
-            </Button>
+            <List component="nav">
+              <Link to={"accept-order/" + notifications}>
+                <ListItem alignItems="flex-start">
+                  <ListItemAvatar>
+                    <Avatar>
+                      <ShoppingCartIcon />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={"New Order Request"}
+                    secondary="Shipment from EtwarPur to Patna,Bihar"
+                  />
+                </ListItem>
+              </Link>
+              <Divider />
+              <Link to="/Track">
+                <ListItem alignItems="flex-start">
+                  <ListItemAvatar>
+                    <Avatar>
+                      <LocalShippingIcon />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={"Order Id. " + Math.floor(Math.random() * 10000)}
+                    secondary="Driver Arrived at Drop Location"
+                  />
+                </ListItem>
+              </Link>
+              <Divider />
+              <Link to="/Track">
+                <ListItem alignItems="flex-start">
+                  <ListItemAvatar>
+                    <Avatar>
+                      <LocalShippingIcon />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={"Order Id. " + Math.floor(Math.random() * 10000)}
+                    secondary="Pickup Completed Successfully"
+                  />
+                </ListItem>
+              </Link>
+              <Divider />
+              <Link to="/Track">
+                <ListItem alignItems="flex-start">
+                  <ListItemAvatar>
+                    <Avatar style={{ color: "green" }}>
+                      <LocalShippingIcon />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={"Order Id. " + Math.floor(Math.random() * 10000)}
+                    secondary="Shipment Delivered Successfully"
+                  />
+                </ListItem>
+              </Link>
+              <Divider />
+              <Link to="/Track">
+                <ListItem alignItems="flex-start">
+                  <ListItemAvatar>
+                    <Avatar>
+                      <LocalShippingIcon />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={"Order Id. " + Math.floor(Math.random() * 10000)}
+                    secondary="Driver has left for Pickup"
+                  />
+                </ListItem>
+              </Link>
+            </List>
           </Menu>
 
           <IconButton

@@ -150,11 +150,6 @@ const Home = (props) => {
 
   return (
     <div>
-      {/* <div className="widgetWrap">
-          <div className="widgetValue">
-            <div className="Value">Hello Gaurav</div>
-          </div>
-        </div> */}
       <div>
         <Card style={{ marginBottom: 10 }}>
           <div>
@@ -289,7 +284,7 @@ const Home = (props) => {
             </Grid>
           </Grid>
         </Card>
-      </div>      
+      </div>
       <div>
         <Grid container spacing={3} style={{ paddingTop: 10 }}>
           <Grid item xs={12} sm={6}>
