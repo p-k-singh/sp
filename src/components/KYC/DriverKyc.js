@@ -182,6 +182,11 @@ const TruckKYC = (props) => {
                 type="number"
                 id="phone"
                 name="phone"
+                onInput={(e) => {
+                  e.target.value = Math.max(0, parseInt(e.target.value))
+                    .toString()
+                    .slice(0, 10);
+                }}
                 label="Enter Phone Number"
                 fullWidth
                 value={phone}

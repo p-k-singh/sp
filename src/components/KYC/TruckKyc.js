@@ -247,6 +247,7 @@ const TruckKYC = (props) => {
               type="text"
               id="truckNumber"
               name="truckNumber"
+              inputProps={{ maxLength: 20 }}
               label="Enter Truck Number"
               fullWidth
               value={truckNumber}
@@ -260,6 +261,7 @@ const TruckKYC = (props) => {
                 type="number"
                 id="capacity"
                 name="capacity"
+                inputProps={{ maxLength: 5 }}
                 label="Enter Capacity"
                 fullWidth
                 value={capacity}
@@ -282,6 +284,7 @@ const TruckKYC = (props) => {
                 type="text"
                 id="chassisNumber"
                 name="chassisNumber"
+                inputProps={{ maxLength: 17 }}
                 label="Enter Chassis Number"
                 fullWidth
                 value={chassisNumber}
@@ -295,6 +298,7 @@ const TruckKYC = (props) => {
                 type="text"
                 id="engineNumber"
                 name="engineNumber"
+                
                 label="Enter Engine Number"
                 fullWidth
                 value={engineNumber}

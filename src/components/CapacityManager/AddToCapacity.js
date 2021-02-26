@@ -497,68 +497,6 @@ const AddTocapacity = (props) => {
             />
           </Grid>
         </Grid>
-        <Typography className={classes.formHeadings}>
-          Pricing Details
-        </Typography>
-        <Grid
-          container
-          spacing={3}
-          style={{ padding: 50, paddingTop: 20, paddingBottom: 30 }}
-        >
-          <Grid item xs={12} sm={4}>
-            <TextField
-              fullWidth
-              label="30 Days Pricing"
-              type="text"
-              className={classes.textField}
-              onChange={(event) => onThirtyDaysPricingController(event)}
-              variant="outlined"
-              size="small"
-              InputProps={{
-                endAdornment: <InputAdornment position="end">₹</InputAdornment>,
-              }}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <TextField
-              fullWidth
-              label="Immidiate Payment Pricing"
-              type="text"
-              className={classes.textField}
-              onChange={(event) => onImmidiatePricingChangeController(event)}
-              variant="outlined"
-              InputProps={{
-                endAdornment: <InputAdornment position="end">₹</InputAdornment>,
-              }}
-              size="small"
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <TextField
-              fullWidth
-              label="Delivery Range"
-              type="text"
-              className={classes.textField}
-              onChange={(event) => onDeliveryRangeChangeController(event)}
-              variant="outlined"
-              size="small"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">Kg</InputAdornment>
-                ),
-              }}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-        </Grid>
 
         <Typography className={classes.formHeadings}>
           Additional Details
@@ -634,20 +572,6 @@ const AddTocapacity = (props) => {
               variant="outlined"
               size="small"
               autoComplete="shipping address-line1"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              type="text"
-              id="RatePerKM"
-              name="RatePerKM"
-              label="Rate / Km"
-              fullWidth
-              value={RatePerKM}
-              onChange={(event) => onRatePerKMChangeController(event)}
-              variant="outlined"
-              size="small"
             />
           </Grid>
         </Grid>

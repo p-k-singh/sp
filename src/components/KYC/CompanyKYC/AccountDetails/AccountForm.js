@@ -121,6 +121,7 @@ const AccountInfoForm = (props) => {
               name="accountNumber"
               label="Account Number"
               value={myState.accountNumber}
+              inputProps={{ maxLength: 18 }}
               onChange={(event) => fieldsChange(event)}
               fullWidth
             />
@@ -131,6 +132,7 @@ const AccountInfoForm = (props) => {
               id="ifscCode"
               name="ifscCode"
               value={myState.ifscCode}
+              inputProps={{ maxLength: 11 }}
               onChange={(event) => fieldsChange(event)}
               label="IFSC Code"
               fullWidth

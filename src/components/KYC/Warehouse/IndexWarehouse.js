@@ -257,6 +257,11 @@ const TruckKYC = (props) => {
               required
               type="number"
               id="capacity"
+              onInput={(e) => {
+                e.target.value = Math.max(0, parseInt(e.target.value))
+                  .toString()
+                  .slice(0, 10);
+              }}
               name="capacity"
               label="Enter Capacity(in sqft.)"
               fullWidth
@@ -280,6 +285,7 @@ const TruckKYC = (props) => {
               name="pan"
               label="Enter PAN No."
               fullWidth
+              inputProps={{ maxLength: 10 }}
               value={pan}
               onChange={(event) => onPanChange(event)}
             />
@@ -290,6 +296,7 @@ const TruckKYC = (props) => {
               id="gstin"
               name="gstin"
               label="Enter GSTIN"
+              inputProps={{ maxLength: 15 }}
               fullWidth
               value={gstin}
               onChange={(event) => onGstinChange(event)}

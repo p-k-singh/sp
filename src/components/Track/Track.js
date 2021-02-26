@@ -17,7 +17,6 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import WarningIcon from "@material-ui/icons/Warning";
 import Paper from "@material-ui/core/Paper";
-
 import Checkbox from "@material-ui/core/Checkbox";
 
 const useStyles = makeStyles({
@@ -73,7 +72,7 @@ const Track = (props) => {
           }}
           fullWidth
         >
-          Delivery
+          Delivery in Progress
         </Typography>
         <form>
           {LeftForDelivery == true ? (
@@ -331,7 +330,7 @@ const Track = (props) => {
           }}
           fullWidth
         >
-          Pickup
+          Pickup in Progress
         </Typography>
         <form>
           <Grid

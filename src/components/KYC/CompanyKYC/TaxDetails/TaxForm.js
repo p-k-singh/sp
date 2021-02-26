@@ -176,6 +176,7 @@ const CompanyKYC = (props) => {
               required
               type="text"
               id="pan"
+              inputProps={{ maxLength: 10 }}
               name="pan"
               value={myState.pan}
               onChange={(event) => fieldsChange(event)}
@@ -189,6 +190,7 @@ const CompanyKYC = (props) => {
               type="text"
               id="gstin"
               name="gstin"
+              inputProps={{ maxLength: 15 }}
               value={myState.gstin}
               onChange={(event) => fieldsChange(event)}
               label="GST Number"
