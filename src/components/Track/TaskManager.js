@@ -322,7 +322,7 @@ const TaskManager = (props) => {
                       </ListItemAvatar>
                       <ListItemText
                         primary={"New Order Request"}
-                        secondary="Shipment from Jaipur,Rajasthan to Hyderabad,Telangana"
+                        secondary="Shipment from Etwarpur,Rajasthan to Patna,Bihar"
                       />
                     </ListItem>
                   </Grid>

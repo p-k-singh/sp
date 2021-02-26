@@ -182,6 +182,11 @@ const CompanyKYC = (props) => {
               id="registeredContactNo"
               name="registeredContactNo"
               label="Contact number"
+              onInput={(e) => {
+                e.target.value = Math.max(0, parseInt(e.target.value))
+                  .toString()
+                  .slice(0, 10);
+              }}
               value={myState.registeredContactNo}
               onChange={(event) => fieldsChange(event)}
               InputProps={{

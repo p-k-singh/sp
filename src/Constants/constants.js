@@ -114,10 +114,56 @@ const constants = {
     { name: "AC", id: 4, key: "ac", value: "", unit: "" },
   ],
   truckCapabilityOptions: [
-    { label: "GPS", value: "gps", data: "", unit: "" },
-    { label: "Freezer", value: "freezer", data: "", unit: "" },
-    { label: "Fastag", value: "fastag", data: "", unit: "" },
-    { label: "AC", value: "ac", data: "", unit: "" },
+    { label: "Canters", value: "gps", data: "", unit: "" },
+    { label: "Car Carriers", value: "CarCarriers", data: "", unit: "" },
+    {
+      label: "Containers Close Body",
+      value: "ContainersCloseBody",
+      data: "",
+      unit: "",
+    },
+    { label: "Truck", value: "Truck", data: "", unit: "" },
+    { label: "LCV", value: "LCV", data: "", unit: "" },
+    {
+      label: "Flat Bed Trailers",
+      value: "FlatBedTrailers",
+      data: "",
+      unit: "",
+    },
+    {
+      label: "Multi Axle Trailers",
+      value: "MultiAxleTrailers",
+      data: "",
+      unit: "",
+    },
+    {
+      label: "Container Trucks",
+      value: "ContainerTrucks",
+      data: "",
+      unit: "",
+    },
+    { label: "Refrigerated/AC", value: "RefrigeratedAC", data: "", unit: "" },
+    {
+      label: "Hydraulic Trucks",
+      value: "HydraulicTrucks",
+      data: "",
+      unit: "",
+    },
+    {
+      label: "Over Dimension Cargo Truck",
+      value: "OverDimensionCargoTruck",
+      data: "",
+      unit: "",
+    },
+    {
+      label: "Semi Low Bed Trailer",
+      value: "SemiLowBedTrailer",
+      data: "",
+      unit: "",
+    },
+    { label: "Low Bed Trailer", value: "LowBedTrailer", data: "", unit: "" },
+    { label: "", value: "", data: "", unit: "" },
+    { label: "", value: "", data: "", unit: "" },
   ],
   /**warehouse capability OLD */
   warehouseCapabilityOptions: [
@@ -204,4 +250,4 @@ const constants = {
   ],
 };
 
-  export default constants
+export default constants;

@@ -499,13 +499,13 @@ const CostManager = (props) => {
           style={{ padding: 50, paddingTop: 20, paddingBottom: 30 }}
         >
           <Grid item xs={12} sm={6}>
-            <Tooltip title="Home Loaction of the Asset">
+            <Tooltip title="Preferred route for Shipping the Asset">
               <TextField
                 required
                 type="text"
                 id="location"
                 name="location"
-                label="Base Location"
+                label="Preffered Route"
                 fullWidth
                 value={location}
                 onChange={(event) => onLocationChangeController(event)}

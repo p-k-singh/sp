@@ -430,13 +430,13 @@ const Home = (props) => {
         </Grid>
       </div>
       <div>
-        <Card style={{ marginBottom: 20, marginTop: 20 }}>
+        {/* <Card style={{ marginBottom: 20, marginTop: 20 }}>
           <Grid container spacing={3} style={{ marginTop: 10 }}>
             <Grid item sm={12}>
               <div>
                 <Typography
                   style={{
-                    borderBottom: `1px solid black`,
+                    borderBottom: `1 px solid black`,
                     fontSize: 20,
                     height: 50,
                     padding: 10,
@@ -458,7 +458,7 @@ const Home = (props) => {
               </Map>
             </Grid>
           </Grid>
-        </Card>
+        </Card> */}
       </div>
     </div>
   );

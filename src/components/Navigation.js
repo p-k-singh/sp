@@ -16,6 +16,7 @@ import {
   Card,
   Container,
 } from "@material-ui/core";
+import AssignmentTurnedInIcon from "@material-ui/icons/AssignmentTurnedIn";
 import LocalShippingIcon from "@material-ui/icons/LocalShipping";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -315,12 +316,12 @@ export default function Dashboard() {
                 <ListItem alignItems="flex-start">
                   <ListItemAvatar>
                     <Avatar>
-                      <LocalShippingIcon />
+                      <AssignmentTurnedInIcon />
                     </Avatar>
                   </ListItemAvatar>
                   <ListItemText
                     primary={"Order Id. " + Math.floor(Math.random() * 10000)}
-                    secondary="Driver Arrived at Drop Location"
+                    secondary="Shipment Delivered Successfully"
                   />
                 </ListItem>
               </Link>
@@ -342,13 +343,13 @@ export default function Dashboard() {
               <Link to="/Track">
                 <ListItem alignItems="flex-start">
                   <ListItemAvatar>
-                    <Avatar style={{ color: "green" }}>
+                    <Avatar>
                       <LocalShippingIcon />
                     </Avatar>
                   </ListItemAvatar>
                   <ListItemText
                     primary={"Order Id. " + Math.floor(Math.random() * 10000)}
-                    secondary="Shipment Delivered Successfully"
+                    secondary="Driver Arrived at Drop Location"
                   />
                 </ListItem>
               </Link>
