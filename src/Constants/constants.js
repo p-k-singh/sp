@@ -113,8 +113,13 @@ const constants = {
     { name: "Fastag", id: 3, key: "fastag", value: "", unit: "" },
     { name: "AC", id: 4, key: "ac", value: "", unit: "" },
   ],
+  truckFeatures: [
+    { label: "GPS", value: "gps", data: "", unit: "" },
+    { label: "Fastag", value: "Fastag", data: "", unit: "" },
+  ],
+
   truckCapabilityOptions: [
-    { label: "Canters", value: "gps", data: "", unit: "" },
+    { label: "Canters", value: "Canters", data: "", unit: "" },
     { label: "Car Carriers", value: "CarCarriers", data: "", unit: "" },
     {
       label: "Containers Close Body",
@@ -162,8 +167,6 @@ const constants = {
       unit: "",
     },
     { label: "Low Bed Trailer", value: "LowBedTrailer", data: "", unit: "" },
-    { label: "", value: "", data: "", unit: "" },
-    { label: "", value: "", data: "", unit: "" },
   ],
   /**warehouse capability OLD */
   warehouseCapabilityOptions: [
@@ -224,6 +227,21 @@ const constants = {
       unit: "",
     },
     { label: "Customer Service", value: "customerService", data: "", unit: "" },
+  ],
+  CapacityOptions: [
+    { label: "0 - 2 Tons", value: "0to2" },
+    { label: "2 - 4 Tons", value: "2to4" },
+    { label: "4 - 8 Tons", value: "4to8" },
+    { label: "8 - 14 Tons", value: "8to14" },
+    { label: "14 - 20 Tons", value: "14to20" },
+    { label: "20 - 26 Tons", value: "20to26" },
+    { label: "26+ Tons", value: "Above26" },
+  ],
+  RangeOptions: [
+    { label: "0 - 200 Kms", value: "0to200" },
+    { label: "200 - 400 Kms", value: "200to400" },
+    { label: "400 - 800 Kms", value: "400to800" },
+    { label: "800+ Kms", value: "Above800" },
   ],
   capacityUnits: [
     { name: "Sqft.", value: "sqft" },

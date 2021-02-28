@@ -91,7 +91,8 @@ const AddTocapacity = (props) => {
   const [ImmidiatePricing, setImmidiatePricing] = useState();
   const [DeliveryRange, setDeliveryRange] = useState();
   const [pin, setPin] = useState();
-  const [capability, setCapability] = useState([]);
+  const [capability, setCapability] = useState("");
+  const [Features, setFeatures] = useState([]);
   const [loading, setLoading] = useState(false);
   const [availableFrom, setAvailableFrom] = useState("");
   const [availableTo, setAvailableTo] = useState("");
@@ -195,8 +196,10 @@ const AddTocapacity = (props) => {
     setAvailableTo(event.target.value);
   };
   const onCapabilitiesChange = (event) => {
-    //alert(event)
     setCapability(event);
+  };
+  const onFeaturesChange = (event) => {
+    setFeatures(event);
   };
   const onRatePerKMChangeController = (event) => {
     setRatePerKM(event.target.value);
@@ -288,10 +291,10 @@ const AddTocapacity = (props) => {
     setLoading(false);
     props.changeDisplaySetting("storage");
   };
-  const setCapabilityKeyValues = (event, idx) => {
-    var items = capability.slice();
+  const setFeaturesKeyValues = (event, idx) => {
+    var items = Features.slice();
     items[idx].data = event.target.value;
-    setCapability(items);
+    setFeatures(items);
   };
   const renderCapabilityForm = () => {
     return (
@@ -301,13 +304,13 @@ const AddTocapacity = (props) => {
           spacing={3}
           style={{ paddingLeft: 50, paddingRight: 50, paddingBottom: 50 }}
         >
-          {capability.map((row, idx) => (
+          {Features.map((row, idx) => (
             <Grid item xs={12} sm={4}>
               <TextField
                 value={row.data}
                 id={row.label}
                 name={row.value}
-                onChange={(event) => setCapabilityKeyValues(event, idx)}
+                onChange={(event) => setFeaturesKeyValues(event, idx)}
                 label={row.label}
                 helperText={row.unit}
               />
@@ -400,6 +403,7 @@ const AddTocapacity = (props) => {
               autoComplete="shipping address-line1"
             />
           </Grid>
+
           <Grid item xs={12} sm={6}>
             <TextField
               disabled
@@ -414,8 +418,21 @@ const AddTocapacity = (props) => {
               autoComplete="shipping address-line1"
             />
           </Grid>
+          <Grid item xs={12} sm={6}>
+            <Select
+              styles={selectStyles}
+              className="basic-single"
+              classNamePrefix="Capability"
+              isSearchable
+              name="Capability"
+              placeholder="Capability"
+              value={capability}
+              onChange={(event) => onCapabilitiesChange(event)}
+              options={constants.truckCapabilityOptions}
+            />
+          </Grid>
           <Tooltip title="Features available in selected Asset" arrow>
-            <Grid item xs={12} sm={12}>
+            <Grid item xs={12} sm={6}>
               {/* <Multiselect
                 style={{ borderLeft: "0px" }}
                 options={
@@ -433,16 +450,16 @@ const AddTocapacity = (props) => {
               <Select
                 isMulti
                 styles={selectStyles}
-                name="capabilities"
-                value={capability}
+                name="Features"
+                value={Features}
                 options={
                   type.value === "truck"
-                    ? constants.truckCapabilityOptions
+                    ? constants.truckFeatures
                     : constants.WarehouseCapabilityOptions
                 }
-                placeholder="Capabilities(Select multiple)"
+                placeholder="Features(Select multiple)"
                 className="basic-multi-select"
-                onChange={(event) => onCapabilitiesChange(event)}
+                onChange={(event) => onFeaturesChange(event)}
                 classNamePrefix="select"
               />
             </Grid>
@@ -515,6 +532,7 @@ const AddTocapacity = (props) => {
               <Tooltip title="Whether the asset is owned or outsourced to another company">
                 <Select
                   styles={selectStyles}
+                  
                   className="basic-single"
                   classNamePrefix="ownership"
                   isSearchable

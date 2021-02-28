@@ -16,24 +16,21 @@ import AllocationForm from "./components/Allocation/AllocationForm";
 import AssignmentForm from "./components/Assignment/Assignment";
 import Track from "./components/Track/Track";
 import Help from "./components/Help/Help";
-import TaskManager from "./components/Track/TaskManager"
+import TaskManager from "./components/Track/TaskManager";
 import UserManager from "./components/UserManager/userManager";
 import AddUser from "./components/UserManager/AddUser";
 import ModifyRoleAccess from "./components/UserManager/ModifyRoleAccess";
-import CostManaager from "./components/Cost Manager"
+import CostManager from "./components/Cost Manager/Cost Manager";
 import Welcome from "./components/Auth/Welcome/welcomePage";
 import SignUp from "./components/Auth/SignUp/signupform.js";
 import Login from "./components/Auth/Login/loginform";
 import ResetPassword from "./components/Auth/ResetPassword/ResetPassword";
-
 import KYC from "./components/KYC/Kyc";
-
 import { Auth, API } from "aws-amplify";
 import { useEffect, useState } from "react";
 import Spinner from "./components/UI/Spinner";
-
 import { AppContext } from "./libs/contextLibs";
-import CostManager from "./components/Cost Manager";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
