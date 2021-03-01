@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useState, useEffect } from "react";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -7,8 +8,10 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Tooltip from "@material-ui/core/Tooltip";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import InfoIcon from "@material-ui/icons/Info";
 import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 import {
   TextField,
   Grid,
@@ -19,6 +22,7 @@ import {
   Switch,
   Card,
   Container,
+  Checkbox,
 } from "@material-ui/core";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Typography from "@material-ui/core/Typography";
@@ -27,6 +31,7 @@ import { Multiselect } from "multiselect-react-dropdown";
 import constants from "../../Constants/constants";
 import { Auth, API } from "aws-amplify";
 import Spinner from "../UI/Spinner";
+import CostManager from "../Cost Manager/Cost Manager";
 const useStyles = makeStyles({
   root: {
     // minWidth: 275,
@@ -93,19 +98,25 @@ const AddTocapacity = (props) => {
   const [pin, setPin] = useState();
   const [capability, setCapability] = useState("");
   const [Features, setFeatures] = useState([]);
+  const [Ratecapability, setRatecapability] = useState([]);
   const [loading, setLoading] = useState(false);
   const [availableFrom, setAvailableFrom] = useState("");
   const [availableTo, setAvailableTo] = useState("");
   const [assetActive, setAssetActive] = useState(true);
   const [pindata, setpindata] = useState("");
+  const [costData, setCostData] = useState([]);
+  const [costRange, setcostRange] = useState();
+  const [costPrice, setcostPrice] = useState();
+  const [costCapacity, setcostCapacity] = useState();
   /**Validators */
   const [pinValidator, setPinValidator] = useState("");
   const [capacityValidator, setCapacityValidator] = useState("");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 
   const capabilityOptions = {
     options: constants.capabilityOptions,
   };
-  
+
   const selectStyles = {
     menu: (base) => ({
       ...base,
@@ -187,9 +198,105 @@ const AddTocapacity = (props) => {
   const onFeaturesChange = (event) => {
     setFeatures(event);
   };
+  const onRateCapabilityChange = (event) => {
+    if (
+      event.value.rangeinkms.lowRange == 0 &&
+      event.value.rangeinkms.highRange == 200
+    ) {
+      setcostRange("0 - 200 Kms");
+    }
+    if (
+      event.value.rangeinkms.lowRange == 200 &&
+      event.value.rangeinkms.highRange == 400
+    ) {
+      setcostRange("200 - 400 Kms");
+    }
+    if (
+      event.value.rangeinkms.lowRange == 400 &&
+      event.value.rangeinkms.highRange == 800
+    ) {
+      setcostRange("400 - 800 Kms");
+    }
+    if (
+      event.value.rangeinkms.lowRange == 800 &&
+      event.value.rangeinkms.highRange == 1600
+    ) {
+      setcostRange("800+ Kms");
+    }
+    if (
+      event.value.capacity.lowCapacity == 0 &&
+      event.value.capacity.highCapacity == 2
+    ) {
+      setcostCapacity("0 - 2 Tons");
+    }
+    if (
+      event.value.capacity.lowCapacity == 2 &&
+      event.value.capacity.highCapacity == 4
+    ) {
+      setcostCapacity("2 - 4 Tons");
+    }
+    if (
+      event.value.capacity.lowCapacity == 4 &&
+      event.value.capacity.highCapacity == 8
+    ) {
+      setcostCapacity("4 - 8 Tons");
+    }
+    if (
+      event.value.capacity.lowCapacity == 8 &&
+      event.value.capacity.highCapacity == 14
+    ) {
+      setcostCapacity("8 - 14 Tons");
+    }
+    if (
+      event.value.capacity.lowCapacity == 14 &&
+      event.value.capacity.highCapacity == 20
+    ) {
+      setcostCapacity("14 - 20 Tons");
+    }
+    if (
+      event.value.capacity.lowCapacity == 20 &&
+      event.value.capacity.highCapacity == 26
+    ) {
+      setcostCapacity("20 - 26 Tons");
+    }
+    if (event.value.price == null) {
+      setcostPrice(event.value.additionalDetails.immediatePricing);
+    }
+    setcostPrice(event.value.price);
+
+    setRatecapability(event);
+  };
   const onRatePerKMChangeController = (event) => {
     setRatePerKM(event.target.value);
   };
+
+  useEffect(async () => {
+    var currentUser = await Auth.currentUserInfo();
+    var owner = currentUser.username;
+    API.get(
+      "GoFlexeOrderPlacement",
+      `/serviceprovidercost?type=serviceProviderId&serviceProviderId=${owner}`
+    )
+      .then((resp) => {
+        console.log(resp);
+
+        var temp = costData.slice();
+        for (var i = 0; i < resp.length; i++) {
+          temp.push({
+            label: resp[i].capability,
+            value: resp[i],
+          });
+        }
+        setCostData(temp);
+
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error.response);
+        setLoading(false);
+      });
+  }, []);
+
   const submitCapacity = async () => {
     if (type.value == null || type.value == "") {
       alert("Please select Asset type.");
@@ -239,6 +346,7 @@ const AddTocapacity = (props) => {
       alert("Pin cannot be Empty");
       return;
     }
+
     setLoading(true);
     var currentUser = await Auth.currentUserInfo();
     var owner = currentUser.username;
@@ -255,17 +363,16 @@ const AddTocapacity = (props) => {
       location: location,
       active: assetActive,
       pincode: pin,
-      ThirtyDaysPricing: ThirtyDaysPricing,
-      ImmidiatePricing: ImmidiatePricing,
-      DeliveryRange: DeliveryRange,
-      RatePerKM: RatePerKM,
+      // ThirtyDaysPricing: ThirtyDaysPricing,
+      // ImmidiatePricing: ImmidiatePricing,
+      // DeliveryRange: DeliveryRange,
+      // RatePerKM: RatePerKM,
     };
     const payload = {
       body: data,
     };
     API.post("GoFlexeOrderPlacement", `/capacity`, payload)
       .then((response) => {
-        // Add your code here
         console.log(response);
         setLoading(false);
       })
@@ -282,6 +389,7 @@ const AddTocapacity = (props) => {
     items[idx].data = event.target.value;
     setFeatures(items);
   };
+
   const renderCapabilityForm = () => {
     return (
       <Container style={{ marginTop: 20 }}>
@@ -308,6 +416,7 @@ const AddTocapacity = (props) => {
       // </Card>
     );
   };
+
   if (loading === true) {
     return <Spinner />;
   }
@@ -405,34 +514,26 @@ const AddTocapacity = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Select
-              styles={selectStyles}
-              className="basic-single"
-              classNamePrefix="Capability"
-              isSearchable
-              name="Capability"
-              placeholder="Capability"
-              value={capability}
-              onChange={(event) => onCapabilitiesChange(event)}
-              options={constants.truckCapabilityOptions}
-            />
+            <Tooltip
+              title="Only Capability with Costing information filled are shown."
+              arrow
+              placement="top"
+            >
+              <Select
+                styles={selectStyles}
+                className="basic-single"
+                classNamePrefix="Capability"
+                isSearchable
+                name="Capability"
+                placeholder="Capability"
+                value={Ratecapability}
+                onChange={(event) => onRateCapabilityChange(event)}
+                options={costData}
+              />
+            </Tooltip>
           </Grid>
           <Tooltip title="Features available in selected Asset" arrow>
             <Grid item xs={12} sm={6}>
-              {/* <Multiselect
-                style={{ borderLeft: "0px" }}
-                options={
-                  type === "truck"
-                    ? capabilityOptions.options
-                    : warehouseCapabilityOptions.options
-                } // Options to display in the dropdown
-                onSelect={onMultiSelect} // Function will trigger on select event
-                selectedValues={capability}
-                onRemove={onMultiRemove} // Function will trigger on remove event
-                displayValue="name" // Property name to display in the dropdown options
-                placeholder="Capabilities"
-              /> */}
-
               <Select
                 isMulti
                 styles={selectStyles}
@@ -450,6 +551,68 @@ const AddTocapacity = (props) => {
               />
             </Grid>
           </Tooltip>
+
+          {Ratecapability.length !== 0 ? (
+            <Grid container spacing={0} style={{ padding: 20 }}>
+              <Grid item xs={12} sm={4}>
+                <TextField disabled={true} value={costPrice} label="Price" />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  disabled={true}
+                  value={costRange}
+                  label="Range in Kms"
+                />
+                {/* <Select
+                  styles={selectStyles}
+                  className="basic-single"
+                  classNamePrefix="Capacity"
+                  isSearchable
+                  name="Capacity"
+                  placeholder="Capacity"
+                  value={costCapacity}
+                  // onChange={(event) => onCapacityChange(event, i)}
+                  options={constants.CapacityOptions} */}
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  disabled={true}
+                  value={costCapacity}
+                  label="Capacity"
+                />
+                {/* <Select
+                  styles={selectStyles}
+                  className="basic-single"
+                  classNamePrefix="Range"
+                  isSearchable
+                  name="Range"
+                  placeholder="Range"
+                  value={costPrice}
+                  // onChange={(event) => onRangeinKmsChange(event, i)}
+                  options={constants.RangeOptions}
+                /> */}
+              </Grid>
+            </Grid>
+          ) : (
+            <br />
+          )}
+
+          <Grid item xs={12} sm={12}>
+            {/* <Checkbox
+              onChange={(e) => {
+                setFillCost(e);
+              }}
+              size="small"
+              color="primary"
+              inputProps={{
+                "aria-label": "secondary checkbox",
+              }}
+            /> */}
+            <Link to="/CostManager">
+              <p>Fill new Cost information</p>
+            </Link>
+          </Grid>
+
           {renderCapabilityForm()}
         </Grid>
 
@@ -518,7 +681,6 @@ const AddTocapacity = (props) => {
               <Tooltip title="Whether the asset is owned or outsourced to another company">
                 <Select
                   styles={selectStyles}
-                  
                   className="basic-single"
                   classNamePrefix="ownership"
                   isSearchable

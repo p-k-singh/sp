@@ -43,6 +43,7 @@ import {
 } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import TruckCost from "./Truck Costing/Truck Cost";
+import WarehouseCost from "./Warehourse Costing/Warehouse Cost";
 
 // import Autocomplete from "@material-ui/lab/Autocomplete";
 const useStyles = makeStyles({
@@ -697,7 +698,7 @@ const CostManager = (props) => {
         <TruckCost />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        Warehouse Costing
+        <WarehouseCost />
       </TabPanel>
     </div>
     // <div>

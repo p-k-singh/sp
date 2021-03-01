@@ -37,7 +37,7 @@ const useRowStyles = makeStyles({
   },
 });
 
-export default function TruckCostDetails(props) {
+export default function WarehouseCostDetails(props) {
   const classes = useRowStyles();
   const [openedPages, setOpenedPages] = useState([]);
   const [checkedBoxes, setCheckedBoxes] = useState([]);
@@ -47,7 +47,7 @@ export default function TruckCostDetails(props) {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(async () => {
-    setLoading(true);
+    setLoading(true)
     var currentUser = await Auth.currentUserInfo();
     var owner = currentUser.username;
     API.get(
@@ -172,32 +172,17 @@ export default function TruckCostDetails(props) {
               <React.Fragment>
                 <TableRow className={classes.root}>
                   <TableCell>
-                    {row.additionalDetails.immediatePricing == null ? (
-                      <IconButton
-                        disabled={true}
-                        aria-label="expand row"
-                        size="small"
-                      >
-                        {/* {isItemOpened ? (
-                            <KeyboardArrowUpIcon />
-                          ) : (
-                            <KeyboardArrowDownIcon />
-                          )} */}
-                      </IconButton>
-                    ) : (
-                      <IconButton
-                        aria-label="expand row"
-                        size="small"
-                        onClick={(event) => handleOpen(event, idx)}
-                      >
-                        {isItemOpened ? (
-                          <KeyboardArrowUpIcon />
-                        ) : (
-                          <KeyboardArrowDownIcon />
-                        )}
-                      </IconButton>
-                    )}
-
+                    <IconButton
+                      aria-label="expand row"
+                      size="small"
+                      onClick={(event) => handleOpen(event, idx)}
+                    >
+                      {isItemOpened ? (
+                        <KeyboardArrowUpIcon />
+                      ) : (
+                        <KeyboardArrowDownIcon />
+                      )}
+                    </IconButton>
                     <Checkbox
                       size="small"
                       color="primary"
