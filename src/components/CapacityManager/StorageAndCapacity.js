@@ -208,7 +208,7 @@ const StorageAndCapacity = (props) => {
       <Card className={classes.root}>
         <CardContent style={{ padding: 0 }}>
           <Typography className={classes.title} gutterBottom>
-            Capacity Manager
+            Availability Manager
             <Tooltip title="Add and Manage all Assets">
               <InfoIcon style={{ color: "lightgrey", marginLeft: 20 }} />
             </Tooltip>

@@ -20,6 +20,7 @@ import Paper from "@material-ui/core/Paper";
 import InfoIcon from "@material-ui/icons/Info";
 import Slider from "@material-ui/core/Slider";
 import Input from "@material-ui/core/Input";
+import "../../Globalcss/globalcss.css";
 import {
   TextField,
   Grid,
@@ -44,6 +45,8 @@ import {
   FormControlLabel,
 } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
+import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
+import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 
 const useStyles = makeStyles({
   title: {
@@ -66,32 +69,7 @@ const useStyles = makeStyles({
 
 const AddTruckCost = (props) => {
   const classes = useStyles();
-  const [deliveryCommitment, setdeliveryCommitment] = React.useState(0);
   const [currentUser, setCurrentUser] = useState(null);
-  const handleSliderChange = (event, newValue, i) => {
-    var items = chosenProducts.slice();
-    items[i].additionalDetails.deliveryCommitment = newValue;
-    setChosenProducts(items);
-    setdeliveryCommitment(newValue);
-  };
-
-  const handleInputChange = (event, i) => {
-    setdeliveryCommitment(
-      event.target.value === "" ? "" : Number(event.target.value)
-    );
-    // var items = chosenProducts.slice();
-    // items[i].deliveryCommitment = event.target.value;
-    // setChosenProducts(items);
-    // alert(event.target.value);
-  };
-
-  const handleBlur = () => {
-    if (deliveryCommitment < 0) {
-      setdeliveryCommitment(0);
-    } else if (deliveryCommitment > 100) {
-      setdeliveryCommitment(100);
-    }
-  };
 
   const [chosenProducts, setChosenProducts] = useState([
     {
@@ -100,13 +78,24 @@ const AddTruckCost = (props) => {
       rangeinKms: null,
       pricing: null,
       details: false,
-      additionalDetails: {
-        sourceLocation: "",
-        destinationLocation: "",
-        thirtyDaysPricing: null,
-        immediatePricing: null,
-        deliveryCommitment: 0,
-      },
+      additionalDetails: [
+        {
+          sourceLocation: "",
+          destinationLocation: "",
+          thirtyDaysPricing: null,
+          immediatePricing: null,
+          deliveryCommitment: 0,
+        },
+      ],
+    },
+  ]);
+  const [additionalDetails, setChosenProductsqw] = useState([
+    {
+      sourceLocation: "",
+      destinationLocation: "",
+      thirtyDaysPricing: null,
+      immediatePricing: null,
+      deliveryCommitment: 0,
     },
   ]);
 
@@ -123,6 +112,7 @@ const AddTruckCost = (props) => {
     items.splice(i, 1);
     setChosenProducts(items);
   };
+
   const addproduct = () => {
     var items = chosenProducts.slice();
     items.push({
@@ -141,6 +131,18 @@ const AddTruckCost = (props) => {
     });
     setChosenProducts(items);
   };
+  const addroute = () => {
+    var items = chosenProducts.slice();
+    items.push({
+      sourceLocation: "",
+      destinationLocation: "",
+      thirtyDaysPricing: null,
+      immediatePricing: null,
+      deliveryCommitment: 0,
+    });
+    setChosenProducts(items);
+  };
+
   const selectStyles = {
     menu: (base) => ({
       ...base,
@@ -183,6 +185,12 @@ const AddTruckCost = (props) => {
     items[i].rangeinKms = event;
     setChosenProducts(items);
   };
+  const onDeliveryCommitmentChange = (event, i) => {
+    var items = chosenProducts.slice();
+    items[i].additionalDetails.deliveryCommitment = event;
+    setChosenProducts(items);
+  };
+
   const onCapacityChange = (event, i) => {
     var items = chosenProducts.slice();
     items[i].capacity = event;
@@ -277,7 +285,6 @@ const AddTruckCost = (props) => {
   var list = chosenProducts.map((e, i) => (
     <div>
       {i !== 0 && <Divider style={{ marginBottom: 30, marginTop: 30 }} />}
-
       <Grid
         container
         direction="row"
@@ -313,6 +320,18 @@ const AddTruckCost = (props) => {
           />
         </Grid>
         <Grid item xs={12} sm={3}>
+          <TextField
+            fullWidth
+            label="Capacity"
+            type="number"
+            value={chosenProducts[i].pricing}
+            onChange={(event) => onPricingController(event, i)}
+            variant="outlined"
+            size="small"
+            InputProps={{
+              endAdornment: <InputAdornment position="end">Ton</InputAdornment>,
+            }}
+          />
           <Select
             styles={selectStyles}
             className="basic-single"
@@ -329,13 +348,13 @@ const AddTruckCost = (props) => {
           <Select
             styles={selectStyles}
             className="basic-single"
-            classNamePrefix="Range"
+            classNamePrefix="Distance"
             isSearchable
-            name="Range"
-            placeholder="Range"
+            name="Distance"
+            placeholder="Distance"
             value={chosenProducts[i].rangeinKms}
             onChange={(event) => onRangeinKmsChange(event, i)}
-            options={constants.RangeOptions}
+            options={constants.DistanceOptions}
           />
         </Grid>
         {chosenProducts[i].details == false ? (
@@ -356,27 +375,38 @@ const AddTruckCost = (props) => {
         ) : (
           <p></p>
         )}
-        <Grid item sm={4} xs={12}>
+        <Grid item>
           <TableContainer>
             <Table aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <TableCell style={{ borderBottom: "none" }}>
-                    <Checkbox
-                      onChange={(e) => {
+                  <TableCell
+                    style={{ padding: 0, margin: 0, borderBottom: "none" }}
+                  >
+                    Add Route (Optional)
+                  </TableCell>
+                  <TableCell
+                    align="left"
+                    style={{ padding: 0, margin: 0, borderBottom: "none" }}
+                  >
+                    <IconButton
+                      style={{ padding: 0, margin: 0, outline: "none" }}
+                      aria-label="expand row"
+                      size="small"
+                      onClick={(e) => {
                         var items = chosenProducts.slice();
-                        items[i].details = e.target.checked;
+                        chosenProducts[i].details == true
+                          ? (items[i].details = false)
+                          : (items[i].details = true);
                         setChosenProducts(items);
                       }}
-                      size="small"
-                      color="primary"
-                      inputProps={{
-                        "aria-label": "secondary checkbox",
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell align="left" style={{ borderBottom: "none" }}>
-                    Fill Additional Details
+                    >
+                      {chosenProducts[i].details == true ? (
+                        <KeyboardArrowUpIcon />
+                      ) : (
+                        <KeyboardArrowDownIcon />
+                      )}
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -405,115 +435,114 @@ const AddTruckCost = (props) => {
         </Grid>
       </Grid>
       {chosenProducts[i].details == true ? (
-        <Grid
-          container
-          spacing={3}
-          style={{ paddingLeft: 40, paddingRight: 40, paddingBottom: 30 }}
-        >
-          <Grid item xs={12} sm={6}>
-            <TextField
-              type="text"
-              id="Source"
-              name="Source"
-              label="Source Location"
-              fullWidth
-              value={chosenProducts[i].additionalDetails.sourceLocation}
-              onChange={(event) => onsourceLocationChangeController(event, i)}
-              variant="outlined"
-              size="small"
-              autoComplete="shipping address-line1"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Destination Location"
-              type="text"
-              className={classes.textField}
-              value={chosenProducts[i].additionalDetails.destinationLocation}
-              onChange={(event) =>
-                onDestinationLocationChangeController(event, i)
-              }
-              variant="outlined"
-              size="small"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="30 Days Pricing"
-              type="number"
-              className={classes.textField}
-              value={chosenProducts[i].additionalDetails.thirtyDaysPricing}
-              onChange={(event) => onThirtyDaysPricingController(event, i)}
-              variant="outlined"
-              size="small"
-              InputProps={{
-                endAdornment: <InputAdornment position="end">₹</InputAdornment>,
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Immediate Payment Pricing"
-              type="number"
-              className={classes.textField}
-              value={chosenProducts[i].additionalDetails.immediatePricing}
-              onChange={(event) => onImmediatePricingChangeController(event, i)}
-              variant="outlined"
-              InputProps={{
-                endAdornment: <InputAdornment position="end">₹</InputAdornment>,
-              }}
-              size="small"
-            />
-          </Grid>
-          <Grid
-            container
-            spacing={2}
-            style={{ paddingLeft: 40, paddingRight: 40, padding: 30 }}
-            alignItems="center"
-          >
-            <Grid item>Delivery Commitment:</Grid>
-            <Grid item xs style={{ marginTop: 5 }}>
-              <Slider
-                value={
-                  typeof chosenProducts[i].additionalDetails
-                    .deliveryCommitment === "number"
-                    ? chosenProducts[i].additionalDetails.deliveryCommitment
-                    : 1
-                }
-                onChange={(event, newValue) =>
-                  handleSliderChange(event, newValue, i)
-                }
-                defaultValue={6}
-                valueLabelDisplay="auto"
-                aria-labelledby="input-slider"
-                max={30}
-              />
-            </Grid>
-            <Grid item>
-              <Input
-                className={classes.input}
-                value={chosenProducts[i].additionalDetails.deliveryCommitment}
-                margin="dense"
-                onChange={handleInputChange}
-                onBlur={handleBlur}
-                inputProps={{
-                  step: 10,
-                  min: 0,
-                  max: 100,
-                  type: "number",
-                  "aria-labelledby": "input-slider",
+        <div>
+          {" "}
+          {e.additionalDetails.map((e, j) => (
+            <Grid
+              container
+              spacing={3}
+              style={{ paddingLeft: 40, paddingRight: 40, paddingBottom: 30 }}
+            >
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  type="text"
+                  id="Source"
+                  name="Source"
+                  label="Source Location"
+                  fullWidth
+                  value={chosenProducts[i].additionalDetails.sourceLocation}
+                  onChange={(event) =>
+                    onsourceLocationChangeController(event, i)
+                  }
+                  variant="outlined"
+                  size="small"
+                  autoComplete="shipping address-line1"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Destination Location"
+                  type="text"
+                  className={classes.textField}
+                  value={
+                    chosenProducts[i].additionalDetails.destinationLocation
+                  }
+                  onChange={(event) =>
+                    onDestinationLocationChangeController(event, i)
+                  }
+                  variant="outlined"
+                  size="small"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="30 Days Pricing"
+                  type="number"
+                  className={classes.textField}
+                  value={chosenProducts[i].additionalDetails.thirtyDaysPricing}
+                  onChange={(event) => onThirtyDaysPricingController(event, i)}
+                  variant="outlined"
+                  size="small"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">₹</InputAdornment>
+                    ),
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Immediate Payment Pricing"
+                  type="number"
+                  className={classes.textField}
+                  value={chosenProducts[i].additionalDetails.immediatePricing}
+                  onChange={(event) =>
+                    onImmediatePricingChangeController(event, i)
+                  }
+                  variant="outlined"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">₹</InputAdornment>
+                    ),
+                  }}
+                  size="small"
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <Select
+                  styles={selectStyles}
+                  className="basic-single"
+                  classNamePrefix="Delivery Commitment"
+                  isSearchable
+                  name="Delivery Commitment"
+                  placeholder="Delivery Commitment"
+                  value={chosenProducts[i].additionalDetails.deliveryCommitment}
+                  onChange={(event) => onDeliveryCommitmentChange(event, i)}
+                  options={constants.DeliveryCommitmentOptions}
+                />
+              </Grid>
+              <Button
+                variant="contained"
+                className="AllButtons"
+                style={{
+                  marginTop: 10,
+                  marginLeft: 50,
                 }}
-              />
+                onClick={() => addroute()}
+              >
+                Add Route
+              </Button>
             </Grid>
-            <Grid item>Days</Grid>
-          </Grid>
-        </Grid>
+          ))}
+        </div>
       ) : (
         <p></p>
       )}
+
       {/* {renderCapabilityForm()} */}
     </div>
   ));

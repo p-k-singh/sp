@@ -142,7 +142,11 @@ export default function Dashboard() {
   const list = [
     { title: "Dashboard", to: "/", icon: <DashboardIcon /> },
     { title: "My Orders", to: "/my-orders", icon: <AddShoppingCartIcon /> },
-    { title: "Capacity Manager", to: "/capacity", icon: <BatteryFullIcon /> },
+    {
+      title: "Availability Manager",
+      to: "/capacity",
+      icon: <BatteryFullIcon />,
+    },
     { title: "Cost Manager", to: "/CostManager", icon: <MonetizationOnIcon /> },
 
     {

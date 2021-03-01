@@ -431,7 +431,6 @@ const AddTocapacity = (props) => {
     <CardContent style={{ padding: 0, overflow: "hidden" }}>
       <form>
         <Typography className={classes.formHeadings}>Basic Details</Typography>
-
         <Grid
           container
           spacing={3}
@@ -449,28 +448,9 @@ const AddTocapacity = (props) => {
               onChange={(event) => typeChangeController(event)}
               options={constants.CapacityType}
             />
-            {/* <FormControl
-              style={{ minWidth: 400 }}
-              className={classes.formControl}
-            >
-              <InputLabel htmlFor="age-native-simple">Type</InputLabel>
-              <Select
-                native
-                //value="inches"
-                onChange={typeChangeController}
-                inputProps={{
-                  name: "age",
-                  id: "age-native-simple",
-                }}
-              >
-                {constants.CapacityType.map((d) => (
-                  <option value={d.value}>{d.label}</option>
-                ))}
-              </Select>
-            </FormControl> */}
-          </Grid>
-          {type.value === "truck" && (
-            <Grid item xs={12} sm={6}>
+          </Grid>{" "}
+          <Grid item xs={12} sm={6}>
+            {type.value === "truck" && (
               <TextField
                 required
                 type="text"
@@ -484,60 +464,50 @@ const AddTocapacity = (props) => {
                 size="small"
                 autoComplete="shipping address-line1"
               />
-            </Grid>
-          )}
-          {type.value !== "truck" && <Grid item xs={12} sm={6}></Grid>}
-          {/* <Grid item xs={12} sm={6}></Grid> */}
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              type="number"
-              error={capacityValidator !== ""}
-              helperText={capacityValidator === "" ? " " : capacityValidator}
-              id="size"
-              name="size"
-              label="Capacity"
-              fullWidth
-              value={size}
-              onChange={(event) => onSizeChangeController(event)}
-              variant="outlined"
-              size="small"
-              autoComplete="shipping address-line1"
-            />
+            )}
           </Grid>
-
           <Grid item xs={12} sm={6}>
             <TextField
-              disabled
-              type="text"
-              id="unit"
-              name="unit"
-              label="Unit"
               fullWidth
-              value={unit}
+              id="datetime-local"
+              label="Available From"
+              type="datetime-local"
+              className={classes.textField}
+              onChange={(event) => onAvailableFromChangeController(event)}
               variant="outlined"
               size="small"
-              autoComplete="shipping address-line1"
+              InputLabelProps={{
+                shrink: true,
+              }}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Tooltip
-              title="Only Capabilities with Costing information filled are shown."
-              arrow
-              placement="top"
-            >
-              <Select
-                styles={selectStyles}
-                className="basic-single"
-                classNamePrefix="Capability"
-                isSearchable
-                name="Capability"
-                placeholder="Capability"
-                value={Ratecapability}
-                onChange={(event) => onRateCapabilityChange(event)}
-                options={costData}
-              />
-            </Tooltip>
+            <TextField
+              fullWidth
+              id="datetime-local"
+              label="Available To"
+              type="datetime-local"
+              className={classes.textField}
+              onChange={(event) => onAvailableToChangeController(event)}
+              variant="outlined"
+              size="small"
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Select
+              styles={selectStyles}
+              className="basic-single"
+              classNamePrefix="Capability"
+              isSearchable
+              name="Capability"
+              placeholder="Capability"
+              value={Ratecapability}
+              onChange={(event) => onRateCapabilityChange(event)}
+              options={constants.truckCapabilityOptions}
+            />
           </Grid>
           <Tooltip title="Features available in selected Asset" arrow>
             <Grid item xs={12} sm={6}>
@@ -558,7 +528,6 @@ const AddTocapacity = (props) => {
               />
             </Grid>
           </Tooltip>
-
           {Ratecapability.length !== 0 ? (
             <Grid container spacing={3} style={{ padding: 50 }}>
               <Grid item xs={12} sm={4}>
@@ -603,155 +572,17 @@ const AddTocapacity = (props) => {
           ) : (
             <br />
           )}
-
           <Grid item xs={12} sm={12}>
-            {/* <Checkbox
-              onChange={(e) => {
-                setFillCost(e);
-              }}
-              size="small"
-              color="primary"
-              inputProps={{
-                "aria-label": "secondary checkbox",
-              }}
-            /> */}
             <Link to="/CostManager">
               <p>Fill new Cost information</p>
             </Link>
           </Grid>
-
           {renderCapabilityForm()}
-        </Grid>
-
-        <Typography className={classes.formHeadings}>
-          Availability Details
-          <Tooltip
-            title="Specify the Period of asset availability"
-            placement="right"
-          >
-            <InfoIcon
-              style={{ color: "lightgrey", marginLeft: 10 }}
-              fontSize="small"
-            />
-          </Tooltip>
-        </Typography>
-
+        </Grid>{" "}
         <Grid
           container
           spacing={3}
-          style={{ padding: 50, paddingTop: 20, paddingBottom: 30 }}
-        >
-          <Grid item xs={12} sm={6}>
-            <TextField
-              id="datetime-local"
-              label="Available From"
-              type="datetime-local"
-              className={classes.textField}
-              onChange={(event) => onAvailableFromChangeController(event)}
-              variant="outlined"
-              size="small"
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              id="datetime-local"
-              label="Available To"
-              type="datetime-local"
-              className={classes.textField}
-              onChange={(event) => onAvailableToChangeController(event)}
-              variant="outlined"
-              size="small"
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-        </Grid>
-
-        <Typography className={classes.formHeadings}>
-          Additional Details
-        </Typography>
-        <Grid
-          container
-          spacing={3}
-          style={{ padding: 50, paddingTop: 20, paddingBottom: 30 }}
-        >
-          <Grid item xs={12} sm={6}>
-            <FormControl
-              style={{ minWidth: 400 }}
-              className={classes.formControl}
-            >
-              <InputLabel htmlFor="age-native-simple">Ownership</InputLabel>
-              <Tooltip title="Whether the asset is owned or outsourced to another company">
-                <Select
-                  styles={selectStyles}
-                  className="basic-single"
-                  classNamePrefix="ownership"
-                  isSearchable
-                  name="ownership"
-                  placeholder="Ownership"
-                  value={ownership}
-                  onChange={(event) => ownershipChangeController(event)}
-                  options={constants.ownerShip}
-                />
-                {/* <Select
-                  native
-                  value={ownership}
-                  onChange={ownershipChangeController}
-                  inputProps={{
-                    name: "age",
-                    id: "age-native-simple",
-                  }}
-                >
-                  <option aria-label="None" value="" />
-                  <option value={"self"}>Self</option>
-                  <option value={"outsourced"}>Outsourced</option>
-                </Select> */}
-              </Tooltip>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Tooltip title="Home Loaction of the Asset">
-              <TextField
-                required
-                type="text"
-                id="location"
-                name="location"
-                label="Base Location"
-                fullWidth
-                value={location}
-                onChange={(event) => onLocationChangeController(event)}
-                variant="outlined"
-                size="small"
-                autoComplete="shipping address-line1"
-              />
-            </Tooltip>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              type="number"
-              error={pinValidator !== ""}
-              helperText={pinValidator === "" ? " " : pinValidator}
-              id="pin"
-              name="pin"
-              label="Pin Code"
-              fullWidth
-              value={pin}
-              onChange={(event) => onPinChangeController(event)}
-              variant="outlined"
-              size="small"
-              autoComplete="shipping address-line1"
-            />
-          </Grid>
-        </Grid>
-        <Grid
-          container
-          spacing={3}
-          style={{ padding: 50, paddingTop: 20, paddingBottom: 30 }}
+          style={{ padding: 50, paddingTop: 20, paddingBottom: 90 }}
         >
           <Typography component="div">
             <Grid component="label" container alignItems="center" spacing={1}>
@@ -776,6 +607,7 @@ const AddTocapacity = (props) => {
           </Typography>
         </Grid>
       </form>
+
       <Button
         variant="contained"
         onClick={submitCapacity}

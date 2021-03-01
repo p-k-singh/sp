@@ -228,6 +228,19 @@ const constants = {
     },
     { label: "Customer Service", value: "customerService", data: "", unit: "" },
   ],
+  DeliveryCommitmentOptions: [
+    { label: "1 Day", value: 1 },
+    { label: "2 Days", value: 2 },
+
+    { label: "3 Days", value: 3 },
+
+    { label: "4 Days", value: 4 },
+
+    { label: "5 Days", value: 5 },
+    { label: "6 Days", value: 6 },
+
+    { label: "7 Days", value: 7 },
+  ],
   CapacityOptions: [
     {
       label: "0 - 2 Tons",
@@ -279,11 +292,18 @@ const constants = {
       },
     },
   ],
-  RangeOptions: [
+  DistanceOptions: [
     {
-      label: "0 - 200 Kms",
+      label: "0 - 50 Kms",
       value: {
         lowRange: 0,
+        highRange: 50,
+      },
+    },
+    {
+      label: "50 - 200 Kms",
+      value: {
+        lowRange: 50,
         highRange: 200,
       },
     },
