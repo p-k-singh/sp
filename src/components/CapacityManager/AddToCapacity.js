@@ -219,7 +219,7 @@ const AddTocapacity = (props) => {
     }
     if (
       event.value.rangeinkms.lowRange == 800 &&
-      event.value.rangeinkms.highRange == 1600
+      event.value.rangeinkms.highRange == 2000
     ) {
       setcostRange("800+ Kms");
     }
@@ -259,10 +259,17 @@ const AddTocapacity = (props) => {
     ) {
       setcostCapacity("20 - 26 Tons");
     }
-    if (event.value.price == null) {
-      setcostPrice(event.value.additionalDetails.immediatePricing);
+    if (
+      event.value.capacity.lowCapacity == 26 &&
+      event.value.capacity.highCapacity == 100
+    ) {
+      setcostCapacity("26+ Tons");
     }
-    setcostPrice(event.value.price);
+    if (event.value.price == null || event.value.price == "") {
+      setcostPrice(event.value.additionalDetails.immediatePricing);
+    } else {
+      setcostPrice(event.value.price);
+    }
 
     setRatecapability(event);
   };
@@ -515,7 +522,7 @@ const AddTocapacity = (props) => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <Tooltip
-              title="Only Capability with Costing information filled are shown."
+              title="Only Capabilities with Costing information filled are shown."
               arrow
               placement="top"
             >
@@ -553,7 +560,7 @@ const AddTocapacity = (props) => {
           </Tooltip>
 
           {Ratecapability.length !== 0 ? (
-            <Grid container spacing={0} style={{ padding: 20 }}>
+            <Grid container spacing={3} style={{ padding: 50 }}>
               <Grid item xs={12} sm={4}>
                 <TextField disabled={true} value={costPrice} label="Price" />
               </Grid>
