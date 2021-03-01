@@ -184,7 +184,6 @@ export default function CollapsibleTable(props) {
             <TableCell component="th" scope="row">
               {row.type==='truck'?'Truck':'Warehouse'}
             </TableCell>
-            
             <TableCell align="right">{row.capacity }{row.unitOfMeasurement}</TableCell>
             <TableCell align="right">{row.ownershipType}</TableCell>
             <TableCell align="right">{row.location}</TableCell>

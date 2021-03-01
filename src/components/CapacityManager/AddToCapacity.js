@@ -105,21 +105,7 @@ const AddTocapacity = (props) => {
   const capabilityOptions = {
     options: constants.capabilityOptions,
   };
-  // const api_url = "https://api.postalpincode.in/pincode/301411";
-
-  // // Defining async function
-  // async function getapi(url) {
-  //   // Storing response
-
-  //   const response = await fetch(url);
-
-  //   // Storing data in form of JSON
-  //   var data = await response.json();
-  //   console.log(data);
-  //   setpindata(data);
-  // }
-  // // Calling that async function
-  // getapi(api_url);
+  
   const selectStyles = {
     menu: (base) => ({
       ...base,

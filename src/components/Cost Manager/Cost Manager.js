@@ -42,7 +42,7 @@ import {
   FormControlLabel,
 } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
-import TruckCost from "./Truck Cost";
+import TruckCost from "./Truck Costing/Truck Cost";
 
 // import Autocomplete from "@material-ui/lab/Autocomplete";
 const useStyles = makeStyles({

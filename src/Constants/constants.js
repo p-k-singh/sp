@@ -229,19 +229,85 @@ const constants = {
     { label: "Customer Service", value: "customerService", data: "", unit: "" },
   ],
   CapacityOptions: [
-    { label: "0 - 2 Tons", value: "0to2" },
-    { label: "2 - 4 Tons", value: "2to4" },
-    { label: "4 - 8 Tons", value: "4to8" },
-    { label: "8 - 14 Tons", value: "8to14" },
-    { label: "14 - 20 Tons", value: "14to20" },
-    { label: "20 - 26 Tons", value: "20to26" },
-    { label: "26+ Tons", value: "Above26" },
+    {
+      label: "0 - 2 Tons",
+      value: {
+        lowCapacity: 0,
+        highCapacity: 2,
+      },
+    },
+    {
+      label: "2 - 4 Tons",
+      value: {
+        lowCapacity: 2,
+        highCapacity: 4,
+      },
+    },
+    {
+      label: "4 - 8 Tons",
+      value: {
+        lowCapacity: 4,
+        highCapacity: 8,
+      },
+    },
+    {
+      label: "8 - 14 Tons",
+      value: {
+        lowCapacity: 8,
+        highCapacity: 14,
+      },
+    },
+    {
+      label: "14 - 20 Tons",
+      value: {
+        lowCapacity: 14,
+        highCapacity: 20,
+      },
+    },
+    {
+      label: "20 - 26 Tons",
+      value: {
+        lowCapacity: 20,
+        highCapacity: 26,
+      },
+    },
+    {
+      label: "26+ Tons",
+      value: {
+        lowCapacity: 26,
+        highCapacity: 100,
+      },
+    },
   ],
   RangeOptions: [
-    { label: "0 - 200 Kms", value: "0to200" },
-    { label: "200 - 400 Kms", value: "200to400" },
-    { label: "400 - 800 Kms", value: "400to800" },
-    { label: "800+ Kms", value: "Above800" },
+    {
+      label: "0 - 200 Kms",
+      value: {
+        lowRange: 0,
+        highRange: 200,
+      },
+    },
+    {
+      label: "200 - 400 Kms",
+      value: {
+        lowRange: 200,
+        highRange: 400,
+      },
+    },
+    {
+      label: "400 - 800 Kms",
+      value: {
+        lowRange: 400,
+        highRange: 800,
+      },
+    },
+    {
+      label: "800+ Kms",
+      value: {
+        lowRange: 800,
+        highRange: 2000,
+      },
+    },
   ],
   capacityUnits: [
     { name: "Sqft.", value: "sqft" },

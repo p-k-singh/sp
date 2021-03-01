@@ -18,6 +18,8 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import InfoIcon from "@material-ui/icons/Info";
+import Slider from "@material-ui/core/Slider";
+import Input from "@material-ui/core/Input";
 import {
   TextField,
   Grid,
@@ -30,9 +32,9 @@ import {
 } from "@material-ui/core";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import { Multiselect } from "multiselect-react-dropdown";
-import constants from "../../Constants/constants";
+import constants from "../../../Constants/constants";
 import { Auth, API } from "aws-amplify";
-import Spinner from "../UI/Spinner";
+import Spinner from "../../UI/Spinner";
 import PropTypes from "prop-types";
 import {
   Checkbox,
@@ -62,26 +64,49 @@ const useStyles = makeStyles({
   },
 });
 
-const TruckCost = (props) => {
+const AddTruckCost = (props) => {
   const classes = useStyles();
+  const [deliveryCommitment, setdeliveryCommitment] = React.useState(0);
+  const [currentUser, setCurrentUser] = useState(null);
+  const handleSliderChange = (event, newValue, i) => {
+    var items = chosenProducts.slice();
+    items[i].additionalDetails.deliveryCommitment = newValue;
+    setChosenProducts(items);
+    setdeliveryCommitment(newValue);
+  };
 
-  const [value, setValue] = React.useState(0);
+  const handleInputChange = (event, i) => {
+    setdeliveryCommitment(
+      event.target.value === "" ? "" : Number(event.target.value)
+    );
+    // var items = chosenProducts.slice();
+    // items[i].deliveryCommitment = event.target.value;
+    // setChosenProducts(items);
+    // alert(event.target.value);
+  };
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+  const handleBlur = () => {
+    if (deliveryCommitment < 0) {
+      setdeliveryCommitment(0);
+    } else if (deliveryCommitment > 100) {
+      setdeliveryCommitment(100);
+    }
   };
 
   const [chosenProducts, setChosenProducts] = useState([
     {
       capability: null,
       capacity: null,
-      RangeinKms: null,
-      Pricing: null,
-      AdditionalDetails: false,
-      SourceLocation: "",
-      DestinationLocation: "",
-      ThirtyDaysPricing: null,
-      ImmediatePricing: null,
+      rangeinKms: null,
+      pricing: null,
+      details: false,
+      additionalDetails: {
+        sourceLocation: "",
+        destinationLocation: "",
+        thirtyDaysPricing: null,
+        immediatePricing: null,
+        deliveryCommitment: 0,
+      },
     },
   ]);
 
@@ -91,7 +116,6 @@ const TruckCost = (props) => {
   const capabilityOptions = {
     options: constants.capabilityOptions,
   };
-  const [calculating, setCalculating] = useState(false);
   const [redirect, setRedirect] = useState(false);
 
   const handleItemDeleted = (i) => {
@@ -104,55 +128,48 @@ const TruckCost = (props) => {
     items.push({
       capability: null,
       capacity: null,
-      RangeinKms: null,
-      Pricing: null,
-      AdditionalDetails: false,
-      SourceLocation: "",
-      DestinationLocation: "",
-      ThirtyDaysPricing: null,
-      ImmediatePricing: null,
+      rangeinKms: null,
+      pricing: null,
+      details: false,
+      additionalDetails: {
+        sourceLocation: "",
+        destinationLocation: "",
+        thirtyDaysPricing: null,
+        immediatePricing: null,
+        deliveryCommitment: 0,
+      },
     });
     setChosenProducts(items);
   };
-
-  const api_url = "https://api.postalpincode.in/pincode/301411";
-
-  // Defining async function
-  async function getapi(url) {
-    const response = await fetch(url);
-    var data = await response.json();
-    console.log(data);
-  }
-  getapi(api_url);
   const selectStyles = {
     menu: (base) => ({
       ...base,
       zIndex: 100,
     }),
   };
-  const onSourceLocationChangeController = (event, i) => {
+  const onsourceLocationChangeController = (event, i) => {
     var items = chosenProducts.slice();
-    items[i].SourceLocation = event.target.value;
+    items[i].additionalDetails.sourceLocation = event.target.value;
     setChosenProducts(items);
   };
   const onDestinationLocationChangeController = (event, i) => {
     var items = chosenProducts.slice();
-    items[i].DestinationLocation = event.target.value;
+    items[i].additionalDetails.destinationLocation = event.target.value;
     setChosenProducts(items);
   };
   const onImmediatePricingChangeController = (event, i) => {
     var items = chosenProducts.slice();
-    items[i].ImmediatePricing = event.target.value;
+    items[i].additionalDetails.immediatePricing = event.target.value;
     setChosenProducts(items);
   };
   const onThirtyDaysPricingController = (event, i) => {
     var items = chosenProducts.slice();
-    items[i].ThirtyDaysPricing = event.target.value;
+    items[i].additionalDetails.thirtyDaysPricing = event.target.value;
     setChosenProducts(items);
   };
   const onPricingController = (event, i) => {
     var items = chosenProducts.slice();
-    items[i].Pricing = event.target.value;
+    items[i].pricing = event.target.value;
     setChosenProducts(items);
   };
 
@@ -163,7 +180,7 @@ const TruckCost = (props) => {
   };
   const onRangeinKmsChange = (event, i) => {
     var items = chosenProducts.slice();
-    items[i].RangeinKms = event;
+    items[i].rangeinKms = event;
     setChosenProducts(items);
   };
   const onCapacityChange = (event, i) => {
@@ -171,30 +188,62 @@ const TruckCost = (props) => {
     items[i].capacity = event;
     setChosenProducts(items);
   };
-  const calculatePrice = () => {
-    setCalculating(true);
+  useEffect(() => {
+    const setUser = async () => {
+      var currentUser = await Auth.currentUserInfo();
+      var owner = currentUser.username;
+      setCurrentUser(owner);
+    };
+    setUser();
+  }, []);
+
+  const SubmitPricing = async () => {
+    setLoading(true);
     var items = [];
     for (var i = 0; i < chosenProducts.length; i++) {
-      items.push({
-        length: chosenProducts[i].length,
-        width: chosenProducts[i].width,
-        height: chosenProducts[i].height,
-        weightPerUnit: chosenProducts[i].weightPerUnit,
-        noOfUnits: chosenProducts[i].noOfUnits,
-        measurable: chosenProducts[i].measurable,
-        density: chosenProducts[i].density,
-        totalWeight: chosenProducts[i].totalWeight,
-      });
+      const data = {
+        serviceProviderId: currentUser,
+        assetType: "truck",
+        capability: chosenProducts[i].capability.value,
+        capacity: chosenProducts[i].capacity.value,
+        rangeinkms: chosenProducts[i].rangeinKms.value,
+        price:
+          chosenProducts[i].details !== true ? chosenProducts[i].pricing : null,
+        additionalDetails: chosenProducts[i].additionalDetails,
+        sourceLocation: chosenProducts[i].additionalDetails.sourceLocation,
+        destinationLocation:
+          chosenProducts[i].additionalDetails.destinationLocation,
+        thirtyDaysPricing:
+          chosenProducts[i].additionalDetails.thirtyDaysPricing,
+        immediatePricing: chosenProducts[i].additionalDetails.immediatePricing,
+        deliveryCommitment:
+          chosenProducts[i].additionalDetails.deliveryCommitment,
+      };
+      const payload = {
+        body: data,
+      };
+      items.push(
+        API.post("GoFlexeOrderPlacement", `/serviceprovidercost`, payload)
+          .then((response) => {
+            console.log(response);
+            setLoading(false);
+          })
+          .catch((error) => {
+            console.log(error.response);
+            setLoading(false);
+          })
+      );
+      setLoading(false);
+      props.toggleForm();
     }
-    var params = JSON.stringify(items);
-    var exactParam = `?items=${params}&useCase=price`;
-    setCalculating(false);
+    return await Promise.all(items);
   };
   const setCapabilityKeyValues = (event, idx) => {
     var items = capability.slice();
     items[idx].data = event.target.value;
     setCapability(items);
   };
+
   const renderCapabilityForm = () => {
     return (
       <Container style={{ marginTop: 20 }}>
@@ -284,18 +333,18 @@ const TruckCost = (props) => {
             isSearchable
             name="Range"
             placeholder="Range"
-            value={chosenProducts[i].RangeinKms}
+            value={chosenProducts[i].rangeinKms}
             onChange={(event) => onRangeinKmsChange(event, i)}
             options={constants.RangeOptions}
           />
         </Grid>
-        {chosenProducts[i].AdditionalDetails == false ? (
+        {chosenProducts[i].details == false ? (
           <Grid item xs={12} sm={2}>
             <TextField
               fullWidth
               label="Pricing"
-              type="text"
-              className={chosenProducts[i].Pricing}
+              type="number"
+              value={chosenProducts[i].pricing}
               onChange={(event) => onPricingController(event, i)}
               variant="outlined"
               size="small"
@@ -316,7 +365,7 @@ const TruckCost = (props) => {
                     <Checkbox
                       onChange={(e) => {
                         var items = chosenProducts.slice();
-                        items[i].AdditionalDetails = e.target.checked;
+                        items[i].details = e.target.checked;
                         setChosenProducts(items);
                       }}
                       size="small"
@@ -355,7 +404,7 @@ const TruckCost = (props) => {
           </TableContainer>
         </Grid>
       </Grid>
-      {chosenProducts[i].AdditionalDetails == true ? (
+      {chosenProducts[i].details == true ? (
         <Grid
           container
           spacing={3}
@@ -363,14 +412,13 @@ const TruckCost = (props) => {
         >
           <Grid item xs={12} sm={6}>
             <TextField
-              required
               type="text"
               id="Source"
               name="Source"
               label="Source Location"
               fullWidth
-              value={chosenProducts[i].SourceLocation}
-              onChange={(event) => onSourceLocationChangeController(event, i)}
+              value={chosenProducts[i].additionalDetails.sourceLocation}
+              onChange={(event) => onsourceLocationChangeController(event, i)}
               variant="outlined"
               size="small"
               autoComplete="shipping address-line1"
@@ -382,7 +430,7 @@ const TruckCost = (props) => {
               label="Destination Location"
               type="text"
               className={classes.textField}
-              value={chosenProducts[i].DestinationLocation}
+              value={chosenProducts[i].additionalDetails.destinationLocation}
               onChange={(event) =>
                 onDestinationLocationChangeController(event, i)
               }
@@ -394,9 +442,9 @@ const TruckCost = (props) => {
             <TextField
               fullWidth
               label="30 Days Pricing"
-              type="text"
+              type="number"
               className={classes.textField}
-              value={chosenProducts[i].ThirtyDaysPricing}
+              value={chosenProducts[i].additionalDetails.thirtyDaysPricing}
               onChange={(event) => onThirtyDaysPricingController(event, i)}
               variant="outlined"
               size="small"
@@ -409,9 +457,9 @@ const TruckCost = (props) => {
             <TextField
               fullWidth
               label="Immediate Payment Pricing"
-              type="text"
+              type="number"
               className={classes.textField}
-              value={chosenProducts[i].ImmediatePricing}
+              value={chosenProducts[i].additionalDetails.immediatePricing}
               onChange={(event) => onImmediatePricingChangeController(event, i)}
               variant="outlined"
               InputProps={{
@@ -419,6 +467,48 @@ const TruckCost = (props) => {
               }}
               size="small"
             />
+          </Grid>
+          <Grid
+            container
+            spacing={2}
+            style={{ paddingLeft: 40, paddingRight: 40, padding: 30 }}
+            alignItems="center"
+          >
+            <Grid item>Delivery Commitment:</Grid>
+            <Grid item xs style={{ marginTop: 5 }}>
+              <Slider
+                value={
+                  typeof chosenProducts[i].additionalDetails
+                    .deliveryCommitment === "number"
+                    ? chosenProducts[i].additionalDetails.deliveryCommitment
+                    : 1
+                }
+                onChange={(event, newValue) =>
+                  handleSliderChange(event, newValue, i)
+                }
+                defaultValue={6}
+                valueLabelDisplay="auto"
+                aria-labelledby="input-slider"
+                max={30}
+              />
+            </Grid>
+            <Grid item>
+              <Input
+                className={classes.input}
+                value={chosenProducts[i].additionalDetails.deliveryCommitment}
+                margin="dense"
+                onChange={handleInputChange}
+                onBlur={handleBlur}
+                inputProps={{
+                  step: 10,
+                  min: 0,
+                  max: 100,
+                  type: "number",
+                  "aria-labelledby": "input-slider",
+                }}
+              />
+            </Grid>
+            <Grid item>Days</Grid>
           </Grid>
         </Grid>
       ) : (
@@ -431,23 +521,13 @@ const TruckCost = (props) => {
   if (loading === true) {
     return (
       <React.Fragment>
-        <h1>Loading your product details</h1>
+        <h1>Submitting Cost Details</h1>
         <Spinner />
       </React.Fragment>
     );
   }
   if (redirect) {
     return <Redirect to="/ordersRedir" />;
-  }
-  if (calculating === true) {
-    return (
-      <div class="jumbotron text-center">
-        <p class="lead">
-          <strong>Calculating estimated cost</strong>
-        </p>
-        <Spinner />
-      </div>
-    );
   }
 
   return (
@@ -488,9 +568,11 @@ const TruckCost = (props) => {
           <Button
             variant="contained"
             className="AllButtons"
+            onClick={SubmitPricing}
             style={{
               marginTop: 10,
               marginLeft: 20,
+              marginBottom: 50,
             }}
           >
             Submit
@@ -501,4 +583,4 @@ const TruckCost = (props) => {
   );
 };
 
-export default TruckCost;
+export default AddTruckCost;
