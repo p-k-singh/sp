@@ -276,57 +276,57 @@ const constants = {
 
     { label: "7 Days", value: 7 },
   ],
-  CapacityOptions: [
-    {
-      label: "0 - 2 Tons",
-      value: {
-        lowCapacity: 0,
-        highCapacity: 2,
-      },
-    },
-    {
-      label: "2 - 4 Tons",
-      value: {
-        lowCapacity: 2,
-        highCapacity: 4,
-      },
-    },
-    {
-      label: "4 - 8 Tons",
-      value: {
-        lowCapacity: 4,
-        highCapacity: 8,
-      },
-    },
-    {
-      label: "8 - 14 Tons",
-      value: {
-        lowCapacity: 8,
-        highCapacity: 14,
-      },
-    },
-    {
-      label: "14 - 20 Tons",
-      value: {
-        lowCapacity: 14,
-        highCapacity: 20,
-      },
-    },
-    {
-      label: "20 - 26 Tons",
-      value: {
-        lowCapacity: 20,
-        highCapacity: 26,
-      },
-    },
-    {
-      label: "26+ Tons",
-      value: {
-        lowCapacity: 26,
-        highCapacity: 100,
-      },
-    },
-  ],
+  // CapacityOptions: [
+  //   {
+  //     label: "0 - 2 Tons",
+  //     value: {
+  //       lowCapacity: 0,
+  //       highCapacity: 2,
+  //     },
+  //   },
+  //   {
+  //     label: "2 - 4 Tons",
+  //     value: {
+  //       lowCapacity: 2,
+  //       highCapacity: 4,
+  //     },
+  //   },
+  //   {
+  //     label: "4 - 8 Tons",
+  //     value: {
+  //       lowCapacity: 4,
+  //       highCapacity: 8,
+  //     },
+  //   },
+  //   {
+  //     label: "8 - 14 Tons",
+  //     value: {
+  //       lowCapacity: 8,
+  //       highCapacity: 14,
+  //     },
+  //   },
+  //   {
+  //     label: "14 - 20 Tons",
+  //     value: {
+  //       lowCapacity: 14,
+  //       highCapacity: 20,
+  //     },
+  //   },
+  //   {
+  //     label: "20 - 26 Tons",
+  //     value: {
+  //       lowCapacity: 20,
+  //       highCapacity: 26,
+  //     },
+  //   },
+  //   {
+  //     label: "26+ Tons",
+  //     value: {
+  //       lowCapacity: 26,
+  //       highCapacity: 100,
+  //     },
+  //   },
+  // ],
   DistanceOptions: [
     {
       label: "0 - 50 Kms",

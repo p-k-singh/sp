@@ -93,6 +93,7 @@ const AddTruckCost = (props) => {
           thirtyDaysPricing: null,
           immediatePricing: null,
           deliveryCommitment: 0,
+          deliveryCommitmentname: "",
         },
       ],
     },
@@ -143,6 +144,7 @@ const AddTruckCost = (props) => {
           thirtyDaysPricing: null,
           immediatePricing: null,
           deliveryCommitment: 0,
+          deliveryCommitmentname: "",
         },
       ],
     });
@@ -162,6 +164,7 @@ const AddTruckCost = (props) => {
       thirtyDaysPricing: null,
       immediatePricing: null,
       deliveryCommitment: 0,
+      deliveryCommitmentname: "",
     });
     setChosenProducts(items);
   };
@@ -293,7 +296,8 @@ const AddTruckCost = (props) => {
   };
   const onDeliveryCommitmentChange = (event, i, j) => {
     var items = chosenProducts.slice();
-    items[i].additionalDetails[j].deliveryCommitment = event;
+    items[i].additionalDetails[j].deliveryCommitmentname = event;
+    items[i].additionalDetails[j].deliveryCommitment = event.value;
     setChosenProducts(items);
   };
 
@@ -324,14 +328,6 @@ const AddTruckCost = (props) => {
         price:
           chosenProducts[i].details !== true ? chosenProducts[i].pricing : null,
         additionalDetails: chosenProducts[i].additionalDetails,
-        sourceLocation: chosenProducts[i].additionalDetails.sourceLocation,
-        destinationLocation:
-          chosenProducts[i].additionalDetails.destinationLocation,
-        thirtyDaysPricing:
-          chosenProducts[i].additionalDetails.thirtyDaysPricing,
-        immediatePricing: chosenProducts[i].additionalDetails.immediatePricing,
-        deliveryCommitment:
-          chosenProducts[i].additionalDetails.deliveryCommitment,
       };
       const payload = {
         body: data,
@@ -517,7 +513,7 @@ const AddTruckCost = (props) => {
             <Grid
               container
               spacing={3}
-              style={{ paddingLeft: 40, paddingRight: 40, paddingBottom: 30 }}
+              style={{ paddingLeft: 40, paddingRight: 40, paddingBottom: 40 }}
             >
               <Grid item xs={12} sm={10}></Grid>
               <Grid item>
@@ -700,7 +696,8 @@ const AddTruckCost = (props) => {
                   name="Delivery Commitment"
                   placeholder="Delivery Commitment"
                   value={
-                    chosenProducts[i].additionalDetails[j].deliveryCommitment
+                    chosenProducts[i].additionalDetails[j]
+                      .deliveryCommitmentname
                   }
                   onChange={(event) => onDeliveryCommitmentChange(event, i, j)}
                   options={constants.DeliveryCommitmentOptions}

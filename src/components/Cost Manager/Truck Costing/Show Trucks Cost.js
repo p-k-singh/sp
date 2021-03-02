@@ -172,7 +172,7 @@ export default function TruckCostDetails(props) {
               <React.Fragment>
                 <TableRow className={classes.root}>
                   <TableCell>
-                    {row.additionalDetails.immediatePricing == null ? (
+                    {row.additionalDetails[0].immediatePricing == null ? (
                       <IconButton
                         disabled={true}
                         aria-label="expand row"
@@ -210,16 +210,14 @@ export default function TruckCostDetails(props) {
                   <TableCell component="th" scope="row">
                     {row.capability}
                   </TableCell>
-                  <TableCell>
-                    {row.capacity.lowCapacity}-{row.capacity.highCapacity} Tons
-                  </TableCell>
+                  <TableCell>{row.capacity} Tons</TableCell>
                   <TableCell>
                     {row.rangeinkms.lowRange}-{row.rangeinkms.highRange} kms
                   </TableCell>
                   <TableCell>
                     ₹{" "}
                     {row.price == null
-                      ? row.additionalDetails.immediatePricing
+                      ? row.additionalDetails[0].immediatePricing
                       : row.price}{" "}
                   </TableCell>
                 </TableRow>
@@ -229,77 +227,95 @@ export default function TruckCostDetails(props) {
                     colSpan={6}
                   >
                     <Collapse in={isItemOpened} timeout="auto" unmountOnExit>
-                      <Box margin={1}>
-                        <Typography variant="h6" gutterBottom component="div">
-                          More Details
-                        </Typography>
-                        <Grid container spacing={0} style={{ padding: 0 }}>
-                          <Grid item xs={12} sm={6}>
-                            <TableRow>
-                              <TableCell
-                                component="th"
-                                scope="row"
-                                style={{ borderBottom: "none" }}
-                              >
-                                Source Location :
-                              </TableCell>
-                              <TableCell style={{ borderBottom: "none" }}>
-                                {row.additionalDetails.sourceLocation}
-                              </TableCell>
-                            </TableRow>
-                            <TableRow>
-                              <TableCell
-                                component="th"
-                                scope="row"
-                                style={{ borderBottom: "none" }}
-                              >
-                                Immediate Pricing :
-                              </TableCell>
-                              <TableCell style={{ borderBottom: "none" }}>
-                                ₹ {row.additionalDetails.immediatePricing}
-                              </TableCell>
-                            </TableRow>
-                            <TableRow>
-                              <TableCell
-                                component="th"
-                                scope="row"
-                                style={{ borderBottom: "none" }}
-                              >
-                                Delivery Commitment :
-                              </TableCell>
-                              <TableCell style={{ borderBottom: "none" }}>
-                                {row.additionalDetails.deliveryCommitment} Days
-                              </TableCell>
-                            </TableRow>
-                          </Grid>
-                          <Grid item xs={12} sm={6}>
-                            <TableRow>
-                              <TableCell
-                                component="th"
-                                scope="row"
-                                style={{ borderBottom: "none" }}
-                              >
-                                Destination Location :
-                              </TableCell>
-                              <TableCell style={{ borderBottom: "none" }}>
-                                {row.additionalDetails.destinationLocation}
-                              </TableCell>
-                            </TableRow>
-                            <TableRow>
-                              <TableCell
-                                component="th"
-                                scope="row"
-                                style={{ borderBottom: "none" }}
-                              >
-                                30 Days Pricing :
-                              </TableCell>
-                              <TableCell style={{ borderBottom: "none" }}>
-                                ₹ {row.additionalDetails.thirtyDaysPricing}
-                              </TableCell>
-                            </TableRow>
-                          </Grid>
-                        </Grid>
-                      </Box>
+                      <Typography
+                        style={{ paddingLeft: 30 }}
+                        variant="h6"
+                        gutterBottom
+                        component="div"
+                      >
+                        More Details
+                      </Typography>
+                      {row.additionalDetails.map((details, i) => {
+                        return (
+                          <Box margin={1}>
+                            <Typography
+                              style={{
+                                paddingLeft: 30,
+                                color: "black",
+                                backgroundColor: "lightgrey",
+                              }}
+                            >
+                              Route {i + 1}
+                            </Typography>
+                            <Grid container spacing={0} style={{ padding: 0 }}>
+                              <Grid item xs={12} sm={6}>
+                                <TableRow>
+                                  <TableCell
+                                    component="th"
+                                    scope="row"
+                                    style={{ borderBottom: "none" }}
+                                  >
+                                    Source Location :
+                                  </TableCell>
+                                  <TableCell style={{ borderBottom: "none" }}>
+                                    {details.sourceLocation}
+                                  </TableCell>
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell
+                                    component="th"
+                                    scope="row"
+                                    style={{ borderBottom: "none" }}
+                                  >
+                                    Immediate Pricing :
+                                  </TableCell>
+                                  <TableCell style={{ borderBottom: "none" }}>
+                                    ₹ {details.immediatePricing}
+                                  </TableCell>
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell
+                                    component="th"
+                                    scope="row"
+                                    style={{ borderBottom: "none" }}
+                                  >
+                                    Delivery Commitment :
+                                  </TableCell>
+                                  <TableCell style={{ borderBottom: "none" }}>
+                                    {details.deliveryCommitment.toString()} Days
+                                  </TableCell>
+                                </TableRow>
+                              </Grid>
+                              <Grid item xs={12} sm={6}>
+                                <TableRow>
+                                  <TableCell
+                                    component="th"
+                                    scope="row"
+                                    style={{ borderBottom: "none" }}
+                                  >
+                                    Destination Location :
+                                  </TableCell>
+                                  <TableCell style={{ borderBottom: "none" }}>
+                                    {details.destinationLocation}
+                                  </TableCell>
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell
+                                    component="th"
+                                    scope="row"
+                                    style={{ borderBottom: "none" }}
+                                  >
+                                    30 Days Pricing :
+                                  </TableCell>
+                                  <TableCell style={{ borderBottom: "none" }}>
+                                    ₹ {details.thirtyDaysPricing}
+                                  </TableCell>
+                                </TableRow>
+                              </Grid>
+                            </Grid>
+                          </Box>
+                        );
+                      })}
                     </Collapse>
                   </TableCell>
                 </TableRow>

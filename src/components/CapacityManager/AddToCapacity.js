@@ -5,6 +5,8 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
+import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
+import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Tooltip from "@material-ui/core/Tooltip";
@@ -15,6 +17,7 @@ import CreatableSelect from "react-select/creatable";
 import {
   TextField,
   Grid,
+  IconButton,
   CardContent,
   FormControl,
   InputLabel,
@@ -85,16 +88,19 @@ const AddTocapacity = (props) => {
   const classes = useStyles();
 
   const [type, setType] = useState("truck");
-
+  const [currentUser, setCurrentUser] = useState(null);
   const [truckNumber, setTruckNumber] = useState();
-  const [RatePerKM, setRatePerKM] = useState();
+  const [CostId, setCostId] = useState();
   const [size, setSize] = useState();
   const [unit, setUnit] = useState("tons");
   const [ownership, setOwnership] = useState("self");
   const [location, setLocation] = useState();
+  const [capacity, setCapacity] = useState();
+  const [price, setPrice] = useState();
+  const [distance, setDistance] = useState();
+  const [isNew, setIsNew] = useState(false); 
   const [ThirtyDaysPricing, setThirtyDaysPricing] = useState();
   const [ImmidiatePricing, setImmidiatePricing] = useState();
-  const [DeliveryRange, setDeliveryRange] = useState();
   const [pin, setPin] = useState();
   const [capability, setCapability] = useState("");
   const [Features, setFeatures] = useState([]);
@@ -103,11 +109,12 @@ const AddTocapacity = (props) => {
   const [availableFrom, setAvailableFrom] = useState("");
   const [availableTo, setAvailableTo] = useState("");
   const [assetActive, setAssetActive] = useState(true);
+  const [ExpandDetails, setExpandDetails] = useState(false);
   const [pindata, setpindata] = useState("");
   const [costData, setCostData] = useState([]);
-  const [costRange, setcostRange] = useState();
-  const [costPrice, setcostPrice] = useState();
-  const [costCapacity, setcostCapacity] = useState();
+  const [DeliveryPromise, setDeliveryPromise] = useState();
+  const [SourceLocation, setSourceLocation] = useState();
+  const [DestinationLocation, setDestinationLocation] = useState();
   /**Validators */
   const [pinValidator, setPinValidator] = useState("");
   const [capacityValidator, setCapacityValidator] = useState("");
@@ -153,9 +160,7 @@ const AddTocapacity = (props) => {
   // const unitChangeController = (event) => {
   //     setUnit(event.target.value)
   // }
-  const ownershipChangeController = (event) => {
-    setOwnership(event);
-  };
+
   const onLocationChangeController = (event) => {
     setLocation(event.target.value);
   };
@@ -165,9 +170,7 @@ const AddTocapacity = (props) => {
   const onThirtyDaysPricingController = (event) => {
     setThirtyDaysPricing(event.target.value);
   };
-  const onDeliveryRangeChangeController = (event) => {
-    setDeliveryRange(event.target.value);
-  };
+
   const onPinChangeController = (event) => {
     var pickupPinCode = parseInt(event.target.value, 10);
     var greater = 999999,
@@ -199,85 +202,71 @@ const AddTocapacity = (props) => {
     setFeatures(event);
   };
   const onRateCapabilityChange = (event) => {
-    if (
-      event.value.rangeinkms.lowRange == 0 &&
-      event.value.rangeinkms.highRange == 200
-    ) {
-      setcostRange("0 - 200 Kms");
-    }
-    if (
-      event.value.rangeinkms.lowRange == 200 &&
-      event.value.rangeinkms.highRange == 400
-    ) {
-      setcostRange("200 - 400 Kms");
-    }
-    if (
-      event.value.rangeinkms.lowRange == 400 &&
-      event.value.rangeinkms.highRange == 800
-    ) {
-      setcostRange("400 - 800 Kms");
-    }
-    if (
-      event.value.rangeinkms.lowRange == 800 &&
-      event.value.rangeinkms.highRange == 2000
-    ) {
-      setcostRange("800+ Kms");
-    }
-    if (
-      event.value.capacity.lowCapacity == 0 &&
-      event.value.capacity.highCapacity == 2
-    ) {
-      setcostCapacity("0 - 2 Tons");
-    }
-    if (
-      event.value.capacity.lowCapacity == 2 &&
-      event.value.capacity.highCapacity == 4
-    ) {
-      setcostCapacity("2 - 4 Tons");
-    }
-    if (
-      event.value.capacity.lowCapacity == 4 &&
-      event.value.capacity.highCapacity == 8
-    ) {
-      setcostCapacity("4 - 8 Tons");
-    }
-    if (
-      event.value.capacity.lowCapacity == 8 &&
-      event.value.capacity.highCapacity == 14
-    ) {
-      setcostCapacity("8 - 14 Tons");
-    }
-    if (
-      event.value.capacity.lowCapacity == 14 &&
-      event.value.capacity.highCapacity == 20
-    ) {
-      setcostCapacity("14 - 20 Tons");
-    }
-    if (
-      event.value.capacity.lowCapacity == 20 &&
-      event.value.capacity.highCapacity == 26
-    ) {
-      setcostCapacity("20 - 26 Tons");
-    }
-    if (
-      event.value.capacity.lowCapacity == 26 &&
-      event.value.capacity.highCapacity == 100
-    ) {
-      setcostCapacity("26+ Tons");
-    }
-    if (event.value.price == null || event.value.price == "") {
-      setcostPrice(event.value.additionalDetails.immediatePricing);
-    } else {
-      setcostPrice(event.value.price);
-    }
+    var i;
+    var j;
+    for (i = 0; i < costData.length; i++) {
+      if (event.value === costData[i].label) {
+        setIsNew(true);
+        setPrice(costData[i].value.price);
+        setCostId(costData[i].value.costId);
+        setImmidiatePricing(
+          costData[i].value.additionalDetails[0].immediatePricing
+        );
+        setThirtyDaysPricing(
+          costData[i].value.additionalDetails[0].thirtyDaysPricing
+        );
+        setSourceLocation(
+          costData[i].value.additionalDetails[0].sourceLocation
+        );
+        setDestinationLocation(
+          costData[i].value.additionalDetails[0].destinationLocation
+        );
+        for (j = 0; j < constants.truckCapacityOptions.length; j++) {
+          if (
+            constants.truckCapacityOptions[j].value ===
+            costData[i].value.capacity
+          ) {
+            setCapacity(constants.truckCapacityOptions[j]);
+          }
+        }
+        for (j = 0; j < constants.DeliveryCommitmentOptions.length; j++) {
+          if (
+            constants.DeliveryCommitmentOptions[j].value ==
+            costData[i].value.additionalDetails[0].deliveryCommitment
+          ) {
+            setDeliveryPromise(constants.DeliveryCommitmentOptions[j]);
+          }
+        }
 
-    setRatecapability(event);
+        for (j = 0; j < constants.DistanceOptions.length; j++) {
+          if (
+            constants.DistanceOptions[j].value.lowRange ===
+            costData[i].value.rangeinkms.lowRange
+          ) {
+            setDistance(constants.DistanceOptions[j]);
+          }
+        }
+      }
+      setRatecapability(event);
+    }
   };
-  const onRatePerKMChangeController = (event) => {
-    setRatePerKM(event.target.value);
+  const onCapacityChange = (event) => {
+    setCapacity(event);
+  };
+  const onPriceChange = (event) => {
+    setPrice(event.target.value);
+  };
+  const onDistanceChange = (event) => {
+    setDistance(event);
   };
 
   useEffect(async () => {
+    const setUser = async () => {
+      var currentUser = await Auth.currentUserInfo();
+      var owner = currentUser.username;
+      setCurrentUser(owner);
+    };
+    setUser();
     var currentUser = await Auth.currentUserInfo();
     var owner = currentUser.username;
     API.get(
@@ -295,7 +284,7 @@ const AddTocapacity = (props) => {
           });
         }
         setCostData(temp);
-
+        //  alert(JSON.stringify(temp));
         setLoading(false);
       })
       .catch((error) => {
@@ -304,6 +293,94 @@ const AddTocapacity = (props) => {
       });
   }, []);
 
+  const EditOldPricing = async () => {
+    setLoading(true);
+    var items = [];
+
+    const data = {
+      costId: CostId,
+      serviceProviderId: currentUser,
+      assetType: type.value,
+      capability: capability.value,
+      capacity: capacity.value,
+      rangeinkms: distance.value,
+      price: price,
+      additionalDetails: [
+        {
+          sourceLocation: SourceLocation,
+          sourceArea: "",
+          sourcePinData: [],
+          destinationArea: "",
+          destinationPinData: [],
+          destinationLocation: DestinationLocation,
+          thirtyDaysPricing: ThirtyDaysPricing,
+          immediatePricing: ImmidiatePricing,
+          deliveryCommitment: DeliveryPromise.value,
+        },
+      ],
+    };
+    const payload = {
+      body: data,
+    };
+    items.push(
+      API.put("GoFlexeOrderPlacement", `/serviceprovidercost`, payload)
+        .then((response) => {
+          console.log(response);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.log(error.response);
+          setLoading(false);
+        })
+    );
+    setLoading(false);
+    props.toggleForm();
+    return await Promise.all(items);
+  };
+
+  const SubmitNewPricing = async () => {
+    setLoading(true);
+    var items = [];
+
+    const data = {
+      serviceProviderId: currentUser,
+      assetType: type.value,
+      capability: capability.value,
+      capacity: capacity.value,
+      rangeinkms: distance.value,
+      price: price,
+      additionalDetails: [
+        {
+          sourceLocation: SourceLocation,
+          sourceArea: "",
+          sourcePinData: [],
+          destinationArea: "",
+          destinationPinData: [],
+          destinationLocation: DestinationLocation,
+          thirtyDaysPricing: ThirtyDaysPricing,
+          immediatePricing: ImmidiatePricing,
+          deliveryCommitment: DeliveryPromise.value,
+        },
+      ],
+    };
+    const payload = {
+      body: data,
+    };
+    items.push(
+      API.post("GoFlexeOrderPlacement", `/serviceprovidercost`, payload)
+        .then((response) => {
+          console.log(response);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.log(error.response);
+          setLoading(false);
+        })
+    );
+    setLoading(false);
+    props.toggleForm();
+    return await Promise.all(items);
+  };
   const submitCapacity = async () => {
     if (type.value == null || type.value == "") {
       alert("Please select Asset type.");
@@ -531,52 +608,173 @@ const AddTocapacity = (props) => {
           {Ratecapability.length !== 0 ? (
             <Grid container spacing={3} style={{ padding: 50 }}>
               <Grid item xs={12} sm={4}>
-                <TextField disabled={true} value={costPrice} label="Price" />
+                <TextField
+                  size="small"
+                  variant="outlined"
+                  value={price}
+                  label="Price"
+                  InputLabelProps={{ shrink: true }}
+                  onChange={(event) => onPriceChange(event)}
+                />
               </Grid>
               <Grid item xs={12} sm={4}>
-                <TextField
-                  disabled={true}
-                  value={costRange}
-                  label="Range in Kms"
-                />
-                {/* <Select
+                <Select
                   styles={selectStyles}
                   className="basic-single"
                   classNamePrefix="Capacity"
                   isSearchable
                   name="Capacity"
                   placeholder="Capacity"
-                  value={costCapacity}
-                  // onChange={(event) => onCapacityChange(event, i)}
-                  options={constants.CapacityOptions} */}
+                  value={capacity}
+                  onChange={(event) => onCapacityChange(event)}
+                  options={constants.truckCapacityOptions}
+                />
               </Grid>
               <Grid item xs={12} sm={4}>
-                <TextField
-                  disabled={true}
-                  value={costCapacity}
-                  label="Capacity"
-                />
-                {/* <Select
+                <Select
                   styles={selectStyles}
                   className="basic-single"
-                  classNamePrefix="Range"
+                  classNamePrefix="Distance"
                   isSearchable
-                  name="Range"
-                  placeholder="Range"
-                  value={costPrice}
-                  // onChange={(event) => onRangeinKmsChange(event, i)}
-                  options={constants.RangeOptions}
-                /> */}
+                  name="Distance"
+                  placeholder="Distance"
+                  value={distance}
+                  onChange={(event) => onDistanceChange(event)}
+                  options={constants.DistanceOptions}
+                />
               </Grid>
+              <Grid item>
+                <TableContainer>
+                  <Table aria-label="simple table">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell
+                          style={{
+                            padding: 0,
+                            margin: 0,
+                            borderBottom: "none",
+                          }}
+                        >
+                          Add Route (Optional)
+                        </TableCell>
+                        <TableCell
+                          align="left"
+                          style={{
+                            padding: 0,
+                            margin: 0,
+                            borderBottom: "none",
+                          }}
+                        >
+                          <IconButton
+                            style={{ padding: 0, margin: 0, outline: "none" }}
+                            aria-label="expand row"
+                            size="small"
+                            onClick={() => {
+                              ExpandDetails == true
+                                ? setExpandDetails(false)
+                                : setExpandDetails(true);
+                            }}
+                          >
+                            {ExpandDetails == true ? (
+                              <KeyboardArrowUpIcon />
+                            ) : (
+                              <KeyboardArrowDownIcon />
+                            )}
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                  </Table>
+                </TableContainer>
+              </Grid>
+              {ExpandDetails == true ? (
+                <Grid container spacing={3}>
+                  <Grid item xs={12} sm={3}>
+                    <TextField
+                      required
+                      InputLabelProps={{ shrink: true }}
+                      // type="number"
+                      id="Source"
+                      name="Source"
+                      label="Source Location Zip"
+                      PinCode
+                      value={SourceLocation}
+                      size="small"
+                      variant="outlined"
+                      autoComplete="Pickup postal-code"
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={3}>
+                    <TextField
+                      InputLabelProps={{ shrink: true }}
+                      required
+                      fullWidth
+                      label="Destination Location Zip"
+                      // type="number"
+                      value={DestinationLocation}
+                      className={classes.textField}
+                      variant="outlined"
+                      size="small"
+                      autoComplete="Pickup postal-code"
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      InputLabelProps={{ shrink: true }}
+                      label="30 Days Pricing"
+                      //type="number"
+                      className={classes.textField}
+                      variant="outlined"
+                      size="small"
+                      value={ThirtyDaysPricing}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">₹</InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      label="Immediate Payment Pricing"
+                      //type="number"
+                      value={ImmidiatePricing}
+                      className={classes.textField}
+                      variant="outlined"
+                      InputLabelProps={{ shrink: true }}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">₹</InputAdornment>
+                        ),
+                      }}
+                      size="small"
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={6}>
+                    <Select
+                      styles={selectStyles}
+                      value={DeliveryPromise}
+                      className="basic-single"
+                      classNamePrefix="Delivery Commitment"
+                      isSearchable
+                      name="Delivery Commitment"
+                      placeholder="Delivery Commitment"
+                      options={constants.DeliveryCommitmentOptions}
+                    />
+                  </Grid>
+                </Grid>
+              ) : (
+                <br />
+              )}{" "}
             </Grid>
           ) : (
             <br />
           )}
-          <Grid item xs={12} sm={12}>
-            <Link to="/CostManager">
-              <p>Fill new Cost information</p>
-            </Link>
-          </Grid>
           {renderCapabilityForm()}
         </Grid>{" "}
         <Grid
@@ -614,7 +812,7 @@ const AddTocapacity = (props) => {
         style={{
           float: "right",
           backgroundColor: "#f9a825",
-          marginBottom: "20px",
+          marginBottom: 50,
           marginRight: 30,
         }}
       >
