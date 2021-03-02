@@ -172,13 +172,13 @@ const CostManager = (props) => {
       });
   }, []);
 
-  useEffect(() => {}, []);
-  const emptyPinValidator = (string) => {
-    if (string === "" || string == null) {
-      return false;
-    }
-    return true;
-  };
+  // useEffect(() => {}, []);
+  // const emptyPinValidator = (string) => {
+  //   if (string === "" || string == null) {
+  //     return false;
+  //   }
+  //   return true;
+  // };
 
   const handleItemDeleted = (i) => {
     var items = chosenProducts.slice();

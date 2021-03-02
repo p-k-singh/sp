@@ -73,6 +73,16 @@ const AddTruckCost = (props) => {
   const classes = useStyles();
   const [currentUser, setCurrentUser] = useState(null);
 
+  const [sourcePinCodes,setSourcePinCodes] = useState([
+    {
+      sourceLocation:[
+        {
+          pin:""
+        }
+      ]
+    }
+  ])
+
   const [chosenProducts, setChosenProducts] = useState([
     {
       capability: null,
@@ -101,6 +111,12 @@ const AddTruckCost = (props) => {
   const [capability, setCapability] = useState([]);
   const [loading, setLoading] = useState(false);
 
+
+  useEffect(()=>{
+
+  },[sourcePinCodes])
+
+
   const onsourceAreaChangeController = (event, i, j) => {
     var items = chosenProducts.slice();
     items[i].additionalDetails[j].sourceArea = event.target.value;
@@ -125,6 +141,17 @@ const AddTruckCost = (props) => {
 
   const addproduct = () => {
     var items = chosenProducts.slice();
+
+    var pins = sourcePinCodes.slice();
+    pins.push({
+      sourceLocation:[
+        {
+          pin:""
+        }
+      ]
+    })
+    setSourcePinCodes(pins)
+
     items.push({
       capability: null,
       capacity: null,
@@ -150,8 +177,16 @@ const AddTruckCost = (props) => {
     });
     setChosenProducts(items);
   };
-  const addroute = (i, j) => {
+  const addroute = (i) => {
     var items = chosenProducts.slice();
+
+    var pins = sourcePinCodes.slice();
+    pins[i].sourceLocation.push({
+      pin:""
+    })
+    setSourcePinCodes(pins)
+
+
     items[i].additionalDetails.push({
       sourceLocation: "",
       sourceZipValidator: "",
@@ -176,6 +211,13 @@ const AddTruckCost = (props) => {
     }),
   };
   const onsourceLocationChangeController = (event, i, j) => {
+
+    var pins = sourcePinCodes.slice();
+    pins[i].sourceLocation[j].pin = event.target.value
+    setSourcePinCodes(pins)
+    
+
+
     var sourcePinCode = parseInt(event.target.value, 10);
     var items = chosenProducts.slice();
     if (sourcePinCode < 0) {
@@ -185,7 +227,7 @@ const AddTruckCost = (props) => {
       return;
     } else {
       items[i].additionalDetails[j].sourceZipValidator = "";
-      setChosenProducts(items);
+     // setChosenProducts(items);
     }
     var count = 0,
       temp = sourcePinCode;
@@ -193,18 +235,26 @@ const AddTruckCost = (props) => {
       count++;
       temp = Math.floor(temp / 10);
     }
+    items[i].additionalDetails[j].sourceLocation=event.target.value
+    
     if (count === 6) {
+      
       const api_url = "https://api.postalpincode.in/pincode/" + sourcePinCode;
       // alert("Hello");
       fetch(api_url).then((response) => {
+       // alert(response)
         response.json().then((data) => {
           if (data !== null && data[0].PostOffice !== null) {
             items[i].additionalDetails[j].sourcePinData = data[0].PostOffice;
-            setChosenProducts(items);
+           // setChosenProducts(items);
           }
           setChosenProducts(items);
         });
-      });
+      })
+      .catch(err=>{
+        console.log(err);
+        setChosenProducts(items);
+      })
       // async function getapi(url) {
       //   const response = await fetch(url);
       //   var data = await response.json();
@@ -219,16 +269,11 @@ const AddTruckCost = (props) => {
       // }
       // getapi(api_url);
     }
-    if (count !== 6) {
-      items[i].additionalDetails[j].sourceZipValidator =
-        "Must be of six digits";
-      setChosenProducts(items);
-    } else {
-      items[i].additionalDetails[j].sourceZipValidator = "";
+    else{
+      items[i].additionalDetails[j].sourceZipValidator = "Pin must be of 6 digits";
       setChosenProducts(items);
     }
-    items[i].additionalDetails[j].sourceLocation = event.target.value;
-    setChosenProducts(items);
+   
   };
   const onDestinationLocationChangeController = (event, i, j) => {
     var destinationPinCode = parseInt(event.target.value, 10);
@@ -542,6 +587,7 @@ const AddTruckCost = (props) => {
                     chosenProducts[i].additionalDetails[j]
                       .sourceZipValidator !== ""
                   }
+                  
                   helperText={
                     chosenProducts[i].additionalDetails[j]
                       .sourceZipValidator === ""
@@ -561,7 +607,8 @@ const AddTruckCost = (props) => {
                   name="Source"
                   label="Source Location Zip"
                   PinCode
-                  value={chosenProducts[i].additionalDetails[j].sourceLocation}
+                  // value={chosenProducts[i].additionalDetails[j].sourceLocation}
+                  value={sourcePinCodes[i].sourceLocation[j].pin}
                   onChange={(event) =>
                     onsourceLocationChangeController(event, i, j)
                   }
