@@ -142,16 +142,20 @@ export default function Dashboard() {
   const list = [
     { title: "Dashboard", to: "/", icon: <DashboardIcon /> },
     { title: "My Orders", to: "/my-orders", icon: <AddShoppingCartIcon /> },
-    { title: "Capacity Manager", to: "/capacity", icon: <BatteryFullIcon /> },
+    {
+      title: "Availability Manager",
+      to: "/capacity",
+      icon: <BatteryFullIcon />,
+    },
     { title: "Cost Manager", to: "/CostManager", icon: <MonetizationOnIcon /> },
 
     {
-      title: "Tasks",
+      title: "My WorkList",
       to: "/TaskManager",
       icon: (
-        <Badge badgeContent={5} color="secondary">
-          <AssignmentIcon />
-        </Badge>
+        // <Badge badgeContent={5} color="secondary">
+        <AssignmentIcon />
+        // </Badge>
       ),
     },
     { title: "User Manager", to: "/userManager", icon: <GroupIcon /> },

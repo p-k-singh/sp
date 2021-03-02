@@ -1,17 +1,23 @@
-import React, { useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useState, useEffect } from "react";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
+import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
+import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Tooltip from "@material-ui/core/Tooltip";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import InfoIcon from "@material-ui/icons/Info";
 import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 import {
   TextField,
   Grid,
+  IconButton,
   CardContent,
   FormControl,
   InputLabel,
@@ -19,6 +25,7 @@ import {
   Switch,
   Card,
   Container,
+  Checkbox,
 } from "@material-ui/core";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Typography from "@material-ui/core/Typography";
@@ -27,6 +34,7 @@ import { Multiselect } from "multiselect-react-dropdown";
 import constants from "../../Constants/constants";
 import { Auth, API } from "aws-amplify";
 import Spinner from "../UI/Spinner";
+import CostManager from "../Cost Manager/Cost Manager";
 const useStyles = makeStyles({
   root: {
     // minWidth: 275,
@@ -80,45 +88,42 @@ const AddTocapacity = (props) => {
   const classes = useStyles();
 
   const [type, setType] = useState("truck");
-
+  const [currentUser, setCurrentUser] = useState(null);
   const [truckNumber, setTruckNumber] = useState();
-  const [RatePerKM, setRatePerKM] = useState();
+  const [CostId, setCostId] = useState();
   const [size, setSize] = useState();
   const [unit, setUnit] = useState("tons");
   const [ownership, setOwnership] = useState("self");
   const [location, setLocation] = useState();
+  const [capacity, setCapacity] = useState();
+  const [price, setPrice] = useState();
+  const [distance, setDistance] = useState();
+  const [isNew, setIsNew] = useState(false);
   const [ThirtyDaysPricing, setThirtyDaysPricing] = useState();
   const [ImmidiatePricing, setImmidiatePricing] = useState();
-  const [DeliveryRange, setDeliveryRange] = useState();
   const [pin, setPin] = useState();
-  const [capability, setCapability] = useState([]);
+  const [capability, setCapability] = useState("");
+  const [Features, setFeatures] = useState([]);
+  const [Ratecapability, setRatecapability] = useState([]);
   const [loading, setLoading] = useState(false);
   const [availableFrom, setAvailableFrom] = useState("");
   const [availableTo, setAvailableTo] = useState("");
   const [assetActive, setAssetActive] = useState(true);
+  const [ExpandDetails, setExpandDetails] = useState(false);
   const [pindata, setpindata] = useState("");
+  const [costData, setCostData] = useState([]);
+  const [DeliveryPromise, setDeliveryPromise] = useState();
+  const [SourceLocation, setSourceLocation] = useState();
+  const [DestinationLocation, setDestinationLocation] = useState();
   /**Validators */
   const [pinValidator, setPinValidator] = useState("");
   const [capacityValidator, setCapacityValidator] = useState("");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 
   const capabilityOptions = {
     options: constants.capabilityOptions,
   };
-  // const api_url = "https://api.postalpincode.in/pincode/301411";
 
-  // // Defining async function
-  // async function getapi(url) {
-  //   // Storing response
-
-  //   const response = await fetch(url);
-
-  //   // Storing data in form of JSON
-  //   var data = await response.json();
-  //   console.log(data);
-  //   setpindata(data);
-  // }
-  // // Calling that async function
-  // getapi(api_url);
   const selectStyles = {
     menu: (base) => ({
       ...base,
@@ -155,9 +160,7 @@ const AddTocapacity = (props) => {
   // const unitChangeController = (event) => {
   //     setUnit(event.target.value)
   // }
-  const ownershipChangeController = (event) => {
-    setOwnership(event);
-  };
+
   const onLocationChangeController = (event) => {
     setLocation(event.target.value);
   };
@@ -167,9 +170,7 @@ const AddTocapacity = (props) => {
   const onThirtyDaysPricingController = (event) => {
     setThirtyDaysPricing(event.target.value);
   };
-  const onDeliveryRangeChangeController = (event) => {
-    setDeliveryRange(event.target.value);
-  };
+
   const onPinChangeController = (event) => {
     var pickupPinCode = parseInt(event.target.value, 10);
     var greater = 999999,
@@ -195,11 +196,201 @@ const AddTocapacity = (props) => {
     setAvailableTo(event.target.value);
   };
   const onCapabilitiesChange = (event) => {
-    //alert(event)
     setCapability(event);
   };
-  const onRatePerKMChangeController = (event) => {
-    setRatePerKM(event.target.value);
+  const onFeaturesChange = (event) => {
+    setFeatures(event);
+  };
+  const onRateCapabilityChange = (event) => {
+    var i;
+    var j;
+
+    setIsNew(false);
+    setPrice("");
+    setCostId(null);
+    setImmidiatePricing("");
+    setThirtyDaysPricing("");
+    setSourceLocation("");
+    setDestinationLocation("");
+    setCapacity(null);
+    setDeliveryPromise(null);
+    setDistance(null);
+    for (i = 0; i < costData.length; i++) {
+      if (event.value === costData[i].label) {
+        setIsNew(true);
+        setPrice(costData[i].value.price);
+        setCostId(costData[i].value.costId);
+        setImmidiatePricing(
+          costData[i].value.additionalDetails[0].immediatePricing
+        );
+        setThirtyDaysPricing(
+          costData[i].value.additionalDetails[0].thirtyDaysPricing
+        );
+        setSourceLocation(
+          costData[i].value.additionalDetails[0].sourceLocation
+        );
+        setDestinationLocation(
+          costData[i].value.additionalDetails[0].destinationLocation
+        );
+        for (j = 0; j < constants.truckCapacityOptions.length; j++) {
+          if (
+            constants.truckCapacityOptions[j].value ===
+            costData[i].value.capacity
+          ) {
+            setCapacity(constants.truckCapacityOptions[j]);
+          }
+        }
+        for (j = 0; j < constants.DeliveryCommitmentOptions.length; j++) {
+          if (
+            constants.DeliveryCommitmentOptions[j].value ==
+            costData[i].value.additionalDetails[0].deliveryCommitment
+          ) {
+            setDeliveryPromise(constants.DeliveryCommitmentOptions[j]);
+          }
+        }
+
+        for (j = 0; j < constants.DistanceOptions.length; j++) {
+          if (
+            constants.DistanceOptions[j].value.lowRange ===
+            costData[i].value.rangeinkms.lowRange
+          ) {
+            setDistance(constants.DistanceOptions[j]);
+          }
+        }
+      }
+      setRatecapability(event);
+    }
+  };
+  const onCapacityChange = (event) => {
+    setCapacity(event);
+  };
+  const onPriceChange = (event) => {
+    setPrice(event.target.value);
+  };
+  const onDistanceChange = (event) => {
+    setDistance(event);
+  };
+
+  useEffect(async () => {
+    const setUser = async () => {
+      var currentUser = await Auth.currentUserInfo();
+      var owner = currentUser.username;
+      setCurrentUser(owner);
+    };
+    setUser();
+    var currentUser = await Auth.currentUserInfo();
+    var owner = currentUser.username;
+    API.get(
+      "GoFlexeOrderPlacement",
+      `/serviceprovidercost?type=serviceProviderId&serviceProviderId=${owner}`
+    )
+      .then((resp) => {
+        console.log(resp);
+
+        var temp = costData.slice();
+        for (var i = 0; i < resp.length; i++) {
+          temp.push({
+            label: resp[i].capability,
+            value: resp[i],
+          });
+        }
+        setCostData(temp);
+        //  alert(JSON.stringify(temp));
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error.response);
+        setLoading(false);
+      });
+  }, []);
+
+  const EditOldPricing = async () => {
+    setLoading(true);
+    var items = [];
+
+    const data = {
+      costId: CostId,
+      serviceProviderId: currentUser,
+      assetType: type.value,
+      capability: capability.value,
+      capacity: capacity.value,
+      rangeinkms: distance.value,
+      price: price,
+      additionalDetails: [
+        {
+          sourceLocation: SourceLocation,
+          sourceArea: "",
+          sourcePinData: [],
+          destinationArea: "",
+          destinationPinData: [],
+          destinationLocation: DestinationLocation,
+          thirtyDaysPricing: ThirtyDaysPricing,
+          immediatePricing: ImmidiatePricing,
+          deliveryCommitment: DeliveryPromise.value,
+        },
+      ],
+    };
+    const payload = {
+      body: data,
+    };
+    items.push(
+      API.put("GoFlexeOrderPlacement", `/serviceprovidercost`, payload)
+        .then((response) => {
+          console.log(response);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.log(error.response);
+          setLoading(false);
+        })
+    );
+    setLoading(false);
+    props.toggleForm();
+    return await Promise.all(items);
+  };
+
+  const SubmitNewPricing = async () => {
+    setLoading(true);
+    var items = [];
+
+    const data = {
+      serviceProviderId: currentUser,
+      assetType: type.value,
+      capability: capability.value,
+      capacity: capacity.value,
+      rangeinkms: distance.value,
+      price: price,
+      additionalDetails: [
+        {
+          sourceLocation: SourceLocation,
+          sourceArea: "",
+          sourcePinData: [],
+          destinationArea: "",
+          destinationPinData: [],
+          destinationLocation: DestinationLocation,
+          thirtyDaysPricing: ThirtyDaysPricing,
+          immediatePricing: ImmidiatePricing,
+          deliveryCommitment: DeliveryPromise.value,
+        },
+      ],
+    };
+    const payload = {
+      body: data,
+    };
+    items.push(
+      API.post("GoFlexeOrderPlacement", `/serviceprovidercost`, payload)
+        .then((response) => {
+          console.log(response);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.log(error.response);
+          setLoading(false);
+        })
+    );
+    setLoading(false);
+    props.toggleForm();
+    return await Promise.all(items);
   };
   const submitCapacity = async () => {
     if (type.value == null || type.value == "") {
@@ -250,6 +441,7 @@ const AddTocapacity = (props) => {
       alert("Pin cannot be Empty");
       return;
     }
+
     setLoading(true);
     var currentUser = await Auth.currentUserInfo();
     var owner = currentUser.username;
@@ -266,17 +458,16 @@ const AddTocapacity = (props) => {
       location: location,
       active: assetActive,
       pincode: pin,
-      ThirtyDaysPricing: ThirtyDaysPricing,
-      ImmidiatePricing: ImmidiatePricing,
-      DeliveryRange: DeliveryRange,
-      RatePerKM: RatePerKM,
+      // ThirtyDaysPricing: ThirtyDaysPricing,
+      // ImmidiatePricing: ImmidiatePricing,
+      // DeliveryRange: DeliveryRange,
+      // RatePerKM: RatePerKM,
     };
     const payload = {
       body: data,
     };
     API.post("GoFlexeOrderPlacement", `/capacity`, payload)
       .then((response) => {
-        // Add your code here
         console.log(response);
         setLoading(false);
       })
@@ -288,11 +479,12 @@ const AddTocapacity = (props) => {
     setLoading(false);
     props.changeDisplaySetting("storage");
   };
-  const setCapabilityKeyValues = (event, idx) => {
-    var items = capability.slice();
+  const setFeaturesKeyValues = (event, idx) => {
+    var items = Features.slice();
     items[idx].data = event.target.value;
-    setCapability(items);
+    setFeatures(items);
   };
+
   const renderCapabilityForm = () => {
     return (
       <Container style={{ marginTop: 20 }}>
@@ -301,13 +493,13 @@ const AddTocapacity = (props) => {
           spacing={3}
           style={{ paddingLeft: 50, paddingRight: 50, paddingBottom: 50 }}
         >
-          {capability.map((row, idx) => (
+          {Features.map((row, idx) => (
             <Grid item xs={12} sm={4}>
               <TextField
                 value={row.data}
                 id={row.label}
                 name={row.value}
-                onChange={(event) => setCapabilityKeyValues(event, idx)}
+                onChange={(event) => setFeaturesKeyValues(event, idx)}
                 label={row.label}
                 helperText={row.unit}
               />
@@ -319,6 +511,7 @@ const AddTocapacity = (props) => {
       // </Card>
     );
   };
+
   if (loading === true) {
     return <Spinner />;
   }
@@ -326,7 +519,6 @@ const AddTocapacity = (props) => {
     <CardContent style={{ padding: 0, overflow: "hidden" }}>
       <form>
         <Typography className={classes.formHeadings}>Basic Details</Typography>
-
         <Grid
           container
           spacing={3}
@@ -344,28 +536,9 @@ const AddTocapacity = (props) => {
               onChange={(event) => typeChangeController(event)}
               options={constants.CapacityType}
             />
-            {/* <FormControl
-              style={{ minWidth: 400 }}
-              className={classes.formControl}
-            >
-              <InputLabel htmlFor="age-native-simple">Type</InputLabel>
-              <Select
-                native
-                //value="inches"
-                onChange={typeChangeController}
-                inputProps={{
-                  name: "age",
-                  id: "age-native-simple",
-                }}
-              >
-                {constants.CapacityType.map((d) => (
-                  <option value={d.value}>{d.label}</option>
-                ))}
-              </Select>
-            </FormControl> */}
-          </Grid>
-          {type.value === "truck" && (
-            <Grid item xs={12} sm={6}>
+          </Grid>{" "}
+          <Grid item xs={12} sm={6}>
+            {type.value === "truck" && (
               <TextField
                 required
                 type="text"
@@ -379,97 +552,11 @@ const AddTocapacity = (props) => {
                 size="small"
                 autoComplete="shipping address-line1"
               />
-            </Grid>
-          )}
-          {type.value !== "truck" && <Grid item xs={12} sm={6}></Grid>}
-          {/* <Grid item xs={12} sm={6}></Grid> */}
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              type="number"
-              error={capacityValidator !== ""}
-              helperText={capacityValidator === "" ? " " : capacityValidator}
-              id="size"
-              name="size"
-              label="Capacity"
-              fullWidth
-              value={size}
-              onChange={(event) => onSizeChangeController(event)}
-              variant="outlined"
-              size="small"
-              autoComplete="shipping address-line1"
-            />
+            )}
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
-              disabled
-              type="text"
-              id="unit"
-              name="unit"
-              label="Unit"
               fullWidth
-              value={unit}
-              variant="outlined"
-              size="small"
-              autoComplete="shipping address-line1"
-            />
-          </Grid>
-          <Tooltip title="Features available in selected Asset" arrow>
-            <Grid item xs={12} sm={12}>
-              {/* <Multiselect
-                style={{ borderLeft: "0px" }}
-                options={
-                  type === "truck"
-                    ? capabilityOptions.options
-                    : warehouseCapabilityOptions.options
-                } // Options to display in the dropdown
-                onSelect={onMultiSelect} // Function will trigger on select event
-                selectedValues={capability}
-                onRemove={onMultiRemove} // Function will trigger on remove event
-                displayValue="name" // Property name to display in the dropdown options
-                placeholder="Capabilities"
-              /> */}
-
-              <Select
-                isMulti
-                styles={selectStyles}
-                name="capabilities"
-                value={capability}
-                options={
-                  type.value === "truck"
-                    ? constants.truckCapabilityOptions
-                    : constants.WarehouseCapabilityOptions
-                }
-                placeholder="Capabilities(Select multiple)"
-                className="basic-multi-select"
-                onChange={(event) => onCapabilitiesChange(event)}
-                classNamePrefix="select"
-              />
-            </Grid>
-          </Tooltip>
-          {renderCapabilityForm()}
-        </Grid>
-
-        <Typography className={classes.formHeadings}>
-          Availability Details
-          <Tooltip
-            title="Specify the Period of asset availability"
-            placement="right"
-          >
-            <InfoIcon
-              style={{ color: "lightgrey", marginLeft: 10 }}
-              fontSize="small"
-            />
-          </Tooltip>
-        </Typography>
-
-        <Grid
-          container
-          spacing={3}
-          style={{ padding: 50, paddingTop: 20, paddingBottom: 30 }}
-        >
-          <Grid item xs={12} sm={6}>
-            <TextField
               id="datetime-local"
               label="Available From"
               type="datetime-local"
@@ -484,6 +571,7 @@ const AddTocapacity = (props) => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
+              fullWidth
               id="datetime-local"
               label="Available To"
               type="datetime-local"
@@ -496,89 +584,214 @@ const AddTocapacity = (props) => {
               }}
             />
           </Grid>
-        </Grid>
-
-        <Typography className={classes.formHeadings}>
-          Additional Details
-        </Typography>
-        <Grid
-          container
-          spacing={3}
-          style={{ padding: 50, paddingTop: 20, paddingBottom: 30 }}
-        >
           <Grid item xs={12} sm={6}>
-            <FormControl
-              style={{ minWidth: 400 }}
-              className={classes.formControl}
-            >
-              <InputLabel htmlFor="age-native-simple">Ownership</InputLabel>
-              <Tooltip title="Whether the asset is owned or outsourced to another company">
+            <Select
+              styles={selectStyles}
+              className="basic-single"
+              classNamePrefix="Capability"
+              isSearchable
+              name="Capability"
+              placeholder="Capability"
+              value={Ratecapability}
+              onChange={(event) => onRateCapabilityChange(event)}
+              options={constants.truckCapabilityOptions}
+            />
+          </Grid>
+          <Tooltip title="Features available in selected Asset" arrow>
+            <Grid item xs={12} sm={6}>
+              <Select
+                isMulti
+                styles={selectStyles}
+                name="Features"
+                value={Features}
+                options={
+                  type.value === "truck"
+                    ? constants.truckFeatures
+                    : constants.WarehouseCapabilityOptions
+                }
+                placeholder="Features(Select multiple)"
+                className="basic-multi-select"
+                onChange={(event) => onFeaturesChange(event)}
+                classNamePrefix="select"
+              />
+            </Grid>
+          </Tooltip>
+          {Ratecapability.length !== 0 ? (
+            <Grid container spacing={3} style={{ padding: 50 }}>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  size="small"
+                  variant="outlined"
+                  value={price}
+                  label="Price"
+                  InputLabelProps={{ shrink: true }}
+                  onChange={(event) => onPriceChange(event)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
                 <Select
                   styles={selectStyles}
                   className="basic-single"
-                  classNamePrefix="ownership"
+                  classNamePrefix="Capacity"
                   isSearchable
-                  name="ownership"
-                  placeholder="Ownership"
-                  value={ownership}
-                  onChange={(event) => ownershipChangeController(event)}
-                  options={constants.ownerShip}
+                  name="Capacity"
+                  placeholder="Capacity"
+                  value={capacity}
+                  onChange={(event) => onCapacityChange(event)}
+                  options={constants.truckCapacityOptions}
                 />
-                {/* <Select
-                  native
-                  value={ownership}
-                  onChange={ownershipChangeController}
-                  inputProps={{
-                    name: "age",
-                    id: "age-native-simple",
-                  }}
-                >
-                  <option aria-label="None" value="" />
-                  <option value={"self"}>Self</option>
-                  <option value={"outsourced"}>Outsourced</option>
-                </Select> */}
-              </Tooltip>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Tooltip title="Home Loaction of the Asset">
-              <TextField
-                required
-                type="text"
-                id="location"
-                name="location"
-                label="Base Location"
-                fullWidth
-                value={location}
-                onChange={(event) => onLocationChangeController(event)}
-                variant="outlined"
-                size="small"
-                autoComplete="shipping address-line1"
-              />
-            </Tooltip>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              type="number"
-              error={pinValidator !== ""}
-              helperText={pinValidator === "" ? " " : pinValidator}
-              id="pin"
-              name="pin"
-              label="Pin Code"
-              fullWidth
-              value={pin}
-              onChange={(event) => onPinChangeController(event)}
-              variant="outlined"
-              size="small"
-              autoComplete="shipping address-line1"
-            />
-          </Grid>
-        </Grid>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <Select
+                  styles={selectStyles}
+                  className="basic-single"
+                  classNamePrefix="Distance"
+                  isSearchable
+                  name="Distance"
+                  placeholder="Distance"
+                  value={distance}
+                  onChange={(event) => onDistanceChange(event)}
+                  options={constants.DistanceOptions}
+                />
+              </Grid>
+              <Grid item>
+                <TableContainer>
+                  <Table aria-label="simple table">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell
+                          style={{
+                            padding: 0,
+                            margin: 0,
+                            borderBottom: "none",
+                          }}
+                        >
+                          Add Route (Optional)
+                        </TableCell>
+                        <TableCell
+                          align="left"
+                          style={{
+                            padding: 0,
+                            margin: 0,
+                            borderBottom: "none",
+                          }}
+                        >
+                          <IconButton
+                            style={{ padding: 0, margin: 0, outline: "none" }}
+                            aria-label="expand row"
+                            size="small"
+                            onClick={() => {
+                              ExpandDetails == true
+                                ? setExpandDetails(false)
+                                : setExpandDetails(true);
+                            }}
+                          >
+                            {ExpandDetails == true ? (
+                              <KeyboardArrowUpIcon />
+                            ) : (
+                              <KeyboardArrowDownIcon />
+                            )}
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                  </Table>
+                </TableContainer>
+              </Grid>
+              {ExpandDetails == true ? (
+                <Grid container spacing={3}>
+                  <Grid item xs={12} sm={3}>
+                    <TextField
+                      required
+                      InputLabelProps={{ shrink: true }}
+                      // type="number"
+                      id="Source"
+                      name="Source"
+                      label="Source Location Zip"
+                      PinCode
+                      value={SourceLocation}
+                      size="small"
+                      variant="outlined"
+                      autoComplete="Pickup postal-code"
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={3}>
+                    <TextField
+                      InputLabelProps={{ shrink: true }}
+                      required
+                      fullWidth
+                      label="Destination Location Zip"
+                      // type="number"
+                      value={DestinationLocation}
+                      className={classes.textField}
+                      variant="outlined"
+                      size="small"
+                      autoComplete="Pickup postal-code"
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      InputLabelProps={{ shrink: true }}
+                      label="30 Days Pricing"
+                      //type="number"
+                      className={classes.textField}
+                      variant="outlined"
+                      size="small"
+                      value={ThirtyDaysPricing}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">₹</InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      label="Immediate Payment Pricing"
+                      //type="number"
+                      value={ImmidiatePricing}
+                      className={classes.textField}
+                      variant="outlined"
+                      InputLabelProps={{ shrink: true }}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">₹</InputAdornment>
+                        ),
+                      }}
+                      size="small"
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={6}>
+                    <Select
+                      styles={selectStyles}
+                      value={DeliveryPromise}
+                      className="basic-single"
+                      classNamePrefix="Delivery Commitment"
+                      isSearchable
+                      name="Delivery Commitment"
+                      placeholder="Delivery Commitment"
+                      options={constants.DeliveryCommitmentOptions}
+                    />
+                  </Grid>
+                </Grid>
+              ) : (
+                <br />
+              )}{" "}
+            </Grid>
+          ) : (
+            <br />
+          )}
+          {renderCapabilityForm()}
+        </Grid>{" "}
         <Grid
           container
           spacing={3}
-          style={{ padding: 50, paddingTop: 20, paddingBottom: 30 }}
+          style={{ padding: 50, paddingTop: 20, paddingBottom: 90 }}
         >
           <Typography component="div">
             <Grid component="label" container alignItems="center" spacing={1}>
@@ -603,13 +816,14 @@ const AddTocapacity = (props) => {
           </Typography>
         </Grid>
       </form>
+
       <Button
         variant="contained"
         onClick={submitCapacity}
         style={{
           float: "right",
           backgroundColor: "#f9a825",
-          marginBottom: "20px",
+          marginBottom: 50,
           marginRight: 30,
         }}
       >

@@ -113,26 +113,65 @@ const constants = {
     { name: "Fastag", id: 3, key: "fastag", value: "", unit: "" },
     { name: "AC", id: 4, key: "ac", value: "", unit: "" },
   ],
+  truckFeatures: [
+    { label: "GPS", value: "gps", data: "", unit: "" },
+    { label: "Fastag", value: "Fastag", data: "", unit: "" },
+  ],
+  truckCapacityOptions: [
+    { label: "1 Ton", value: "1", data: "", unit: "" },
+    { label: "2 Ton", value: "2", data: "", unit: "" },
+    { label: "3 Ton", value: "3", data: "", unit: "" },
+    { label: "4 Ton", value: "4", data: "", unit: "" },
+    { label: "5 Ton", value: "5", data: "", unit: "" },
+    { label: "6 Ton", value: "6", data: "", unit: "" },
+    { label: "7 Ton", value: "7", data: "", unit: "" },
+    { label: "8 Ton", value: "8", data: "", unit: "" },
+    { label: "9 Ton", value: "9", data: "", unit: "" },
+    { label: "10 Ton", value: "10", data: "", unit: "" },
+    { label: "11 Ton", value: "11", data: "", unit: "" },
+    { label: "12 Ton", value: "12", data: "", unit: "" },
+    { label: "13 Ton", value: "13", data: "", unit: "" },
+    { label: "14 Ton", value: "14", data: "", unit: "" },
+    { label: "15 Ton", value: "15", data: "", unit: "" },
+    { label: "16 Ton", value: "16", data: "", unit: "" },
+    { label: "17 Ton", value: "17", data: "", unit: "" },
+    { label: "18 Ton", value: "18", data: "", unit: "" },
+    { label: "19 Ton", value: "19", data: "", unit: "" },
+    { label: "20 Ton", value: "20", data: "", unit: "" },
+    { label: "21 Ton", value: "21", data: "", unit: "" },
+    { label: "22 Ton", value: "22", data: "", unit: "" },
+    { label: "23 Ton", value: "23", data: "", unit: "" },
+    { label: "24 Ton", value: "24", data: "", unit: "" },
+    { label: "25 Ton", value: "25", data: "", unit: "" },
+    { label: "26 Ton", value: "26", data: "", unit: "" },
+    { label: "27 Ton", value: "27", data: "", unit: "" },
+    { label: "28 Ton", value: "28", data: "", unit: "" },
+    { label: "29 Ton", value: "29", data: "", unit: "" },
+    { label: "30 Ton", value: "30", data: "", unit: "" },
+    { label: "31 Ton", value: "31", data: "", unit: "" },
+    { label: "32 Ton", value: "32", data: "", unit: "" },
+  ],
+
   truckCapabilityOptions: [
-    { label: "Canters", value: "gps", data: "", unit: "" },
-    { label: "Car Carriers", value: "CarCarriers", data: "", unit: "" },
+    { label: "Canter", value: "canter", data: "", unit: "" },
+    { label: "Car Carrier", value: "carCarriers", data: "", unit: "" },
     {
       label: "Containers Close Body",
-      value: "ContainersCloseBody",
+      value: "containersCloseBody",
       data: "",
       unit: "",
     },
-    { label: "Truck", value: "Truck", data: "", unit: "" },
-    { label: "LCV", value: "LCV", data: "", unit: "" },
+    { label: "Truck", value: "truck", data: "", unit: "" },
+    { label: "LCV", value: "lcv", data: "", unit: "" },
     {
       label: "Flat Bed Trailers",
-      value: "FlatBedTrailers",
+      value: "flatBedTrailer",
       data: "",
       unit: "",
     },
     {
       label: "Multi Axle Trailers",
-      value: "MultiAxleTrailers",
+      value: "multiAxleTrailers",
       data: "",
       unit: "",
     },
@@ -142,69 +181,68 @@ const constants = {
       data: "",
       unit: "",
     },
-    { label: "Refrigerated/AC", value: "RefrigeratedAC", data: "", unit: "" },
+    { label: "Refrigerated/AC", value: "refrigerated/ac", data: "", unit: "" },
     {
       label: "Hydraulic Trucks",
-      value: "HydraulicTrucks",
+      value: "hydraulicTrucks",
       data: "",
       unit: "",
     },
     {
       label: "Over Dimension Cargo Truck",
-      value: "OverDimensionCargoTruck",
+      value: "overDimensionCargoTruck",
       data: "",
       unit: "",
     },
     {
       label: "Semi Low Bed Trailer",
-      value: "SemiLowBedTrailer",
+      value: "semiLowBedTrailer",
       data: "",
       unit: "",
     },
-    { label: "Low Bed Trailer", value: "LowBedTrailer", data: "", unit: "" },
-    { label: "", value: "", data: "", unit: "" },
-    { label: "", value: "", data: "", unit: "" },
+    { label: "Low Bed Trailer", value: "lowBedTrailers", data: "", unit: "" },
+    { label: "Tanker Truck", value: "tankerTruck", data: "", unit: "" },
   ],
   /**warehouse capability OLD */
-  warehouseCapabilityOptions: [
-    {
-      name: "Trained Staff",
-      id: 1,
-      key: "trainedStaff",
-      value: "",
-      unit: "kg",
-    },
-    { name: "Safety", id: 2, key: "safety", value: "", unit: "cm" },
-    {
-      name: "Market Proximity",
-      id: 3,
-      key: "marketProximity",
-      value: "",
-      unit: "number",
-    },
-    { name: "Parking", id: 4, key: "parking", value: "", unit: "kg" },
-    {
-      name: "Mechanical Appliances",
-      id: 5,
-      key: "mechanicalAppliances",
-      value: "",
-      unit: "cm",
-    },
-    {
-      name: "Emergency Protocols",
-      id: 6,
-      key: "emergencyProtocols",
-      value: "",
-      unit: "inches",
-    },
-    {
-      name: "Customer Service",
-      id: 7,
-      key: "customerService",
-      value: "",
-      unit: "number",
-    },
-  ],
+  // warehouseCapabilityOptions: [
+  //   {
+  //     name: "Trained Staff",
+  //     id: 1,
+  //     key: "trainedStaff",
+  //     value: "",
+  //     unit: "kg",
+  //   },
+  //   { name: "Safety", id: 2, key: "safety", value: "", unit: "cm" },
+  //   {
+  //     name: "Market Proximity",
+  //     id: 3,
+  //     key: "marketProximity",
+  //     value: "",
+  //     unit: "number",
+  //   },
+  //   { name: "Parking", id: 4, key: "parking", value: "", unit: "kg" },
+  //   {
+  //     name: "Mechanical Appliances",
+  //     id: 5,
+  //     key: "mechanicalAppliances",
+  //     value: "",
+  //     unit: "cm",
+  //   },
+  //   {
+  //     name: "Emergency Protocols",
+  //     id: 6,
+  //     key: "emergencyProtocols",
+  //     value: "",
+  //     unit: "inches",
+  //   },
+  //   {
+  //     name: "Customer Service",
+  //     id: 7,
+  //     key: "customerService",
+  //     value: "",
+  //     unit: "number",
+  //   },
+  // ],
   /**warehouse capability NEW */
   WarehouseCapabilityOptions: [
     { label: "Trained Staff", value: "trainedStaff", data: "", unit: "" },
@@ -224,6 +262,107 @@ const constants = {
       unit: "",
     },
     { label: "Customer Service", value: "customerService", data: "", unit: "" },
+  ],
+  DeliveryCommitmentOptions: [
+    { label: "1 Day", value: 1 },
+    { label: "2 Days", value: 2 },
+
+    { label: "3 Days", value: 3 },
+
+    { label: "4 Days", value: 4 },
+
+    { label: "5 Days", value: 5 },
+    { label: "6 Days", value: 6 },
+
+    { label: "7 Days", value: 7 },
+  ],
+  // CapacityOptions: [
+  //   {
+  //     label: "0 - 2 Tons",
+  //     value: {
+  //       lowCapacity: 0,
+  //       highCapacity: 2,
+  //     },
+  //   },
+  //   {
+  //     label: "2 - 4 Tons",
+  //     value: {
+  //       lowCapacity: 2,
+  //       highCapacity: 4,
+  //     },
+  //   },
+  //   {
+  //     label: "4 - 8 Tons",
+  //     value: {
+  //       lowCapacity: 4,
+  //       highCapacity: 8,
+  //     },
+  //   },
+  //   {
+  //     label: "8 - 14 Tons",
+  //     value: {
+  //       lowCapacity: 8,
+  //       highCapacity: 14,
+  //     },
+  //   },
+  //   {
+  //     label: "14 - 20 Tons",
+  //     value: {
+  //       lowCapacity: 14,
+  //       highCapacity: 20,
+  //     },
+  //   },
+  //   {
+  //     label: "20 - 26 Tons",
+  //     value: {
+  //       lowCapacity: 20,
+  //       highCapacity: 26,
+  //     },
+  //   },
+  //   {
+  //     label: "26+ Tons",
+  //     value: {
+  //       lowCapacity: 26,
+  //       highCapacity: 100,
+  //     },
+  //   },
+  // ],
+  DistanceOptions: [
+    {
+      label: "0 - 50 Kms",
+      value: {
+        lowRange: 0,
+        highRange: 50,
+      },
+    },
+    {
+      label: "50 - 200 Kms",
+      value: {
+        lowRange: 50,
+        highRange: 200,
+      },
+    },
+    {
+      label: "200 - 400 Kms",
+      value: {
+        lowRange: 200,
+        highRange: 400,
+      },
+    },
+    {
+      label: "400 - 800 Kms",
+      value: {
+        lowRange: 400,
+        highRange: 800,
+      },
+    },
+    {
+      label: "800+ Kms",
+      value: {
+        lowRange: 800,
+        highRange: 2000,
+      },
+    },
   ],
   capacityUnits: [
     { name: "Sqft.", value: "sqft" },
