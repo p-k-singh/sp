@@ -182,7 +182,6 @@ const AddTruckCost = (props) => {
       items[i].additionalDetails[j].sourceZipValidator =
         "Cannot be a negative value";
       setChosenProducts(items);
-
       return;
     } else {
       items[i].additionalDetails[j].sourceZipValidator = "";
@@ -194,21 +193,31 @@ const AddTruckCost = (props) => {
       count++;
       temp = Math.floor(temp / 10);
     }
-    if (count == 6) {
+    if (count === 6) {
       const api_url = "https://api.postalpincode.in/pincode/" + sourcePinCode;
+      // alert("Hello");
+      fetch(api_url).then((response) => {
+        response.json().then((data) => {
+          if (data !== null && data[0].PostOffice !== null) {
+            items[i].additionalDetails[j].sourcePinData = data[0].PostOffice;
+            setChosenProducts(items);
+          }
+          setChosenProducts(items);
+        });
+      });
+      // async function getapi(url) {
+      //   const response = await fetch(url);
+      //   var data = await response.json();
+      //   console.log(data);
 
-      async function getapi(url) {
-        const response = await fetch(url);
-        var data = await response.json();
-        console.log(data);
-
-        if (data !== null && data[0].PostOffice !== null) {
-          items[i].additionalDetails[j].sourcePinData = data[0].PostOffice;
-        } else {
-        }
-        setChosenProducts(items);
-      }
-      getapi(api_url);
+      //   if (data !== null && data[0].PostOffice !== null) {
+      //     items[i].additionalDetails[j].sourcePinData = data[0].PostOffice;
+      //     setChosenProducts(items);
+      //   } else {
+      //   }
+      //   setChosenProducts(items);
+      // }
+      // getapi(api_url);
     }
     if (count !== 6) {
       items[i].additionalDetails[j].sourceZipValidator =

@@ -98,7 +98,7 @@ const AddTocapacity = (props) => {
   const [capacity, setCapacity] = useState();
   const [price, setPrice] = useState();
   const [distance, setDistance] = useState();
-  const [isNew, setIsNew] = useState(false); 
+  const [isNew, setIsNew] = useState(false);
   const [ThirtyDaysPricing, setThirtyDaysPricing] = useState();
   const [ImmidiatePricing, setImmidiatePricing] = useState();
   const [pin, setPin] = useState();
@@ -204,6 +204,17 @@ const AddTocapacity = (props) => {
   const onRateCapabilityChange = (event) => {
     var i;
     var j;
+
+    setIsNew(false);
+    setPrice("");
+    setCostId(null);
+    setImmidiatePricing("");
+    setThirtyDaysPricing("");
+    setSourceLocation("");
+    setDestinationLocation("");
+    setCapacity(null);
+    setDeliveryPromise(null);
+    setDistance(null);
     for (i = 0; i < costData.length; i++) {
       if (event.value === costData[i].label) {
         setIsNew(true);
