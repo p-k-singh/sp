@@ -6,10 +6,12 @@ import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import DeleteIcon from "@material-ui/icons/Delete";
+import AddCircleIcon from "@material-ui/icons/AddCircle";
 import CreatableSelect from "react-select/creatable";
 import Select from "react-select";
 import Tooltip from "@material-ui/core/Tooltip";
 import { Redirect, withRouter } from "react-router-dom";
+
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -81,6 +83,12 @@ const AddTruckCost = (props) => {
       additionalDetails: [
         {
           sourceLocation: "",
+          sourceZipValidator: "",
+          sourceArea: "",
+          sourcePinData: [],
+          destinationZipValidator: "",
+          destinationArea: "",
+          destinationPinData: [],
           destinationLocation: "",
           thirtyDaysPricing: null,
           immediatePricing: null,
@@ -89,34 +97,28 @@ const AddTruckCost = (props) => {
       ],
     },
   ]);
-  const [additionalDetails, setChosenProductsqw] = useState([
-    {
-      sourceLocation: "",
-      destinationLocation: "",
-      thirtyDaysPricing: null,
-      immediatePricing: null,
-      deliveryCommitment: 0,
-    },
-  ]);
-
   const [capability, setCapability] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [ZipValidator, setZipValidator] = useState("");
-  const [deliverZipValidator, setDeliverZipValidator] = useState("");
-  const [PinData, setPinData] = useState([]);
-  const [Area, setArea] = useState("");
-  const onAreaChangeController = (event) => {
-    setArea(event.target.value);
+
+  const onsourceAreaChangeController = (event, i, j) => {
+    var items = chosenProducts.slice();
+    items[i].additionalDetails[j].sourceArea = event.target.value;
+    setChosenProducts(items);
   };
 
-  const capabilityOptions = {
-    options: constants.capabilityOptions,
+  const onDestinationAreaChangeController = (event, i, j) => {
+    var items = chosenProducts.slice();
+    items[i].additionalDetails[j].destinationArea = event.target.value;
+    setChosenProducts(items);
   };
-  const [redirect, setRedirect] = useState(false);
-
   const handleItemDeleted = (i) => {
     var items = chosenProducts.slice();
     items.splice(i, 1);
+    setChosenProducts(items);
+  };
+  const handleRouteDeleted = (i, j) => {
+    var items = chosenProducts.slice();
+    items[i].additionalDetails.splice(j, 1);
     setChosenProducts(items);
   };
 
@@ -128,20 +130,34 @@ const AddTruckCost = (props) => {
       rangeinKms: null,
       pricing: null,
       details: false,
-      additionalDetails: {
-        sourceLocation: "",
-        destinationLocation: "",
-        thirtyDaysPricing: null,
-        immediatePricing: null,
-        deliveryCommitment: 0,
-      },
+      additionalDetails: [
+        {
+          sourceLocation: "",
+          sourceZipValidator: "",
+          sourceArea: "",
+          sourcePinData: [],
+          destinationZipValidator: "",
+          destinationArea: "",
+          destinationPinData: [],
+          destinationLocation: "",
+          thirtyDaysPricing: null,
+          immediatePricing: null,
+          deliveryCommitment: 0,
+        },
+      ],
     });
     setChosenProducts(items);
   };
-  const addroute = () => {
+  const addroute = (i, j) => {
     var items = chosenProducts.slice();
-    items.push({
+    items[i].additionalDetails.push({
       sourceLocation: "",
+      sourceZipValidator: "",
+      sourceArea: "",
+      sourcePinData: [],
+      destinationZipValidator: "",
+      destinationArea: "",
+      destinationPinData: [],
       destinationLocation: "",
       thirtyDaysPricing: null,
       immediatePricing: null,
@@ -156,63 +172,107 @@ const AddTruckCost = (props) => {
       zIndex: 100,
     }),
   };
-  const onsourceLocationChangeController = (event, i) => {
-    var PinPinCode = parseInt(event.target.value, 10);
-    if (PinPinCode < 0) {
-      setZipValidator("Cannot be a negative value");
+  const onsourceLocationChangeController = (event, i, j) => {
+    var sourcePinCode = parseInt(event.target.value, 10);
+    var items = chosenProducts.slice();
+    if (sourcePinCode < 0) {
+      items[i].additionalDetails[j].sourceZipValidator =
+        "Cannot be a negative value";
+      setChosenProducts(items);
 
       return;
     } else {
-      setZipValidator("");
+      items[i].additionalDetails[j].sourceZipValidator = "";
+      setChosenProducts(items);
     }
     var count = 0,
-      temp = PinPinCode;
+      temp = sourcePinCode;
     while (temp > 0) {
       count++;
       temp = Math.floor(temp / 10);
     }
     if (count == 6) {
-      const api_url = "https://api.postalpincode.in/pincode/" + PinPinCode;
+      const api_url = "https://api.postalpincode.in/pincode/" + sourcePinCode;
 
-      // Defining async function
       async function getapi(url) {
-        // Storing response
-
         const response = await fetch(url);
-
-        // Storing data in form of JSON
         var data = await response.json();
         console.log(data);
-        setPinData(
-          data !== null && data[0].PostOffice !== null ? data[0].PostOffice : ""
-        );
+
+        if (data !== null && data[0].PostOffice !== null) {
+          items[i].additionalDetails[j].sourcePinData = data[0].PostOffice;
+        } else {
+        }
+        setChosenProducts(items);
       }
-      // Calling that async function
       getapi(api_url);
     }
     if (count !== 6) {
-      setZipValidator("Must be of six digits");
+      items[i].additionalDetails[j].sourceZipValidator =
+        "Must be of six digits";
+      setChosenProducts(items);
     } else {
-      setZipValidator("");
+      items[i].additionalDetails[j].sourceZipValidator = "";
+      setChosenProducts(items);
     }
+    items[i].additionalDetails[j].sourceLocation = event.target.value;
+    setChosenProducts(items);
+  };
+  const onDestinationLocationChangeController = (event, i, j) => {
+    var destinationPinCode = parseInt(event.target.value, 10);
+    var items = chosenProducts.slice();
+    if (destinationPinCode < 0) {
+      items[i].additionalDetails[j].destinationZipValidator =
+        "Cannot be a negative value";
+      setChosenProducts(items);
 
-    var items = chosenProducts.slice();
-    items[i].additionalDetails.sourceLocation = event.target.value;
+      return;
+    } else {
+      items[i].additionalDetails[j].destinationZipValidator = "";
+      setChosenProducts(items);
+    }
+    var count = 0,
+      temp = destinationPinCode;
+    while (temp > 0) {
+      count++;
+      temp = Math.floor(temp / 10);
+    }
+    if (count == 6) {
+      const api_url =
+        "https://api.postalpincode.in/pincode/" + destinationPinCode;
+
+      async function getapi(url) {
+        const response = await fetch(url);
+        var data = await response.json();
+        console.log(data);
+
+        if (data !== null && data[0].PostOffice !== null) {
+          items[i].additionalDetails[j].destinationPinData = data[0].PostOffice;
+        } else {
+        }
+        setChosenProducts(items);
+      }
+      getapi(api_url);
+    }
+    if (count !== 6) {
+      items[i].additionalDetails[j].destinationZipValidator =
+        "Must be of six digits";
+      setChosenProducts(items);
+    } else {
+      items[i].additionalDetails[j].destinationZipValidator = "";
+      setChosenProducts(items);
+    }
+    items[i].additionalDetails[j].destinationLocation = event.target.value;
     setChosenProducts(items);
   };
-  const onDestinationLocationChangeController = (event, i) => {
+  const onImmediatePricingChangeController = (event, i, j) => {
     var items = chosenProducts.slice();
-    items[i].additionalDetails.destinationLocation = event.target.value;
+    items[i].additionalDetails[j].immediatePricing = event.target.value;
     setChosenProducts(items);
   };
-  const onImmediatePricingChangeController = (event, i) => {
+  const onThirtyDaysPricingController = (event, i, j) => {
     var items = chosenProducts.slice();
-    items[i].additionalDetails.immediatePricing = event.target.value;
-    setChosenProducts(items);
-  };
-  const onThirtyDaysPricingController = (event, i) => {
-    var items = chosenProducts.slice();
-    items[i].additionalDetails.thirtyDaysPricing = event.target.value;
+    items[i].additionalDetails[j].thirtyDaysPricing = event.target.value;
     setChosenProducts(items);
   };
   const onPricingController = (event, i) => {
@@ -231,9 +291,9 @@ const AddTruckCost = (props) => {
     items[i].rangeinKms = event;
     setChosenProducts(items);
   };
-  const onDeliveryCommitmentChange = (event, i) => {
+  const onDeliveryCommitmentChange = (event, i, j) => {
     var items = chosenProducts.slice();
-    items[i].additionalDetails.deliveryCommitment = event;
+    items[i].additionalDetails[j].deliveryCommitment = event;
     setChosenProducts(items);
   };
 
@@ -366,18 +426,6 @@ const AddTruckCost = (props) => {
           />
         </Grid>
         <Grid item xs={12} sm={4}>
-          <TextField
-            fullWidth
-            label="Capacity"
-            type="number"
-            value={chosenProducts[i].pricing}
-            onChange={(event) => onPricingController(event, i)}
-            variant="outlined"
-            size="small"
-            InputProps={{
-              endAdornment: <InputAdornment position="end">Ton</InputAdornment>,
-            }}
-          />
           <Select
             styles={selectStyles}
             className="basic-single"
@@ -387,7 +435,7 @@ const AddTruckCost = (props) => {
             placeholder="Capacity"
             value={chosenProducts[i].capacity}
             onChange={(event) => onCapacityChange(event, i)}
-            options={constants.CapacityOptions}
+            options={constants.truckCapacityOptions}
           />
         </Grid>
         <Grid item xs={12} sm={4}>
@@ -465,33 +513,52 @@ const AddTruckCost = (props) => {
       </Grid>
       {chosenProducts[i].details == true ? (
         <div>
-          {" "}
           {e.additionalDetails.map((e, j) => (
             <Grid
               container
               spacing={3}
               style={{ paddingLeft: 40, paddingRight: 40, paddingBottom: 30 }}
             >
+              <Grid item xs={12} sm={10}></Grid>
+              <Grid item>
+                {j == 0 ? (
+                  ""
+                ) : (
+                  <IconButton onClick={() => handleRouteDeleted(i, j)}>
+                    <DeleteIcon style={{ fontSize: "30" }} />
+                  </IconButton>
+                )}
+              </Grid>
               <Grid item xs={12} sm={3}>
                 <TextField
                   required
                   InputLabelProps={{ shrink: true }}
-                  error={ZipValidator !== ""}
+                  error={
+                    chosenProducts[i].additionalDetails[j]
+                      .sourceZipValidator !== ""
+                  }
                   helperText={
-                    ZipValidator === ""
-                      ? PinData == ""
+                    chosenProducts[i].additionalDetails[j]
+                      .sourceZipValidator === ""
+                      ? chosenProducts[i].additionalDetails[j].sourcePinData ==
+                        ""
                         ? ""
-                        : PinData[0].District + ", " + PinData[0].State
-                      : ZipValidator
+                        : chosenProducts[i].additionalDetails[j]
+                            .sourcePinData[0].District +
+                          ", " +
+                          chosenProducts[i].additionalDetails[j]
+                            .sourcePinData[0].State
+                      : chosenProducts[i].additionalDetails[j]
+                          .sourceZipValidator
                   }
                   type="number"
                   id="Source"
                   name="Source"
                   label="Source Location Zip"
                   PinCode
-                  value={chosenProducts[i].additionalDetails.sourceLocation}
+                  value={chosenProducts[i].additionalDetails[j].sourceLocation}
                   onChange={(event) =>
-                    onsourceLocationChangeController(event, i)
+                    onsourceLocationChangeController(event, i, j)
                   }
                   size="small"
                   variant="outlined"
@@ -499,17 +566,22 @@ const AddTruckCost = (props) => {
                 />
               </Grid>
               <Grid item xs={12} sm={3}>
-                {PinData.length !== 0 ? (
+                {chosenProducts[i].additionalDetails[j].sourcePinData.length !==
+                0 ? (
                   <MaterialSelect
                     autoWidth={true}
                     size="small"
                     native
-                    onChange={(event) => onAreaChangeController(event)}
-                    value={Area}
+                    onChange={(event) =>
+                      onsourceAreaChangeController(event, i, j)
+                    }
+                    value={chosenProducts[i].additionalDetails[j].sourceArea}
                   >
-                    {PinData.map((d) => (
-                      <option>{d.Name}</option>
-                    ))}
+                    {chosenProducts[i].additionalDetails[j].sourcePinData.map(
+                      (d) => (
+                        <option>{d.Name}</option>
+                      )
+                    )}
                   </MaterialSelect>
                 ) : (
                   <p></p>
@@ -519,23 +591,33 @@ const AddTruckCost = (props) => {
                 <TextField
                   InputLabelProps={{ shrink: true }}
                   required
-                  error={ZipValidator !== ""}
+                  error={
+                    chosenProducts[i].additionalDetails[j]
+                      .destinationZipValidator !== ""
+                  }
                   helperText={
-                    ZipValidator === ""
-                      ? PinData == ""
+                    chosenProducts[i].additionalDetails[j]
+                      .destinationZipValidator === ""
+                      ? chosenProducts[i].additionalDetails[j]
+                          .destinationPinData == ""
                         ? ""
-                        : PinData[0].District + ", " + PinData[0].State
-                      : ZipValidator
+                        : chosenProducts[i].additionalDetails[j]
+                            .destinationPinData[0].District +
+                          ", " +
+                          chosenProducts[i].additionalDetails[j]
+                            .destinationPinData[0].State
+                      : chosenProducts[i].additionalDetails[j]
+                          .destinationZipValidator
                   }
                   fullWidth
                   label="Destination Location Zip"
                   type="number"
                   className={classes.textField}
                   value={
-                    chosenProducts[i].additionalDetails.destinationLocation
+                    chosenProducts[i].additionalDetails[j].destinationLocation
                   }
                   onChange={(event) =>
-                    onDestinationLocationChangeController(event, i)
+                    onDestinationLocationChangeController(event, i, j)
                   }
                   variant="outlined"
                   size="small"
@@ -543,15 +625,22 @@ const AddTruckCost = (props) => {
                 />
               </Grid>
               <Grid item xs={12} sm={3}>
-                {PinData.length !== 0 ? (
+                {chosenProducts[i].additionalDetails[j].destinationPinData
+                  .length !== 0 ? (
                   <MaterialSelect
                     autoWidth={true}
                     size="small"
                     native
-                    onChange={(event) => onAreaChangeController(event)}
-                    value={Area}
+                    onChange={(event) =>
+                      onDestinationAreaChangeController(event, i, j)
+                    }
+                    value={
+                      chosenProducts[i].additionalDetails[j].destinationArea
+                    }
                   >
-                    {PinData.map((d) => (
+                    {chosenProducts[i].additionalDetails[
+                      j
+                    ].destinationPinData.map((d) => (
                       <option>{d.Name}</option>
                     ))}
                   </MaterialSelect>
@@ -565,8 +654,12 @@ const AddTruckCost = (props) => {
                   label="30 Days Pricing"
                   type="number"
                   className={classes.textField}
-                  value={chosenProducts[i].additionalDetails.thirtyDaysPricing}
-                  onChange={(event) => onThirtyDaysPricingController(event, i)}
+                  value={
+                    chosenProducts[i].additionalDetails[j].thirtyDaysPricing
+                  }
+                  onChange={(event) =>
+                    onThirtyDaysPricingController(event, i, j)
+                  }
                   variant="outlined"
                   size="small"
                   InputProps={{
@@ -582,9 +675,11 @@ const AddTruckCost = (props) => {
                   label="Immediate Payment Pricing"
                   type="number"
                   className={classes.textField}
-                  value={chosenProducts[i].additionalDetails.immediatePricing}
+                  value={
+                    chosenProducts[i].additionalDetails[j].immediatePricing
+                  }
                   onChange={(event) =>
-                    onImmediatePricingChangeController(event, i)
+                    onImmediatePricingChangeController(event, i, j)
                   }
                   variant="outlined"
                   InputProps={{
@@ -604,24 +699,25 @@ const AddTruckCost = (props) => {
                   isSearchable
                   name="Delivery Commitment"
                   placeholder="Delivery Commitment"
-                  value={chosenProducts[i].additionalDetails.deliveryCommitment}
-                  onChange={(event) => onDeliveryCommitmentChange(event, i)}
+                  value={
+                    chosenProducts[i].additionalDetails[j].deliveryCommitment
+                  }
+                  onChange={(event) => onDeliveryCommitmentChange(event, i, j)}
                   options={constants.DeliveryCommitmentOptions}
                 />
               </Grid>
-              <Button
-                variant="contained"
-                className="AllButtons"
-                style={{
-                  marginTop: 10,
-                  marginLeft: 50,
-                }}
-                onClick={() => addroute()}
-              >
-                Add Route
-              </Button>
+              <Divider />
             </Grid>
           ))}
+
+          <IconButton
+            style={{ padding: 0, marginLeft: 40, outline: "none" }}
+            aria-label="expand row"
+            size="small"
+            onClick={() => addroute(i)}
+          >
+            Add Another Route <AddCircleIcon />
+          </IconButton>
         </div>
       ) : (
         <p></p>
@@ -639,10 +735,6 @@ const AddTruckCost = (props) => {
       </React.Fragment>
     );
   }
-  if (redirect) {
-    return <Redirect to="/ordersRedir" />;
-  }
-
   return (
     <div>
       <Card className={classes.root}>
@@ -670,7 +762,6 @@ const AddTruckCost = (props) => {
           {" "}
           <Button
             variant="contained"
-            className="AllButtons"
             style={{
               marginTop: 50,
               marginLeft: 50,
