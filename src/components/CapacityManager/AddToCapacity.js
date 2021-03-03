@@ -176,6 +176,8 @@ const AddTocapacity = (props) => {
     setCostId(null);
     setImmidiatePricing("");
     setThirtyDaysPricing("");
+    setSourcePinData([]);
+    setDestinationPinData([]);
     setSourceLocation("");
     setDestinationLocation("");
     setCapacity(null);
@@ -677,15 +679,19 @@ const AddTocapacity = (props) => {
           {capability.length !== 0 ? (
             <Grid container spacing={3} style={{ padding: 50 }}>
               <Grid item xs={12} sm={4}>
-                <TextField
-                  size="small"
-                  variant="outlined"
-                  helperText={"*Immidiate Pricing inclusive of GST per Trip"}
-                  value={price}
-                  label="Price"
-                  InputLabelProps={{ shrink: true }}
-                  onChange={(event) => onPriceChange(event)}
-                />
+                {ExpandDetails == false ? (
+                  <TextField
+                    size="small"
+                    variant="outlined"
+                    helperText={"*Immidiate Pricing inclusive of GST per Trip"}
+                    value={price}
+                    label="Price"
+                    InputLabelProps={{ shrink: true }}
+                    onChange={(event) => onPriceChange(event)}
+                  />
+                ) : (
+                  <br />
+                )}
               </Grid>
               <Grid item xs={12} sm={4}>
                 <Select
@@ -714,7 +720,11 @@ const AddTocapacity = (props) => {
                 />
               </Grid>
               <Grid item>
-                <TableContainer>
+                <TableContainer
+                  style={{
+                    marginBottom: 30,
+                  }}
+                >
                   <Table aria-label="simple table">
                     <TableHead>
                       <TableRow>
@@ -736,7 +746,11 @@ const AddTocapacity = (props) => {
                           }}
                         >
                           <IconButton
-                            style={{ padding: 0, margin: 0, outline: "none" }}
+                            style={{
+                              padding: 0,
+                              marginBottom: 0,
+                              outline: "none",
+                            }}
                             aria-label="expand row"
                             size="small"
                             onClick={() => {
