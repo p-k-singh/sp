@@ -324,7 +324,7 @@ export default function Dashboard() {
                     </Avatar>
                   </ListItemAvatar>
                   <ListItemText
-                    primary={"Order Id. " + Math.floor(Math.random() * 10000)}
+                    primary={"Shipment from Haryana to Rajasthan"}
                     secondary="Shipment Delivered Successfully"
                   />
                 </ListItem>
@@ -338,7 +338,7 @@ export default function Dashboard() {
                     </Avatar>
                   </ListItemAvatar>
                   <ListItemText
-                    primary={"Order Id. " + Math.floor(Math.random() * 10000)}
+                    primary={"Shipment from Bhopal to Indore"}
                     secondary="Pickup Completed Successfully"
                   />
                 </ListItem>
@@ -352,25 +352,12 @@ export default function Dashboard() {
                     </Avatar>
                   </ListItemAvatar>
                   <ListItemText
-                    primary={"Order Id. " + Math.floor(Math.random() * 10000)}
+                    primary={"Shipment from Hyderabad to Banglore"}
                     secondary="Driver Arrived at Drop Location"
                   />
                 </ListItem>
               </Link>
               <Divider />
-              <Link to="/Track">
-                <ListItem alignItems="flex-start">
-                  <ListItemAvatar>
-                    <Avatar>
-                      <LocalShippingIcon />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={"Order Id. " + Math.floor(Math.random() * 10000)}
-                    secondary="Driver has left for Pickup"
-                  />
-                </ListItem>
-              </Link>
             </List>
           </Menu>
 

@@ -160,6 +160,7 @@ export default function CollapsibleTable(props) {
             <TableCell>Type</TableCell>
 
             <TableCell align="left">Capacity</TableCell>
+            <TableCell align="left">Capability</TableCell>
             {/* <TableCell align="right">Ownership</TableCell>
             <TableCell align="right">Location</TableCell> */}
           </TableRow>
@@ -196,8 +197,11 @@ export default function CollapsibleTable(props) {
                     {row.type === "truck" ? "Truck" : "Warehouse"}
                   </TableCell>
                   <TableCell align="left">
-                    {row.capacity}
-                    {row.unitOfMeasurement}
+                    {row.capacity} Tons
+                    {/* {row.unitOfMeasurement} */}
+                  </TableCell>
+                  <TableCell align="left">
+                    {row.capabilities.toString()}
                   </TableCell>
                   {/* <TableCell align="right">{row.ownershipType}</TableCell>
                   <TableCell align="right">{row.location}</TableCell> */}

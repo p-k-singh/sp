@@ -339,7 +339,7 @@ const Track = (props) => {
             style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}
           ></Grid>
 
-          <TableContainer component={Paper}>
+          <TableContainer component={Paper} fullWidth>
             <Table aria-label="simple table">
               <TableHead>
                 <TableRow>

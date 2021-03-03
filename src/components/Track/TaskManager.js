@@ -7,6 +7,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 import { Link } from "react-router-dom";
+import WarningIcon from "@material-ui/icons/Warning";
 import Paper from "@material-ui/core/Paper";
 import Tooltip from "@material-ui/core/Tooltip";
 import InfoIcon from "@material-ui/icons/Info";
@@ -37,9 +38,10 @@ import {
   Card,
   Container,
 } from "@material-ui/core";
+
 import TodayIcon from "@material-ui/icons/Today";
 import InputAdornment from "@material-ui/core/InputAdornment";
-
+import CheckIcon from "@material-ui/icons/Check";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { Multiselect } from "multiselect-react-dropdown";
 import { Auth, API } from "aws-amplify";
@@ -52,6 +54,8 @@ import FolderIcon from "@material-ui/icons/Folder";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
+import AcceptanceForm from "../AcceptanceForm";
+import Track from "./Track";
 const tracking = [
   { key: 1, name: "apple" },
   { key: 2, name: "orange" },
@@ -177,7 +181,7 @@ const TaskManager = (props) => {
   return (
     <CardContent style={{ padding: 0, overflow: "hidden" }}>
       <Typography className={classes.title} gutterBottom>
-        Hello, You've got 5 tasks today <TodayIcon />
+        Hello, You've got 6 tasks today <TodayIcon />
         {/* <Tooltip title="Specify the Pricing Details for your Assets">
           <InfoIcon style={{ color: "lightgrey", marginLeft: 20 }} />
         </Tooltip> */}
@@ -185,7 +189,22 @@ const TaskManager = (props) => {
       <Divider />
       <div>
         <List component="nav">
-          <Accordion>
+          <Link to="/kyc">
+            <Card style={{ padding: 10, marginBottom: 10 }}>
+              <ListItem alignItems="flex-start">
+                <ListItemAvatar>
+                  <Avatar>
+                    <WarningIcon />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={"KYC Pending"}
+                  secondary="Your KYC is pending.Please fill your KYC details first."
+                />
+              </ListItem>
+            </Card>
+          </Link>
+          <Accordion style={{ marginBottom: 10 }}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
@@ -205,7 +224,7 @@ const TaskManager = (props) => {
                     />
                   </ListItem>
                 </Grid>
-                <Grid item xs={4}>
+                {/* <Grid item xs={4}>
                   <Button
                     style={{
                       maxWidth: "150px",
@@ -224,14 +243,131 @@ const TaskManager = (props) => {
                   >
                     Details
                   </Button>
-                </Grid>
+                </Grid> */}
               </Grid>
             </AccordionSummary>
-            <AccordionDetails></AccordionDetails>
+            <AccordionDetails>
+              <div>
+                <Card className={classes.root}>
+                  <CardContent style={{ padding: 0 }}>
+                    <form>
+                      <Grid
+                        container
+                        spacing={3}
+                        style={{
+                          padding: 50,
+                          paddingTop: 10,
+                          paddingBottom: 30,
+                        }}
+                      >
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            required
+                            id="requiredCapacity"
+                            name="requiredCapacity"
+                            label="Required Capacity"
+                            value="50 tonnes"
+                            disabled
+                            fullWidth
+                            autoComplete="available capacity"
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            required
+                            id="pickupAddress"
+                            name="pickupAddress"
+                            label="Pickup Address"
+                            value={"Etwarpur,Rajasthan"}
+                            disabled
+                            fullWidth
+                            autoComplete="pickup address"
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            required
+                            id="deliverAddress"
+                            name="deliverAddress"
+                            label="Deliver Address"
+                            value={"Patna,Bihar"}
+                            disabled
+                            fullWidth
+                            autoComplete="deliver address"
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            required
+                            id="estimatedPickup"
+                            name="estimatedPickup"
+                            label="Estimated Pickup"
+                            value="14-01-2021"
+                            disabled
+                            fullWidth
+                            autoComplete="estimated pickup"
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            required
+                            id="estimatedDelivery"
+                            name="estimatedDelivery"
+                            label="Estimated Delivery"
+                            value="20-01-2021"
+                            disabled
+                            fullWidth
+                            autoComplete="estimated delivery"
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            required
+                            id="estimatedPrice"
+                            name="estimatedPrice"
+                            label="Estimated Price"
+                            value="Rs 2,00,000"
+                            disabled
+                            fullWidth
+                            autoComplete="estimated price"
+                          />
+                        </Grid>
+                      </Grid>
+                    </form>
+                  </CardContent>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "flex-end",
+                      margin: 20,
+                      padding: 10,
+                    }}
+                  >
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      // onClick={acceptOrder}
+                      className={classes.button}
+                      startIcon={<CheckIcon />}
+                    >
+                      Accept
+                    </Button>
+                    {/* <Button
+                                    variant="contained"
+                                    color="secondary"
+                                    startIcon={<ClearIcon/>}
+                                    >
+                                    Reject
+                                </Button>                      */}
+                  </div>
+                </Card>
+              </div>
+            </AccordionDetails>
           </Accordion>
           {/* <Link to="/Track"> */}
           {/* <Card style={{ padding: 10, marginBottom: 10 }}> */}
-          <Accordion>
+          <Accordion style={{ marginBottom: 10 }}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
@@ -244,7 +380,38 @@ const TaskManager = (props) => {
                   </Avatar>
                 </ListItemAvatar>
                 <ListItemText
-                  primary={"Order Id. " + Math.floor(Math.random() * 10000)}
+                  primary={"Shipment from Haryana to Rajasthan"}
+                  secondary="Driver Arrived at Drop Location"
+                />
+              </ListItem>
+            </AccordionSummary>{" "}
+            <AccordionDetails>
+              <Grid container spacing={0}>
+                <Grid item xs={12} sm={12}>
+                  <Track />
+                </Grid>
+                <Grid item xs={12} sm={1}></Grid>
+
+                <Grid item xs={12} sm={10}>
+                  <LinearProgressWithLabel value={83} />
+                </Grid>
+              </Grid>
+            </AccordionDetails>
+          </Accordion>
+          <Accordion style={{ marginBottom: 10 }}>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <ListItem alignItems="flex-start">
+                <ListItemAvatar>
+                  <Avatar>
+                    <LocalShippingIcon />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={"Shipment from Bhopal to Indore"}
                   secondary="Driver Arrived at Drop Location"
                 />
               </ListItem>
@@ -259,7 +426,7 @@ const TaskManager = (props) => {
               </Grid>{" "}
             </AccordionDetails>
           </Accordion>
-          <Accordion>
+          <Accordion style={{ marginBottom: 10 }}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
@@ -272,7 +439,7 @@ const TaskManager = (props) => {
                   </Avatar>
                 </ListItemAvatar>
                 <ListItemText
-                  primary={"Order Id. " + Math.floor(Math.random() * 10000)}
+                  primary={"Shipment from J&K to Assam"}
                   secondary="Driver Arrived at Drop Location"
                 />
               </ListItem>
@@ -287,7 +454,7 @@ const TaskManager = (props) => {
               </Grid>{" "}
             </AccordionDetails>
           </Accordion>
-          <Accordion>
+          <Accordion style={{ marginBottom: 10 }}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
@@ -300,7 +467,7 @@ const TaskManager = (props) => {
                   </Avatar>
                 </ListItemAvatar>
                 <ListItemText
-                  primary={"Order Id. " + Math.floor(Math.random() * 10000)}
+                  primary={"Shipment from Haryana to Rajasthan"}
                   secondary="Driver Arrived at Drop Location"
                 />
               </ListItem>
@@ -315,35 +482,6 @@ const TaskManager = (props) => {
               </Grid>{" "}
             </AccordionDetails>
           </Accordion>
-          <Accordion>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-            >
-              <ListItem alignItems="flex-start">
-                <ListItemAvatar>
-                  <Avatar>
-                    <LocalShippingIcon />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary={"Order Id. " + Math.floor(Math.random() * 10000)}
-                  secondary="Driver Arrived at Drop Location"
-                />
-              </ListItem>
-            </AccordionSummary>{" "}
-            <AccordionDetails>
-              <Grid container spacing={0}>
-                <Grid item xs={12} sm={1}></Grid>
-
-                <Grid item xs={12} sm={10}>
-                  <LinearProgressWithLabel value={83} />
-                </Grid>
-              </Grid>{" "}
-            </AccordionDetails>
-          </Accordion>
-          {/* </Card> */}
           {/* </Link> */}
           {/* <Card style={{ padding: 10, marginBottom: 10 }}>
             <ListItem alignItems="flex-start">
