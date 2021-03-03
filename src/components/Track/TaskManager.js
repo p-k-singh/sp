@@ -14,9 +14,13 @@ import Select from "react-select";
 import PropTypes from "prop-types";
 import Divider from "@material-ui/core/Divider";
 import AppBar from "@material-ui/core/AppBar";
+import Accordion from "@material-ui/core/Accordion";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
+import Typography from "@material-ui/core/Typography";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import Typography from "@material-ui/core/Typography";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import Box from "@material-ui/core/Box";
 import LocalShippingIcon from "@material-ui/icons/LocalShipping";
@@ -179,8 +183,231 @@ const TaskManager = (props) => {
         </Tooltip> */}
       </Typography>
       <Divider />
+      <div>
+        <List component="nav">
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <Grid container spacing={0}>
+                <Grid item xs={12} sm={8}>
+                  <ListItem alignItems="flex-start">
+                    <ListItemAvatar>
+                      <Avatar>
+                        <ShoppingCartIcon />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={"New Order Request"}
+                      secondary="Shipment from Etwarpur,Rajasthan to Patna,Bihar"
+                    />
+                  </ListItem>
+                </Grid>
+                <Grid item xs={4}>
+                  <Button
+                    style={{
+                      maxWidth: "150px",
+                      minWidth: "150px",
+                      maxHeight: "50px",
+                      marginTop: 15,
+                      marginBottom: 7,
+                    }}
+                    component={Link}
+                    to={`accept-order/${notifications}`}
+                    variant="contained"
+                    color="default"
+                    startIcon={<LocalShippingIcon />}
+                    // component={Link}
+                    // to="/track"
+                  >
+                    Details
+                  </Button>
+                </Grid>
+              </Grid>
+            </AccordionSummary>
+            <AccordionDetails></AccordionDetails>
+          </Accordion>
+          {/* <Link to="/Track"> */}
+          {/* <Card style={{ padding: 10, marginBottom: 10 }}> */}
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <ListItem alignItems="flex-start">
+                <ListItemAvatar>
+                  <Avatar>
+                    <LocalShippingIcon />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={"Order Id. " + Math.floor(Math.random() * 10000)}
+                  secondary="Driver Arrived at Drop Location"
+                />
+              </ListItem>
+            </AccordionSummary>{" "}
+            <AccordionDetails>
+              <Grid container spacing={0}>
+                <Grid item xs={12} sm={1}></Grid>
 
-      <Typography className={classes.formHeadings}></Typography>
+                <Grid item xs={12} sm={10}>
+                  <LinearProgressWithLabel value={83} />
+                </Grid>
+              </Grid>{" "}
+            </AccordionDetails>
+          </Accordion>
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <ListItem alignItems="flex-start">
+                <ListItemAvatar>
+                  <Avatar>
+                    <LocalShippingIcon />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={"Order Id. " + Math.floor(Math.random() * 10000)}
+                  secondary="Driver Arrived at Drop Location"
+                />
+              </ListItem>
+            </AccordionSummary>{" "}
+            <AccordionDetails>
+              <Grid container spacing={0}>
+                <Grid item xs={12} sm={1}></Grid>
+
+                <Grid item xs={12} sm={10}>
+                  <LinearProgressWithLabel value={83} />
+                </Grid>
+              </Grid>{" "}
+            </AccordionDetails>
+          </Accordion>
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <ListItem alignItems="flex-start">
+                <ListItemAvatar>
+                  <Avatar>
+                    <LocalShippingIcon />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={"Order Id. " + Math.floor(Math.random() * 10000)}
+                  secondary="Driver Arrived at Drop Location"
+                />
+              </ListItem>
+            </AccordionSummary>{" "}
+            <AccordionDetails>
+              <Grid container spacing={0}>
+                <Grid item xs={12} sm={1}></Grid>
+
+                <Grid item xs={12} sm={10}>
+                  <LinearProgressWithLabel value={83} />
+                </Grid>
+              </Grid>{" "}
+            </AccordionDetails>
+          </Accordion>
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <ListItem alignItems="flex-start">
+                <ListItemAvatar>
+                  <Avatar>
+                    <LocalShippingIcon />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={"Order Id. " + Math.floor(Math.random() * 10000)}
+                  secondary="Driver Arrived at Drop Location"
+                />
+              </ListItem>
+            </AccordionSummary>{" "}
+            <AccordionDetails>
+              <Grid container spacing={0}>
+                <Grid item xs={12} sm={1}></Grid>
+
+                <Grid item xs={12} sm={10}>
+                  <LinearProgressWithLabel value={83} />
+                </Grid>
+              </Grid>{" "}
+            </AccordionDetails>
+          </Accordion>
+          {/* </Card> */}
+          {/* </Link> */}
+          {/* <Card style={{ padding: 10, marginBottom: 10 }}>
+            <ListItem alignItems="flex-start">
+              <ListItemAvatar>
+                <Avatar>
+                  <LocalShippingIcon />
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary={"Order Id. " + Math.floor(Math.random() * 10000)}
+                secondary="Pickup Completed Successfully"
+              />
+            </ListItem>
+            <Grid container spacing={0}>
+              <Grid item xs={12} sm={1}></Grid>
+
+              <Grid item xs={12} sm={10}>
+                <LinearProgressWithLabel value={60} />
+              </Grid>
+            </Grid>
+          </Card>
+          <Card style={{ padding: 10, marginBottom: 10 }}>
+            <ListItem alignItems="flex-start">
+              <ListItemAvatar>
+                <Avatar>
+                  <LocalShippingIcon />
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary={"Order Id. " + Math.floor(Math.random() * 10000)}
+                secondary="Delivery Checklist Completed, Waiting for OTP verification"
+              />
+            </ListItem>
+            <Grid container spacing={0}>
+              <Grid item xs={12} sm={1}></Grid>
+
+              <Grid item xs={12} sm={10}>
+                <LinearProgressWithLabel value={90} />
+              </Grid>
+            </Grid>
+          </Card>
+          <Card style={{ padding: 10, marginBottom: 10 }}>
+            <ListItem alignItems="flex-start">
+              <ListItemAvatar>
+                <Avatar>
+                  <LocalShippingIcon />
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary={"Order Id. " + Math.floor(Math.random() * 10000)}
+                secondary="Driver has left for Pickup"
+              />
+            </ListItem>
+            <Grid container spacing={0}>
+              <Grid item xs={12} sm={1}></Grid>
+
+              <Grid item xs={12} sm={10}>
+                <LinearProgressWithLabel value={10} />
+              </Grid>
+            </Grid>
+          </Card> */}
+        </List>
+      </div>
+      {/* <Typography className={classes.formHeadings}></Typography>
       <div className={classes.root} style={{ marginRight: 100 }}>
         <AppBar position="static">
           <Tabs
@@ -222,7 +449,7 @@ const TaskManager = (props) => {
           <div>
             <List component="nav">
               {/* {tracking.map((f) => ( */}
-              <Link to="/Track">
+      {/* <Link to="/Track">
                 <Card style={{ padding: 10, marginBottom: 10 }}>
                   <ListItem alignItems="flex-start">
                     <ListItemAvatar>
@@ -311,7 +538,7 @@ const TaskManager = (props) => {
           <div>
             <List component="nav">
               {/* {tracking.map((f) => ( */}
-              <Card style={{ padding: 10, marginBottom: 10 }}>
+      {/* <Card style={{ padding: 10, marginBottom: 10 }}>
                 <Grid container spacing={0}>
                   <Grid item xs={12} sm={8}>
                     <ListItem alignItems="flex-start">
@@ -348,10 +575,10 @@ const TaskManager = (props) => {
                   </Grid>
                 </Grid>
               </Card>
-            </List>
-          </div>
-        </TabPanel>
-      </div>
+            </List> */}
+      {/* </div> */}
+      {/* //   </TabPanel> */}
+      {/* // </div>  */}
     </CardContent>
   );
 };
