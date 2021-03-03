@@ -216,7 +216,7 @@ export default function TruckCostDetails(props) {
                   </TableCell>
                   <TableCell>
                     ₹{" "}
-                    {row.price == null
+                    {row.price == null || row.price == ""
                       ? row.additionalDetails[0].immediatePricing
                       : row.price}{" "}
                   </TableCell>
@@ -282,7 +282,7 @@ export default function TruckCostDetails(props) {
                                     Delivery Commitment :
                                   </TableCell>
                                   <TableCell style={{ borderBottom: "none" }}>
-                                    {details.deliveryCommitment.toString()} Days
+                                    {details.deliveryCommitment} Days
                                   </TableCell>
                                 </TableRow>
                               </Grid>

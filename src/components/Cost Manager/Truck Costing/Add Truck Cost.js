@@ -73,15 +73,24 @@ const AddTruckCost = (props) => {
   const classes = useStyles();
   const [currentUser, setCurrentUser] = useState(null);
 
-  const [sourcePinCodes,setSourcePinCodes] = useState([
+  const [sourcePinCodes, setSourcePinCodes] = useState([
     {
-      sourceLocation:[
+      sourceLocation: [
         {
-          pin:""
-        }
-      ]
-    }
-  ])
+          pin: "",
+        },
+      ],
+    },
+  ]);
+  const [destinationPinCodes, setDestinationPinCodes] = useState([
+    {
+      destinationLocation: [
+        {
+          pin: "",
+        },
+      ],
+    },
+  ]);
 
   const [chosenProducts, setChosenProducts] = useState([
     {
@@ -111,11 +120,8 @@ const AddTruckCost = (props) => {
   const [capability, setCapability] = useState([]);
   const [loading, setLoading] = useState(false);
 
-
-  useEffect(()=>{
-
-  },[sourcePinCodes])
-
+  useEffect(() => {}, [sourcePinCodes]);
+  useEffect(() => {}, [destinationPinCodes]);
 
   const onsourceAreaChangeController = (event, i, j) => {
     var items = chosenProducts.slice();
@@ -142,15 +148,24 @@ const AddTruckCost = (props) => {
   const addproduct = () => {
     var items = chosenProducts.slice();
 
-    var pins = sourcePinCodes.slice();
-    pins.push({
-      sourceLocation:[
+    var spins = sourcePinCodes.slice();
+    spins.push({
+      sourceLocation: [
         {
-          pin:""
-        }
-      ]
-    })
-    setSourcePinCodes(pins)
+          pin: "",
+        },
+      ],
+    });
+    setDestinationPinCodes(spins);
+    var dpins = destinationPinCodes.slice();
+    dpins.push({
+      destinationLocation: [
+        {
+          pin: "",
+        },
+      ],
+    });
+    setDestinationPinCodes(dpins);
 
     items.push({
       capability: null,
@@ -180,12 +195,16 @@ const AddTruckCost = (props) => {
   const addroute = (i) => {
     var items = chosenProducts.slice();
 
-    var pins = sourcePinCodes.slice();
-    pins[i].sourceLocation.push({
-      pin:""
-    })
-    setSourcePinCodes(pins)
-
+    var spins = sourcePinCodes.slice();
+    spins[i].sourceLocation.push({
+      pin: "",
+    });
+    setSourcePinCodes(spins);
+    var dpins = destinationPinCodes.slice();
+    dpins[i].destinationLocation.push({
+      pin: "",
+    });
+    setDestinationPinCodes(dpins);
 
     items[i].additionalDetails.push({
       sourceLocation: "",
@@ -211,12 +230,9 @@ const AddTruckCost = (props) => {
     }),
   };
   const onsourceLocationChangeController = (event, i, j) => {
-
     var pins = sourcePinCodes.slice();
-    pins[i].sourceLocation[j].pin = event.target.value
-    setSourcePinCodes(pins)
-    
-
+    pins[i].sourceLocation[j].pin = event.target.value;
+    setSourcePinCodes(pins);
 
     var sourcePinCode = parseInt(event.target.value, 10);
     var items = chosenProducts.slice();
@@ -227,7 +243,7 @@ const AddTruckCost = (props) => {
       return;
     } else {
       items[i].additionalDetails[j].sourceZipValidator = "";
-     // setChosenProducts(items);
+      // setChosenProducts(items);
     }
     var count = 0,
       temp = sourcePinCode;
@@ -235,58 +251,43 @@ const AddTruckCost = (props) => {
       count++;
       temp = Math.floor(temp / 10);
     }
-    items[i].additionalDetails[j].sourceLocation=event.target.value
-    
+    items[i].additionalDetails[j].sourceLocation = event.target.value;
+
     if (count === 6) {
-      
       const api_url = "https://api.postalpincode.in/pincode/" + sourcePinCode;
-      // alert("Hello");
-      fetch(api_url).then((response) => {
-       // alert(response)
-        response.json().then((data) => {
-          if (data !== null && data[0].PostOffice !== null) {
-            items[i].additionalDetails[j].sourcePinData = data[0].PostOffice;
-           // setChosenProducts(items);
-          }
+      fetch(api_url)
+        .then((response) => {
+          response.json().then((data) => {
+            if (data !== null && data[0].PostOffice !== null) {
+              items[i].additionalDetails[j].sourcePinData = data[0].PostOffice;
+            }
+            setChosenProducts(items);
+          });
+        })
+        .catch((err) => {
+          console.log(err);
           setChosenProducts(items);
         });
-      })
-      .catch(err=>{
-        console.log(err);
-        setChosenProducts(items);
-      })
-      // async function getapi(url) {
-      //   const response = await fetch(url);
-      //   var data = await response.json();
-      //   console.log(data);
-
-      //   if (data !== null && data[0].PostOffice !== null) {
-      //     items[i].additionalDetails[j].sourcePinData = data[0].PostOffice;
-      //     setChosenProducts(items);
-      //   } else {
-      //   }
-      //   setChosenProducts(items);
-      // }
-      // getapi(api_url);
-    }
-    else{
-      items[i].additionalDetails[j].sourceZipValidator = "Pin must be of 6 digits";
+    } else {
+      items[i].additionalDetails[j].sourceZipValidator =
+        "Pin must be of 6 digits";
       setChosenProducts(items);
     }
-   
   };
   const onDestinationLocationChangeController = (event, i, j) => {
+    var pins = destinationPinCodes.slice();
+    pins[i].destinationLocation[j].pin = event.target.value;
+    setDestinationPinCodes(pins);
+
     var destinationPinCode = parseInt(event.target.value, 10);
     var items = chosenProducts.slice();
     if (destinationPinCode < 0) {
       items[i].additionalDetails[j].destinationZipValidator =
         "Cannot be a negative value";
-      setChosenProducts(items);
 
       return;
     } else {
       items[i].additionalDetails[j].destinationZipValidator = "";
-      setChosenProducts(items);
     }
     var count = 0,
       temp = destinationPinCode;
@@ -294,33 +295,30 @@ const AddTruckCost = (props) => {
       count++;
       temp = Math.floor(temp / 10);
     }
-    if (count == 6) {
+    items[i].additionalDetails[j].destinationLocation = event.target.value;
+
+    if (count === 6) {
       const api_url =
         "https://api.postalpincode.in/pincode/" + destinationPinCode;
-
-      async function getapi(url) {
-        const response = await fetch(url);
-        var data = await response.json();
-        console.log(data);
-
-        if (data !== null && data[0].PostOffice !== null) {
-          items[i].additionalDetails[j].destinationPinData = data[0].PostOffice;
-        } else {
-        }
-        setChosenProducts(items);
-      }
-      getapi(api_url);
-    }
-    if (count !== 6) {
-      items[i].additionalDetails[j].destinationZipValidator =
-        "Must be of six digits";
-      setChosenProducts(items);
+      fetch(api_url)
+        .then((response) => {
+          response.json().then((data) => {
+            if (data !== null && data[0].PostOffice !== null) {
+              items[i].additionalDetails[j].destinationPinData =
+                data[0].PostOffice;
+            }
+            setChosenProducts(items);
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          setChosenProducts(items);
+        });
     } else {
-      items[i].additionalDetails[j].destinationZipValidator = "";
+      items[i].additionalDetails[j].destinationZipValidator =
+        "Pin must be of 6 digits";
       setChosenProducts(items);
     }
-    items[i].additionalDetails[j].destinationLocation = event.target.value;
-    setChosenProducts(items);
   };
   const onImmediatePricingChangeController = (event, i, j) => {
     var items = chosenProducts.slice();
@@ -587,7 +585,6 @@ const AddTruckCost = (props) => {
                     chosenProducts[i].additionalDetails[j]
                       .sourceZipValidator !== ""
                   }
-                  
                   helperText={
                     chosenProducts[i].additionalDetails[j]
                       .sourceZipValidator === ""
@@ -665,9 +662,7 @@ const AddTruckCost = (props) => {
                   label="Destination Location Zip"
                   type="number"
                   className={classes.textField}
-                  value={
-                    chosenProducts[i].additionalDetails[j].destinationLocation
-                  }
+                  value={destinationPinCodes[i].destinationLocation[j].pin}
                   onChange={(event) =>
                     onDestinationLocationChangeController(event, i, j)
                   }
@@ -681,6 +676,7 @@ const AddTruckCost = (props) => {
                   .length !== 0 ? (
                   <MaterialSelect
                     autoWidth={true}
+                    fullWidth
                     size="small"
                     native
                     onChange={(event) =>

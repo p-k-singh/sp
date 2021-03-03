@@ -22,6 +22,7 @@ import {
   FormControl,
   InputLabel,
   Button,
+  Select as MaterialSelect,
   Switch,
   Card,
   Container,
@@ -98,27 +99,28 @@ const AddTocapacity = (props) => {
   const [capacity, setCapacity] = useState();
   const [price, setPrice] = useState();
   const [distance, setDistance] = useState();
-  const [isNew, setIsNew] = useState(false);
+  const [isNew, setIsNew] = useState(true);
   const [ThirtyDaysPricing, setThirtyDaysPricing] = useState();
   const [ImmidiatePricing, setImmidiatePricing] = useState();
   const [pin, setPin] = useState();
   const [capability, setCapability] = useState("");
   const [Features, setFeatures] = useState([]);
-  const [Ratecapability, setRatecapability] = useState([]);
   const [loading, setLoading] = useState(false);
   const [availableFrom, setAvailableFrom] = useState("");
   const [availableTo, setAvailableTo] = useState("");
   const [assetActive, setAssetActive] = useState(true);
   const [ExpandDetails, setExpandDetails] = useState(false);
-  const [pindata, setpindata] = useState("");
   const [costData, setCostData] = useState([]);
-  const [DeliveryPromise, setDeliveryPromise] = useState();
+  const [DeliveryPromise, setDeliveryPromise] = useState("");
+  const [DeliveryPromiseName, setDeliveryPromiseName] = useState("");
   const [SourceLocation, setSourceLocation] = useState();
   const [DestinationLocation, setDestinationLocation] = useState();
-  /**Validators */
-  const [pinValidator, setPinValidator] = useState("");
-  const [capacityValidator, setCapacityValidator] = useState("");
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const [sourceArea, setSourceArea] = useState("");
+  const [destinationArea, setDestinationArea] = useState("");
+  const [sourcePinData, setSourcePinData] = useState([]);
+  const [destinationPinData, setDestinationPinData] = useState([]);
+  const [sourceZipValidator, setSourceZipValidator] = useState("");
+  const [destinationZipValidator, setDestinationZipValidator] = useState("");
 
   const capabilityOptions = {
     options: constants.capabilityOptions,
@@ -143,70 +145,34 @@ const AddTocapacity = (props) => {
       setUnit("sqft");
     }
   };
+
+  const onSourceAreaChangeController = (event) => {
+    setSourceArea(event.target.value);
+  };
+  const onDestinationAreaChangeController = (event) => {
+    setDestinationArea(event.target.value);
+  };
   const handleAssetActive = () => {
     setAssetActive(!assetActive);
   };
   const onTruckNumberChangeController = (event) => {
     setTruckNumber(event.target.value);
   };
-  const onSizeChangeController = (event) => {
-    if (event.target.value < 0) {
-      setCapacityValidator("Capacity cannot be negative");
-    } else {
-      setCapacityValidator("");
-    }
-    setSize(event.target.value);
-  };
-  // const unitChangeController = (event) => {
-  //     setUnit(event.target.value)
-  // }
 
-  const onLocationChangeController = (event) => {
-    setLocation(event.target.value);
-  };
-  const onImmidiatePricingChangeController = (event) => {
-    setImmidiatePricing(event.target.value);
-  };
-  const onThirtyDaysPricingController = (event) => {
-    setThirtyDaysPricing(event.target.value);
-  };
-
-  const onPinChangeController = (event) => {
-    var pickupPinCode = parseInt(event.target.value, 10);
-    var greater = 999999,
-      smaller = 100000;
-    var check = 1;
-    if (pickupPinCode < smaller || pickupPinCode > greater) {
-      setPinValidator("Pincode must be of 6 digits");
-      check = 0;
-    }
-    if (pickupPinCode < 0) {
-      setPinValidator("Pincode Cannot be negative");
-      check = 0;
-    }
-    if (check === 1) {
-      setPinValidator("");
-    }
-    setPin(event.target.value);
-  };
   const onAvailableFromChangeController = (event) => {
     setAvailableFrom(event.target.value);
   };
   const onAvailableToChangeController = (event) => {
     setAvailableTo(event.target.value);
   };
-  const onCapabilitiesChange = (event) => {
-    setCapability(event);
-  };
   const onFeaturesChange = (event) => {
     setFeatures(event);
   };
-  const onRateCapabilityChange = (event) => {
+  const onCapabilityChange = (event) => {
     var i;
     var j;
-
-    setIsNew(false);
     setPrice("");
+    setIsNew(true);
     setCostId(null);
     setImmidiatePricing("");
     setThirtyDaysPricing("");
@@ -217,7 +183,7 @@ const AddTocapacity = (props) => {
     setDistance(null);
     for (i = 0; i < costData.length; i++) {
       if (event.value === costData[i].label) {
-        setIsNew(true);
+        setIsNew(false);
         setPrice(costData[i].value.price);
         setCostId(costData[i].value.costId);
         setImmidiatePricing(
@@ -245,7 +211,8 @@ const AddTocapacity = (props) => {
             constants.DeliveryCommitmentOptions[j].value ==
             costData[i].value.additionalDetails[0].deliveryCommitment
           ) {
-            setDeliveryPromise(constants.DeliveryCommitmentOptions[j]);
+            setDeliveryPromise(constants.DeliveryCommitmentOptions[j].value);
+            setDeliveryPromiseName(constants.DeliveryCommitmentOptions[j]);
           }
         }
 
@@ -258,8 +225,8 @@ const AddTocapacity = (props) => {
           }
         }
       }
-      setRatecapability(event);
     }
+    setCapability(event);
   };
   const onCapacityChange = (event) => {
     setCapacity(event);
@@ -267,6 +234,102 @@ const AddTocapacity = (props) => {
   const onPriceChange = (event) => {
     setPrice(event.target.value);
   };
+  const onDeliveryCommitmentChange = (event) => {
+    setDeliveryPromise(event.value);
+    setDeliveryPromiseName(event);
+  };
+  const onImmidiatePricingChangeController = (event) => {
+    setImmidiatePricing(event.target.value);
+  };
+  const onThirtyDaysPricingController = (event) => {
+    setThirtyDaysPricing(event.target.value);
+  };
+
+  const onSourceLocationChange = (event) => {
+    var sourcePinCode = parseInt(event.target.value, 10);
+    if (sourcePinCode < 0) {
+      setSourceZipValidator("Cannot be a negative value");
+
+      return;
+    } else {
+      setSourceZipValidator("");
+    }
+    var count = 0,
+      temp = sourcePinCode;
+    while (temp > 0) {
+      count++;
+      temp = Math.floor(temp / 10);
+    }
+    if (count == 6) {
+      const api_url = "https://api.postalpincode.in/pincode/" + sourcePinCode;
+
+      // Defining async function
+      async function getapi(url) {
+        // Storing response
+
+        const response = await fetch(url);
+
+        // Storing data in form of JSON
+        var data = await response.json();
+        console.log(data);
+        setSourcePinData(
+          data !== null && data[0].PostOffice !== null ? data[0].PostOffice : ""
+        );
+      }
+      // Calling that async function
+      getapi(api_url);
+    }
+    if (count !== 6) {
+      setSourceZipValidator("Must be of six digits");
+    } else {
+      setSourceZipValidator("");
+    }
+
+    setSourceLocation(event.target.value);
+  };
+  const onDestinationLocationChange = (event) => {
+    var DestinationPinCode = parseInt(event.target.value, 10);
+    if (DestinationPinCode < 0) {
+      setDestinationZipValidator("Cannot be a negative value");
+
+      return;
+    } else {
+      setDestinationZipValidator("");
+    }
+    var count = 0,
+      temp = DestinationPinCode;
+    while (temp > 0) {
+      count++;
+      temp = Math.floor(temp / 10);
+    }
+    if (count == 6) {
+      const api_url =
+        "https://api.postalpincode.in/pincode/" + DestinationPinCode;
+
+      // Defining async function
+      async function getapi(url) {
+        // Storing response
+
+        const response = await fetch(url);
+
+        // Storing data in form of JSON
+        var data = await response.json();
+        console.log(data);
+        setDestinationPinData(
+          data !== null && data[0].PostOffice !== null ? data[0].PostOffice : ""
+        );
+      }
+      // Calling that async function
+      getapi(api_url);
+    }
+    if (count !== 6) {
+      setDestinationZipValidator("Must be of six digits");
+    } else {
+      setDestinationZipValidator("");
+    }
+    setDestinationLocation(event.target.value);
+  };
+
   const onDistanceChange = (event) => {
     setDistance(event);
   };
@@ -326,7 +389,7 @@ const AddTocapacity = (props) => {
           destinationLocation: DestinationLocation,
           thirtyDaysPricing: ThirtyDaysPricing,
           immediatePricing: ImmidiatePricing,
-          deliveryCommitment: DeliveryPromise.value,
+          deliveryCommitment: DeliveryPromise,
         },
       ],
     };
@@ -345,7 +408,6 @@ const AddTocapacity = (props) => {
         })
     );
     setLoading(false);
-    props.toggleForm();
     return await Promise.all(items);
   };
 
@@ -370,7 +432,7 @@ const AddTocapacity = (props) => {
           destinationLocation: DestinationLocation,
           thirtyDaysPricing: ThirtyDaysPricing,
           immediatePricing: ImmidiatePricing,
-          deliveryCommitment: DeliveryPromise.value,
+          deliveryCommitment: DeliveryPromise,
         },
       ],
     };
@@ -389,7 +451,6 @@ const AddTocapacity = (props) => {
         })
     );
     setLoading(false);
-    props.toggleForm();
     return await Promise.all(items);
   };
   const submitCapacity = async () => {
@@ -397,14 +458,14 @@ const AddTocapacity = (props) => {
       alert("Please select Asset type.");
       return;
     }
-    if (capacityValidator !== "") {
-      alert(capacityValidator);
-      return;
-    }
-    if (size == null || size == 0) {
-      alert("Capacity cannot be blank.");
-      return;
-    }
+    // if (capacityValidator !== "") {
+    //   alert(capacityValidator);
+    //   return;
+    // }
+    // if (size == null || size == 0) {
+    //   alert("Capacity cannot be blank.");
+    //   return;
+    // }
     if (
       (type.value === "truck" && truckNumber == "") ||
       (type.value === "truck" && truckNumber == null)
@@ -412,10 +473,10 @@ const AddTocapacity = (props) => {
       alert("Truck Number cannot be empty.");
       return;
     }
-    if (capability == null || capability == "") {
-      alert("Please select capabilities of the selected Asset.");
-      return;
-    }
+    // if (capability == null || capability == "") {
+    //   alert("Please select capabilities of the selected Asset.");
+    //   return;
+    // }
     if (
       availableTo == null ||
       availableTo == "" ||
@@ -425,22 +486,23 @@ const AddTocapacity = (props) => {
       alert("Availability Dates cannot be empty");
       return;
     }
-    if (ownership.value == null || ownership.value == "") {
-      alert("Ownership cannot be empty");
-      return;
-    }
-    if (pinValidator !== "") {
-      alert(pinValidator);
-      return;
-    }
-    if (location == null || location == "") {
-      alert("Base Location cannot be blank");
-      return;
-    }
-    if (pin == null || pin == 0) {
-      alert("Pin cannot be Empty");
-      return;
-    }
+    // if (ownership.value == null || ownership.value == "") {
+    //   alert("Ownership cannot be empty");
+    //   return;
+    // }
+    // if (pinValidator !== "") {
+    //   alert(pinValidator);
+    //   return;
+    // }
+    // if (location == null || location == "") {
+    //   alert("Base Location cannot be blank");
+    //   return;
+    // }
+    // if (pin == null || pin == 0) {
+    //   alert("Pin cannot be Empty");
+    //   return;
+    // }
+    isNew == true ? SubmitNewPricing() : EditOldPricing();
 
     setLoading(true);
     var currentUser = await Auth.currentUserInfo();
@@ -449,19 +511,15 @@ const AddTocapacity = (props) => {
       owner: owner,
       type: type.value,
       assetNumber: truckNumber,
-      capacity: size,
+      capacity: capacity.value,
       unit: unit,
-      capabilities: capability,
+      capabilities: capability.value,
       availableFromDateTime: availableFrom,
       availableToDateTime: availableTo,
-      ownershipType: ownership.value,
-      location: location,
+      ownershipType: "Blank",
+      location: "Blank",
       active: assetActive,
-      pincode: pin,
-      // ThirtyDaysPricing: ThirtyDaysPricing,
-      // ImmidiatePricing: ImmidiatePricing,
-      // DeliveryRange: DeliveryRange,
-      // RatePerKM: RatePerKM,
+      // pincode: pin,
     };
     const payload = {
       body: data,
@@ -592,8 +650,8 @@ const AddTocapacity = (props) => {
               isSearchable
               name="Capability"
               placeholder="Capability"
-              value={Ratecapability}
-              onChange={(event) => onRateCapabilityChange(event)}
+              value={capability}
+              onChange={(event) => onCapabilityChange(event)}
               options={constants.truckCapabilityOptions}
             />
           </Grid>
@@ -616,12 +674,13 @@ const AddTocapacity = (props) => {
               />
             </Grid>
           </Tooltip>
-          {Ratecapability.length !== 0 ? (
+          {capability.length !== 0 ? (
             <Grid container spacing={3} style={{ padding: 50 }}>
               <Grid item xs={12} sm={4}>
                 <TextField
                   size="small"
                   variant="outlined"
+                  helperText={"*Immidiate Pricing inclusive of GST per Trip"}
                   value={price}
                   label="Price"
                   InputLabelProps={{ shrink: true }}
@@ -702,27 +761,72 @@ const AddTocapacity = (props) => {
                 <Grid container spacing={3}>
                   <Grid item xs={12} sm={3}>
                     <TextField
-                      required
                       InputLabelProps={{ shrink: true }}
                       // type="number"
                       id="Source"
                       name="Source"
                       label="Source Location Zip"
+                      error={sourceZipValidator !== ""}
+                      helperText={
+                        sourceZipValidator === ""
+                          ? sourcePinData == ""
+                            ? ""
+                            : sourcePinData[0].District +
+                              ", " +
+                              sourcePinData[0].State
+                          : sourceZipValidator
+                      }
                       PinCode
+                      onChange={(event) => onSourceLocationChange(event)}
                       value={SourceLocation}
                       size="small"
                       variant="outlined"
                       autoComplete="Pickup postal-code"
                     />
                   </Grid>
-
+                  {sourcePinData.length !== 0 ? (
+                    <Grid item xs={12} sm={3}>
+                      <FormControl className={classes.formControl} fullWidth>
+                        <InputLabel htmlFor="age-native-simple">
+                          Locality
+                        </InputLabel>
+                        <MaterialSelect
+                          native
+                          onChange={(event) =>
+                            onSourceAreaChangeController(event)
+                          }
+                          value={sourceArea}
+                          inputProps={{
+                            name: "age",
+                            id: "age-native-simple",
+                          }}
+                        >
+                          {sourcePinData.map((d) => (
+                            <option>{d.Name}</option>
+                          ))}
+                        </MaterialSelect>
+                      </FormControl>
+                    </Grid>
+                  ) : (
+                    <p></p>
+                  )}
                   <Grid item xs={12} sm={3}>
                     <TextField
                       InputLabelProps={{ shrink: true }}
-                      required
                       fullWidth
+                      onChange={(event) => onDestinationLocationChange(event)}
                       label="Destination Location Zip"
                       // type="number"
+                      error={destinationZipValidator !== ""}
+                      helperText={
+                        destinationZipValidator === ""
+                          ? destinationPinData == ""
+                            ? ""
+                            : destinationPinData[0].District +
+                              ", " +
+                              destinationPinData[0].State
+                          : destinationZipValidator
+                      }
                       value={DestinationLocation}
                       className={classes.textField}
                       variant="outlined"
@@ -730,6 +834,32 @@ const AddTocapacity = (props) => {
                       autoComplete="Pickup postal-code"
                     />
                   </Grid>
+                  {destinationPinData.length !== 0 ? (
+                    <Grid item xs={12} sm={3}>
+                      <FormControl className={classes.formControl} fullWidth>
+                        <InputLabel htmlFor="age-native-simple">
+                          Locality
+                        </InputLabel>
+                        <MaterialSelect
+                          native
+                          onChange={(event) =>
+                            onDestinationAreaChangeController(event)
+                          }
+                          value={sourceArea}
+                          inputProps={{
+                            name: "age",
+                            id: "age-native-simple",
+                          }}
+                        >
+                          {destinationPinData.map((d) => (
+                            <option>{d.Name}</option>
+                          ))}
+                        </MaterialSelect>
+                      </FormControl>
+                    </Grid>
+                  ) : (
+                    <p></p>
+                  )}
 
                   <Grid item xs={12} sm={6}>
                     <TextField
@@ -737,6 +867,7 @@ const AddTocapacity = (props) => {
                       InputLabelProps={{ shrink: true }}
                       label="30 Days Pricing"
                       //type="number"
+                      onChange={(event) => onThirtyDaysPricingController(event)}
                       className={classes.textField}
                       variant="outlined"
                       size="small"
@@ -751,6 +882,9 @@ const AddTocapacity = (props) => {
                   <Grid item xs={12} sm={6}>
                     <TextField
                       fullWidth
+                      onChange={(event) =>
+                        onImmidiatePricingChangeController(event)
+                      }
                       label="Immediate Payment Pricing"
                       //type="number"
                       value={ImmidiatePricing}
@@ -765,12 +899,12 @@ const AddTocapacity = (props) => {
                       size="small"
                     />
                   </Grid>
-
                   <Grid item xs={12} sm={6}>
                     <Select
                       styles={selectStyles}
-                      value={DeliveryPromise}
+                      value={DeliveryPromiseName}
                       className="basic-single"
+                      onChange={(event) => onDeliveryCommitmentChange(event)}
                       classNamePrefix="Delivery Commitment"
                       isSearchable
                       name="Delivery Commitment"
