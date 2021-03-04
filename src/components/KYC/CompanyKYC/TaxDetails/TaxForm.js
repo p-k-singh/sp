@@ -30,6 +30,7 @@ const CompanyKYC = (props) => {
   const [panDoc, setPanDoc] = useState();
   const [gstDoc, setGSTDoc] = useState();
   const [loading, setLoading] = useState(false);
+  const [submit, setSubmit] = useState(false);
   const [myState, setMyState] = useState({
     pan: "",
     gstin: "",
@@ -38,7 +39,6 @@ const CompanyKYC = (props) => {
     setMyState({ ...myState, [event.target.name]: event.target.value });
   };
   const submitKYC = () => {
-
     if (myState.pan == "") {
       alert("PAN Details cannot be empty");
       return;
@@ -56,7 +56,7 @@ const CompanyKYC = (props) => {
       alert(" Please upload your GSTIN Proof");
       return;
     }
-    setLoading(true);
+    setSubmit(true);
     var panLink, gstinLink;
     const metaData = {
       contentType: panDoc.type,
@@ -131,17 +131,36 @@ const CompanyKYC = (props) => {
                             console.log(resp);
                             fun();
                           })
-                          .catch((err) => console.log(err));
+                          .catch((err) => {
+                            console.log(err);
+                            setSubmit(false);
+                          });
                       })
-                      .catch((err) => console.log(err));
+                      .catch((err) => {
+                        console.log(err);
+                        setSubmit(false);
+                      });
                   })
-                  .catch((err) => console.log(err));
+                  .catch((err) => {
+                    console.log(err);
+                    setSubmit(false);
+                  });
               })
-              .catch((err) => console.log(err));
+              .catch((err) => {
+                console.log(err);
+                setSubmit(false);
+              });
           })
-          .catch((err) => console.log(err));
+          .catch((err) => {
+            console.log(err);
+            setSubmit(false);
+          });
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setSubmit(false);
+      });
+
     setLoading(false);
   };
   const fun = () => {
@@ -227,19 +246,22 @@ const CompanyKYC = (props) => {
             />
           </Grid>
         </Grid>
-
-        <Button
-          onClick={submitKYC}
-          className="row"
-          variant="contained"
-          style={{
-            float: "right",
-            backgroundColor: "#f9a825",
-            marginBottom: "10px",
-          }}
-        >
-          Next
-        </Button>
+        {submit == true ? (
+          <Spinner />
+        ) : (
+          <Button
+            onClick={submitKYC}
+            className="row"
+            variant="contained"
+            style={{
+              float: "right",
+              backgroundColor: "#f9a825",
+              marginBottom: "10px",
+            }}
+          >
+            Next
+          </Button>
+        )}
       </form>
     </div>
   );

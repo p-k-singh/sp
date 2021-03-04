@@ -26,6 +26,7 @@ const useStyles = makeStyles({
 const AccountInfoForm = (props) => {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
+  const [submit, setSubmit] = useState(false);
   const [myState, setMyState] = useState({
     accountHolderName: "",
     accountNumber: "",
@@ -45,7 +46,7 @@ const AccountInfoForm = (props) => {
       return;
     }
 
-    setLoading(true);
+    setSubmit(true);
     Auth.currentUserInfo()
       .then((userDetails) => {
         const payload = {
@@ -67,12 +68,17 @@ const AccountInfoForm = (props) => {
           payload
         )
           .then((resp) => console.log(resp))
-          .catch((err) => console.log(err));
+          .catch((err) => {
+            console.log(err);
+            setSubmit(false);
+          });
 
         fun();
       })
-      .catch((err) => console.log(err));
-    setLoading(false);
+      .catch((err) => {
+        console.log(err);
+        setSubmit(false);
+      });
   };
   const fun = () => {
     //alert(JSON.stringify(props))
@@ -139,19 +145,22 @@ const AccountInfoForm = (props) => {
             />
           </Grid>
         </Grid>
-
-        <Button
-          onClick={submitKYC}
-          className="row"
-          variant="contained"
-          style={{
-            float: "right",
-            backgroundColor: "#f9a825",
-            marginBottom: "10px",
-          }}
-        >
-          Submit KYC
-        </Button>
+        {submit == true ? (
+          <Spinner />
+        ) : (
+          <Button
+            onClick={submitKYC}
+            className="row"
+            variant="contained"
+            style={{
+              float: "right",
+              backgroundColor: "#f9a825",
+              marginBottom: "10px",
+            }}
+          >
+            Submit KYC
+          </Button>
+        )}
       </form>
     </div>
   );

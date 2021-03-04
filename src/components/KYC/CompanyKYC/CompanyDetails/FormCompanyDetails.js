@@ -31,6 +31,7 @@ const CompanyKYC = (props) => {
   const classes = useStyles();
   const [registrationDoc, setRegistrationDoc] = useState();
   const [loading, setLoading] = useState(false);
+  const [submit, setSubmit] = useState(false);
   const [myState, setMyState] = useState({
     registeredName: "",
     registeredAddress: "",
@@ -59,7 +60,7 @@ const CompanyKYC = (props) => {
       return;
     }
 
-    setLoading(true);
+    setSubmit(true);
     var docLink;
     const metaData = {
       contentType: registrationDoc.type,
@@ -111,17 +112,28 @@ const CompanyKYC = (props) => {
                     console.log(resp);
                     fun();
                   })
-                  .catch((err) => console.log(err));
+                  .catch((err) => {
+                    console.log(err);
+                    setSubmit(false);
+                  });
               })
-              .catch((err) => console.log(err));
+              .catch((err) => {
+                console.log(err);
+                setSubmit(false);
+              });
           })
-          .catch((err) => console.log(err));
+          .catch((err) => {
+                console.log(err);
+                setSubmit(false);
+              });
       })
-      .catch((err) => console.log(err));
-    setLoading(false);
+      .catch((err) => {
+                console.log(err);
+                setSubmit(false);
+              });
+    
   };
   const fun = () => {
-    //alert(JSON.stringify(props))
     props.loadData();
   };
   const onRegistrationProofChange = (event) => {
@@ -133,11 +145,7 @@ const CompanyKYC = (props) => {
 
   return (
     <div style={{ overflow: "hidden" }}>
-      {/* <Typography fullWidth className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }}>
-                            Pending KYC
-                        </Typography> */}
       <form>
-        {/* <Typography className={classes.formHeadings} >Company Details</Typography> */}
         <Grid
           container
           spacing={3}
@@ -219,19 +227,22 @@ const CompanyKYC = (props) => {
             </Grid>
           </Grid>
         </Grid>
-
-        <Button
-          onClick={submitKYC}
-          className="row"
-          variant="contained"
-          style={{
-            float: "right",
-            backgroundColor: "#f9a825",
-            marginBottom: "10px",
-          }}
-        >
-          Next
-        </Button>
+        {submit == true ? (
+          <Spinner />
+        ) : (
+          <Button
+            onClick={submitKYC}
+            className="row"
+            variant="contained"
+            style={{
+              float: "right",
+              backgroundColor: "#f9a825",
+              marginBottom: "10px",
+            }}
+          >
+            Next
+          </Button>
+        )}
       </form>
     </div>
   );
