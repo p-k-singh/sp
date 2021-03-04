@@ -27,22 +27,32 @@ const AccountInfoForm = (props) => {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
   const [submit, setSubmit] = useState(false);
+  const [IfscValidator, setIfscValidator] = useState("");
+  const [AccountNameValidator, setAccountNameValidator] = useState("");
+  const [AccountNoValidator, setAccountNoValidator] = useState("");
   const [myState, setMyState] = useState({
     accountHolderName: "",
     accountNumber: "",
     ifscCode: "",
   });
   const submitKYC = () => {
+    if (
+      AccountNameValidator !== "" ||
+      IfscValidator !== "" ||
+      AccountNoValidator !== ""
+    ) {
+      return;
+    }
     if (myState.accountHolderName == "") {
-      alert("Account Holder's Name cannot be empty");
+      setAccountNameValidator("Account Holder's Name cannot be empty");
       return;
     }
     if (myState.accountNumber == "") {
-      alert("Account Number cannot be empty");
+      setAccountNoValidator("Account Number cannot be empty");
       return;
     }
     if (myState.ifscCode == "") {
-      alert("IFS code cannot be empty");
+      setIfscValidator("IFS code cannot be empty");
       return;
     }
 
@@ -85,6 +95,13 @@ const AccountInfoForm = (props) => {
     props.loadData();
   };
   const fieldsChange = (event) => {
+    setIfscValidator("");
+    setAccountNameValidator("");
+    setAccountNoValidator("");
+    if (event.target.name == "ifscCode" && event.target.value.length < 11) {
+      setIfscValidator("IFS Code should be of 11 Digits");
+    }
+
     setMyState({ ...myState, [event.target.name]: event.target.value });
   };
   if (loading === true) {
@@ -93,17 +110,7 @@ const AccountInfoForm = (props) => {
 
   return (
     <div style={{ overflow: "hidden" }}>
-      {/* <Breadcrumbs style={{marginBottom:'10px'}} aria-label="breadcrumb">
-        <Link color="inherit" onClick={() => fun('')}>
-            KYC
-        </Link>
-            <Typography color="textPrimary">Account KYC</Typography>
-    </Breadcrumbs> */}
-      {/* <Typography fullWidth className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }}>
-                            Pending KYC
-                        </Typography> */}
       <form>
-        {/* <Typography className={classes.formHeadings} >Account Details</Typography> */}
         <Grid
           container
           spacing={3}
@@ -114,6 +121,8 @@ const AccountInfoForm = (props) => {
               type="text"
               id="accountHolderName"
               name="accountHolderName"
+              helperText={AccountNameValidator}
+              error={AccountNameValidator !== ""}
               value={myState.accountHolderName}
               onChange={(event) => fieldsChange(event)}
               label="Account Holder's Name"
@@ -123,6 +132,8 @@ const AccountInfoForm = (props) => {
           <Grid item xs={12} sm={6}>
             <TextField
               type="text"
+              helperText={AccountNoValidator}
+              error={AccountNoValidator !== ""}
               id="accountNumber"
               name="accountNumber"
               label="Account Number"
@@ -138,6 +149,8 @@ const AccountInfoForm = (props) => {
               id="ifscCode"
               name="ifscCode"
               value={myState.ifscCode}
+              error={IfscValidator !== ""}
+              helperText={IfscValidator}
               inputProps={{ maxLength: 11 }}
               onChange={(event) => fieldsChange(event)}
               label="IFSC Code"

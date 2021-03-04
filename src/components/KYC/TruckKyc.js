@@ -10,6 +10,7 @@ import ShowTrucks from "./ShowTrucks";
 import Tooltip from "@material-ui/core/Tooltip";
 import InfoIcon from "@material-ui/icons/Info";
 import { TextField, Grid, Button } from "@material-ui/core";
+import Select from "react-select";
 const useStyles = makeStyles({
   root: {
     minWidth: 275,
@@ -44,9 +45,6 @@ const TruckKYC = (props) => {
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
 
-  const capabilityOptions = {
-    options: constants.permitStates,
-  };
   const handleShowForm = () => {
     setShowForm(!showForm);
   };
@@ -77,22 +75,12 @@ const TruckKYC = (props) => {
   const onPermitDocChange = (event) => {
     setPermitDoc(event.target.files[0]);
   };
-  const onMultiSelect = (selectedList, selectedItem) => {
-    if (selectedItem.id === "AI") {
-      setIsAllIndiaPermit(true);
-    }
-    if (isAllIndiaPermit !== true) {
-      setStatesOfPermit(selectedList);
-    }
-  };
-  const onMultiRemove = (selectedList, removedItem) => {
-    // alert(selectedList)
-    if (removedItem.id === "AI") {
-      setIsAllIndiaPermit(false);
-    }
-    if (isAllIndiaPermit !== true) {
-      setStatesOfPermit(selectedList);
-    }
+  const onMultiSelect = (event) => {
+    // if (selectedItem.id === "AI") {
+    //   setIsAllIndiaPermit(true);
+    // }
+
+    setStatesOfPermit(event);
   };
 
   const submitKYCChained = () => {
@@ -298,7 +286,6 @@ const TruckKYC = (props) => {
                 type="text"
                 id="engineNumber"
                 name="engineNumber"
-                
                 label="Enter Engine Number"
                 fullWidth
                 value={engineNumber}
@@ -326,17 +313,20 @@ const TruckKYC = (props) => {
           style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}
         >
           <Grid item xs={12} sm={6} style={{ marginTop: "10px" }}>
-            <Multiselect
+            <Select
+              isMulti
               style={{
                 borderLeft: "0px",
                 overflow: "hidden",
                 multiselectContainer: { height: "75px" },
               }}
-              options={capabilityOptions.options} // Options to display in the dropdown
-              onSelect={onMultiSelect} // Function will trigger on select event
-              onRemove={onMultiRemove} // Function will trigger on remove event
-              displayValue="name" // Property name to display in the dropdown options
-              placeholder="Permit Status"
+              name="Features"
+              value={statesOfPermit}
+              options={constants.PermitStates}
+              placeholder="Features(Select multiple)"
+              className="basic-multi-select"
+              onChange={(event) => onMultiSelect(event)}
+              classNamePrefix="select"
             />
           </Grid>
           <Grid item xs={12} sm={6}>

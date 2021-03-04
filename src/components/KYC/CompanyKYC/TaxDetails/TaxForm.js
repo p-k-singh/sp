@@ -29,6 +29,8 @@ const CompanyKYC = (props) => {
   const classes = useStyles();
   const [panDoc, setPanDoc] = useState();
   const [gstDoc, setGSTDoc] = useState();
+  const [PanValidator, setPanValidator] = useState("");
+  const [GstValidator, setGstValidator] = useState("");
   const [loading, setLoading] = useState(false);
   const [submit, setSubmit] = useState(false);
   const [myState, setMyState] = useState({
@@ -36,15 +38,26 @@ const CompanyKYC = (props) => {
     gstin: "",
   });
   const fieldsChange = (event) => {
+    setPanValidator("");
+    setGstValidator("");
+    if (event.target.name == "pan" && event.target.value.length < 10) {
+      setPanValidator("PAN Number should be of 10 Digits");
+    }
+    if (event.target.name == "gstin" && event.target.value.length < 15) {
+      setGstValidator("Gst Number should be of 15 Digits");
+    }
     setMyState({ ...myState, [event.target.name]: event.target.value });
   };
   const submitKYC = () => {
-    if (myState.pan == "") {
-      alert("PAN Details cannot be empty");
+    if (PanValidator !== "" || GstValidator !== "") {
       return;
     }
-    if (myState.gst == "") {
-      alert("GSTIN cannot be empty");
+    if (myState.pan == "") {
+      setPanValidator("PAN Details cannot be empty");
+      return;
+    }
+    if (myState.gstin == "") {
+      setGstValidator("GSTIN cannot be empty");
       return;
     }
 
@@ -195,6 +208,8 @@ const CompanyKYC = (props) => {
               required
               type="text"
               id="pan"
+              error={PanValidator !== ""}
+              helperText={PanValidator === "" ? "" : PanValidator}
               inputProps={{ maxLength: 10 }}
               name="pan"
               value={myState.pan}
@@ -207,6 +222,8 @@ const CompanyKYC = (props) => {
             <TextField
               required
               type="text"
+              error={GstValidator !== ""}
+              helperText={GstValidator}
               id="gstin"
               name="gstin"
               inputProps={{ maxLength: 15 }}
