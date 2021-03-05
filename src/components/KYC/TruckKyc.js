@@ -6,6 +6,7 @@ import constants from "../../Constants/constants";
 import { Auth, API } from "aws-amplify";
 import axios from "axios";
 import Spinner from "../UI/Spinner";
+import InputAdornment from "@material-ui/core/InputAdornment";
 import ShowTrucks from "./ShowTrucks";
 import Tooltip from "@material-ui/core/Tooltip";
 import InfoIcon from "@material-ui/icons/Info";
@@ -43,18 +44,26 @@ const TruckKYC = (props) => {
   const [statesOfPermit, setStatesOfPermit] = useState([]);
   const [isAllIndiaPermit, setIsAllIndiaPermit] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [TruckNumberValidator, setTruckNumberValidator] = useState("");
+  const [CapacityValidator, setCapacityValidator] = useState("");
+  const [ChasisNoValidator, setChasisNoValidator] = useState("");
+  const [EngineNoValidator, setEngineNoValidator] = useState("");
+  const [PermitIDValidator, setPermitIDValidator] = useState("");
   const [showForm, setShowForm] = useState(false);
 
   const handleShowForm = () => {
     setShowForm(!showForm);
   };
   const onChassisNumberChange = (event) => {
+    setChasisNoValidator("");
     setChassisNumber(event.target.value);
   };
   const onEngineNumberChange = (event) => {
+    setEngineNoValidator("");
     setEngineNumber(event.target.value);
   };
   const onPermitIdChange = (event) => {
+    setPermitIDValidator("");
     setPermitId(event.target.value);
   };
   const onRcDocChange = (event) => {
@@ -63,9 +72,11 @@ const TruckKYC = (props) => {
     // alert(tempFile.name.split('.').pop())
   };
   const onTruckNumberChange = (event) => {
+    setTruckNumberValidator("");
     setTruckNumber(event.target.value);
   };
   const onTruckCapacityChange = (event) => {
+    setCapacityValidator("");
     if (event.target.value < 0) {
       event.target.value = 0;
     }
@@ -76,28 +87,41 @@ const TruckKYC = (props) => {
     setPermitDoc(event.target.files[0]);
   };
   const onMultiSelect = (event) => {
-    // if (selectedItem.id === "AI") {
-    //   setIsAllIndiaPermit(true);
-    // }
-
     setStatesOfPermit(event);
   };
 
   const submitKYCChained = () => {
+    if (
+      TruckNumberValidator !== "" ||
+      CapacityValidator !== "" ||
+      PermitIDValidator !== "" ||
+      ChasisNoValidator !== ""
+    ) {
+      return;
+    }
+
     if (truckNumber == "" || truckNumber == null) {
-      alert("Truck Number cannot be blank");
+      setTruckNumberValidator("Truck Number cannot be blank");
       return;
     }
     if (capacity == 0 || capacity == null) {
-      alert("Truck Capacity cannot be empty");
-      return;
-    }
-    if (permitId == "" || permitId == null) {
-      alert("Please enter the Permit Id");
+      setCapacityValidator("Truck Capacity cannot be empty");
       return;
     }
     if (chassisNumber == "" || chassisNumber == null) {
-      alert("Chasis Number cannot be blank");
+      setChasisNoValidator("Chasis Number cannot be blank");
+      return;
+    }
+    if (engineNumber == "" || engineNumber == null) {
+      setEngineNoValidator("Engine Number cannot be blank");
+      return;
+    }
+    if (permitId == "" || permitId == null) {
+      setPermitIDValidator("Permit Id cannot be blank");
+      return;
+    }
+    if (statesOfPermit.length == 0) {
+      alert("Please Specify Permit Details");
       return;
     }
     if (rcDoc == "" || rcDoc == null) {
@@ -235,6 +259,8 @@ const TruckKYC = (props) => {
               type="text"
               id="truckNumber"
               name="truckNumber"
+              helperText={TruckNumberValidator}
+              error={TruckNumberValidator !== ""}
               inputProps={{ maxLength: 20 }}
               label="Enter Truck Number"
               fullWidth
@@ -249,7 +275,18 @@ const TruckKYC = (props) => {
                 type="number"
                 id="capacity"
                 name="capacity"
-                inputProps={{ maxLength: 5 }}
+                helperText={CapacityValidator}
+                error={CapacityValidator !== ""}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">Tons</InputAdornment>
+                  ),
+                }}
+                onInput={(e) => {
+                  e.target.value = Math.max(0, parseInt(e.target.value))
+                    .toString()
+                    .slice(0, 5);
+                }}
                 label="Enter Capacity"
                 fullWidth
                 value={capacity}
@@ -272,6 +309,8 @@ const TruckKYC = (props) => {
                 type="text"
                 id="chassisNumber"
                 name="chassisNumber"
+                helperText={ChasisNoValidator}
+                error={ChasisNoValidator !== ""}
                 inputProps={{ maxLength: 17 }}
                 label="Enter Chassis Number"
                 fullWidth
@@ -284,10 +323,14 @@ const TruckKYC = (props) => {
             <Tooltip title="Can be found on the body of the truck's engine. ">
               <TextField
                 type="text"
+                required
                 id="engineNumber"
                 name="engineNumber"
+                helperText={EngineNoValidator}
+                error={EngineNoValidator !== ""}
                 label="Enter Engine Number"
                 fullWidth
+                inputProps={{ maxLength: 20 }}
                 value={engineNumber}
                 onChange={(event) => onEngineNumberChange(event)}
               />
@@ -320,10 +363,10 @@ const TruckKYC = (props) => {
                 overflow: "hidden",
                 multiselectContainer: { height: "75px" },
               }}
-              name="Features"
+              name="Permit"
               value={statesOfPermit}
               options={constants.PermitStates}
-              placeholder="Features(Select multiple)"
+              placeholder="Permit (Select multiple)"
               className="basic-multi-select"
               onChange={(event) => onMultiSelect(event)}
               classNamePrefix="select"
@@ -334,9 +377,13 @@ const TruckKYC = (props) => {
               <TextField
                 type="text"
                 id="permitId"
+                required
+                helperText={PermitIDValidator}
+                error={PermitIDValidator !== ""}
                 name="permitId"
                 label="Enter Permit Id"
                 fullWidth
+                inputProps={{ maxLength: 20 }}
                 value={permitId}
                 onChange={(event) => onPermitIdChange(event)}
               />

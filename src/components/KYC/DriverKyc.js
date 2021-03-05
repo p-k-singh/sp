@@ -33,17 +33,33 @@ const TruckKYC = (props) => {
   const [dl, setDl] = useState();
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [driverNameValidator, setDriverNameValidator] = useState("");
+  const [LicenseIdValidator, setLicenseIdValidator] = useState("");
+  const [ContactNoValidator, setContactNoValidator] = useState("");
 
   const onlicenceIdChange = (event) => {
+    setLicenseIdValidator("");
     setLicenceId(event.target.value);
   };
   const onphoneChange = (event) => {
+    setContactNoValidator("");
+    var count = 0,
+      temp = event.target.value;
+    while (temp > 0) {
+      count++;
+      temp = Math.floor(temp / 10);
+    }
+
     if (event.target.value < 0) {
       event.target.value = 0;
+    }
+    if (count < 10) {
+      setContactNoValidator("Phone Number should contain 10 Digits");
     }
     setPhone(event.target.value);
   };
   const onDriverNameChange = (event) => {
+    setDriverNameValidator("");
     setDriverName(event.target.value);
   };
 
@@ -60,16 +76,15 @@ const TruckKYC = (props) => {
 
   const submitKYCChained = () => {
     if (driverName == "" || driverName == null) {
-      alert("Driver Name cannot be Empty");
+      setDriverNameValidator("Driver Name cannot be Empty");
       return;
     }
     if (licenceId == "" || licenceId == null) {
-      alert("License ID cannot be Empty");
+      setLicenseIdValidator("License ID cannot be Empty");
       return;
     }
-
     if (phone == 0 || phone == null) {
-      alert("Phone Number cannot be Empty");
+      setContactNoValidator("Phone Number cannot be Empty");
       return;
     }
     if (dl == "" || dl == null) {
@@ -136,10 +151,6 @@ const TruckKYC = (props) => {
   const EachKYC = () => {
     return (
       <div style={{ overflow: "hidden" }}>
-        {/* <Typography fullWidth className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }}>
-                            KYC:            
-                </Typography> */}
-
         <form>
           <Typography className={classes.formHeadings}>
             Driver Details
@@ -158,9 +169,12 @@ const TruckKYC = (props) => {
                   type="text"
                   id="driverName"
                   name="drivername"
+                  helperText={driverNameValidator}
+                  error={driverNameValidator !== ""}
                   label="Enter Driver Name"
                   fullWidth
                   value={driverName}
+                  inputProps={{ maxLength: 30 }}
                   onChange={(event) => onDriverNameChange(event)}
                 />
               </Tooltip>
@@ -171,6 +185,9 @@ const TruckKYC = (props) => {
                 type="text"
                 id="licenceId"
                 name="licenceId"
+                helperText={LicenseIdValidator}
+                error={LicenseIdValidator !== ""}
+                inputProps={{ maxLength: 30 }}
                 label="Enter Driving Licence Id"
                 fullWidth
                 value={licenceId}
@@ -190,6 +207,8 @@ const TruckKYC = (props) => {
                 label="Enter Phone Number"
                 fullWidth
                 value={phone}
+                error={ContactNoValidator !== ""}
+                helperText={ContactNoValidator}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">+91</InputAdornment>
