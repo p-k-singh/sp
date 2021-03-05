@@ -70,6 +70,7 @@ const Assignment = (props) => {
   const [desiredDeliveryDate, setDesiredDeliveryDate] = useState("");
   const [desiredPickupDate, setDesiredPickupDate] = useState("");
   const [CustomerDetails, setCustomerDetails] = useState("");
+  const [TrackingId, setTrackingId] = useState("");
 
   var count = 0;
 
@@ -91,6 +92,7 @@ const Assignment = (props) => {
     fetchCapacityRequired();
     loadData();
     getCustomerDetails();
+    getTrackingId();
   }, []);
 
   useEffect(() => {
@@ -296,6 +298,50 @@ const Assignment = (props) => {
         setLoading("false");
       });
   }
+  function getTrackingId() {
+    API.get(
+      "GoFlexeOrderPlacement",
+      `/tracking?type=getProcess&orderId=${params.customerOrderId}`
+    )
+      .then((resp) => {
+        console.log(resp);
+        setLoading("false");
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading("error");
+      });
+  }
+  const trackingAssetAllocation = async () => {
+    let promiseList = [];
+    const data = {
+      trackingId: "4f9693e7-acb9-4252-90d6-ae09a7fe01a9",
+      stageId: "ced77040-56c9-4979-b9fe-501aa28af9a0",
+      taskId: "f033a82b-3930-4085-9bd2-c6b32856759e",
+      customFields: {
+        data: {
+          allotedDrivers: allotedDrivers,
+          allotedTrucks: allotedTrucks,
+        },
+        attachments: {},
+      },
+    };
+    const payload = {
+      body: data,
+    };
+
+    promiseList.push(
+      API.patch("GoFlexeOrderPlacement", `/updateCustomFields`, payload)
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log(error.response);
+        })
+    );
+
+    return await Promise.all(promiseList);
+  };
 
   const onPickupDateChangeController = (event) => {
     var pickupDate = event.target.value;
@@ -494,6 +540,7 @@ const Assignment = (props) => {
 
   const submitButtonHandler = async () => {
     setLoading("uploading");
+    await trackingAssetAllocation();
     await submitNewTrucks();
     await submitNewDrivers();
 

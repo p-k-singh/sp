@@ -22,10 +22,10 @@ class Dropzone extends Component {
 
   onFilesAdded(evt) {
     if (this.props.disabled) return;
-    const files = evt.target.files;
+    const files = evt.target.files[0];
     if (this.props.onFilesAdded) {
-      const array = this.fileListToArray(files);
-      this.props.onFilesAdded(array);
+      
+      this.props.onFilesAdded(files);
     }
   }
 
