@@ -881,6 +881,7 @@ const AddTocapacity = (props) => {
                       InputLabelProps={{ shrink: true }}
                       label="30 Days Pricing"
                       //type="number"
+                      helperText={"*Inclusive of GST Per Trip"}
                       onChange={(event) => onThirtyDaysPricingController(event)}
                       className={classes.textField}
                       variant="outlined"
@@ -902,6 +903,7 @@ const AddTocapacity = (props) => {
                       label="Immediate Payment Pricing"
                       //type="number"
                       value={ImmidiatePricing}
+                      helperText={"*Inclusive of GST Per Trip"}
                       className={classes.textField}
                       variant="outlined"
                       InputLabelProps={{ shrink: true }}

@@ -208,14 +208,19 @@ const Assignment = (props) => {
                 isValid = true;
               }
 
-              if (isValid === true) {
-                temp.push({
-                  label:
-                    resp[i].assetNumber + "(" + resp[i].capacity + " tons)",
-                  value: resp[i],
-                  isNew: false,
-                });
-              }
+              // if (isValid === true) {
+              //   temp.push({
+              //     label:
+              //       resp[i].assetNumber + "(" + resp[i].capacity + " tons)",
+              //     value: resp[i],
+              //     isNew: false,
+              //   });
+              // }
+              temp.push({
+                label: resp[i].assetNumber + "(" + resp[i].capacity + " tons)",
+                value: resp[i],
+                isNew: false,
+              });
             }
             setMyTrucks(temp);
             console.log(temp);
@@ -641,7 +646,22 @@ const Assignment = (props) => {
         </Grid>
         <Tooltip title="Features available in Truck" arrow placement="top">
           <Grid item xs={12} sm={4}>
-            <Select
+            <TextField
+              disabled={chosenTrucks[i] === null || !chosenTrucks[i].isNew}
+              label="Capability"
+              fullWidth
+              value={
+                chosenTrucks[i] === null
+                  ? null
+                  : chosenTrucks[i].value.capabilities
+              }
+              onChange={(event) => onCapacityChangeController(event, i)}
+              variant="outlined"
+              InputLabelProps={{ shrink: true }}
+              size="small"
+              autoComplete="shipping address-line1"
+            />
+            {/* <Select
               isMulti
               styles={selectStyles}
               name="categories"
@@ -656,7 +676,7 @@ const Assignment = (props) => {
               className="basic-multi-select"
               onChange={(event) => onCapabilityChange(event, i)}
               classNamePrefix="select"
-            />
+            /> */}
             {/* <Multiselect
               style={{
                 searchBox: { minHeight: "55px" },

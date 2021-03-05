@@ -49,7 +49,8 @@ const AcceptanceForm = (props) => {
     match: { params },
   } = props;
   const [Order, setOrder] = useState(null);
-  ///customerorder/{orderId}
+  const [Loading, setLoading] = useState(false);
+  const [accepted, setAccepted] = useState(false);
 
   useEffect(async () => {
     // async function putValues(){
@@ -59,11 +60,10 @@ const AcceptanceForm = (props) => {
     );
     console.log(temp.Item);
     setOrder(temp.Item);
-    // }
-    // putValues()
   }, []);
 
   const acceptOrder = async () => {
+    setLoading(true);
     console.log(Auth.currentUserInfo());
     var providerDetails = await Auth.currentUserInfo();
 
@@ -80,11 +80,13 @@ const AcceptanceForm = (props) => {
     console.log(payload);
     API.post("GoFlexeOrderPlacement", `/serviceorder/acceptance`, payload)
       .then((response) => {
-        // Add your code here
         console.log(response);
+        setLoading(false);
+        setAccepted(true);
       })
       .catch((error) => {
         console.log(error.response);
+        setLoading(false);
       });
   };
   if (Order === null) {
@@ -145,7 +147,7 @@ const AcceptanceForm = (props) => {
                   id="estimatedPickup"
                   name="estimatedPickup"
                   label="Estimated Pickup"
-                  value="14-01-2021"
+                  value={Order.pickupdate}
                   disabled
                   fullWidth
                   autoComplete="estimated pickup"
@@ -157,7 +159,7 @@ const AcceptanceForm = (props) => {
                   id="estimatedDelivery"
                   name="estimatedDelivery"
                   label="Estimated Delivery"
-                  value="20-01-2021"
+                  value={Order.deliveryDate}
                   disabled
                   fullWidth
                   autoComplete="estimated delivery"
@@ -169,7 +171,7 @@ const AcceptanceForm = (props) => {
                   id="estimatedPrice"
                   name="estimatedPrice"
                   label="Estimated Price"
-                  value="Rs 2,00,000"
+                  value={Order.estimatedPrice}
                   disabled
                   fullWidth
                   autoComplete="estimated price"
@@ -187,15 +189,22 @@ const AcceptanceForm = (props) => {
             padding: 10,
           }}
         >
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={acceptOrder}
-            className={classes.button}
-            startIcon={<CheckIcon />}
-          >
-            Accept
-          </Button>
+          {Loading == true ? (
+            <Spinner />
+          ) : accepted == true ? (
+            <p>Order Accepted Successfully</p>
+          ) : (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={acceptOrder}
+              className={classes.button}
+              startIcon={<CheckIcon />}
+            >
+              Accept
+            </Button>
+          )}
+
           {/* <Button
                                     variant="contained"
                                     color="secondary"

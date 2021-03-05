@@ -512,7 +512,7 @@ const AddTruckCost = (props) => {
               InputProps={{
                 endAdornment: <InputAdornment position="end">₹</InputAdornment>,
               }}
-              helperText="Specify Immidiate Pricing Inclusive of GST Per Trip"
+              helperText="*Immidiate Pricing Inclusive of GST Per Trip"
             />
           ) : (
             <p></p>
@@ -702,6 +702,7 @@ const AddTruckCost = (props) => {
                   label="30 Days Pricing"
                   type="number"
                   className={classes.textField}
+                  helperText={"*Inclusive of GST Per Trip"}
                   value={
                     chosenProducts[i].additionalDetails[j].thirtyDaysPricing
                   }
@@ -722,6 +723,7 @@ const AddTruckCost = (props) => {
                   fullWidth
                   label="Immediate Payment Pricing"
                   type="number"
+                  helperText={"*Inclusive of GST Per Trip"}
                   className={classes.textField}
                   value={
                     chosenProducts[i].additionalDetails[j].immediatePricing

@@ -171,7 +171,7 @@ export default function Dashboard() {
   const [username, setUsername] = React.useState("");
   const [numberOfNotifications, setNumberOfNotifications] = useState(0);
   const [notifications, setNotifications] = useState(
-    "abf96696-e920-4c59-93f5-8870263ae2bf"
+    "cfb86978-9ea3-427b-9bd4-da518f708cf1"
   );
   const { userHasAuthenticated } = useAppContext();
   const handleDrawerOpen = () => {
@@ -209,6 +209,7 @@ export default function Dashboard() {
     }
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(async () => {
     //async function checkUse
     var currentUser = await Auth.currentUserInfo();
