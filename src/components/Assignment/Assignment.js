@@ -322,10 +322,10 @@ const Assignment = (props) => {
       trackingId: TrackingId,
       stageId: StageId,
       taskId: TaskId,
-      customFields: {
+      custom: {
         data: {
-          allotedDrivers: allotedDrivers,
-          allotedTrucks: allotedTrucks,
+          allotedDrivers: chosenTrucks,
+          allotedTrucks: chosenDrivers,
         },
         attachments: {},
       },
@@ -437,9 +437,6 @@ const Assignment = (props) => {
       }
     }
     return await Promise.all(promiseList);
-    //   return new Promise(resolve => {
-    //     return  resolve('done')
-    // })
   };
   const submitNewDrivers = async () => {
     let promiseList = [];
@@ -566,13 +563,13 @@ const Assignment = (props) => {
 
   const submitButtonHandler = async () => {
     setLoading("uploading");
-console.log("1")
-    await submitNewTrucks();
-    console.log("2");
-    await submitNewDrivers();
-    console.log("3");
-    await includeAllTrucks();
-    console.log("4");
+    // console.log("1");
+    //  await submitNewTrucks();
+    // console.log("2");
+    //  await submitNewDrivers();
+    // console.log("3");
+    // await includeAllTrucks();
+    // console.log("4");
 
     await trackingAssetAllocation();
     await changeTaskStatus();

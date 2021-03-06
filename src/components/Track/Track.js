@@ -93,6 +93,159 @@ const Track = (props) => {
         setLoading("false");
       });
   }
+  const getTrackingIds = (TrackingData, TaskName) => {
+    let details = null;
+    TrackingData.stages.forEach((stage) => {
+      // console.log(stage);
+      stage.tasks.forEach((task) => {
+        // alert(task.name + TaskName);
+        if (task.name == TaskName) {
+          details = {
+            stageId: stage.stageId,
+            taskId: task.taskId,
+          };
+        }
+      });
+    });
+    return details;
+  };
+
+  const PickupChecklistData = async () => {
+    let details = getTrackingIds(TrackingData, "PICKUP_CHECKLIST");
+    const data = {
+      trackingId: TrackingData.processId,
+      stageId: details.stageId,
+      taskId: details.taskId,
+      custom: {
+        data: {},
+        attachments: {},
+      },
+    };
+    const payload = {
+      body: data,
+    };
+
+    API.patch(
+      "GoFlexeOrderPlacement",
+      `/tracking?type=updateCustomFields`,
+      payload
+    )
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error.response);
+      });
+  };
+  const DeliveryChecklistData = async () => {
+    let details = getTrackingIds(TrackingData, "DELIVERY_CHECKLIST");
+
+    const data = {
+      trackingId: TrackingData.processId,
+      stageId: details.stageId,
+      taskId: details.taskId,
+      custom: {
+        data: {},
+        attachments: {},
+      },
+    };
+    const payload = {
+      body: data,
+    };
+
+    API.patch(
+      "GoFlexeOrderPlacement",
+      `/tracking?type=updateCustomFields`,
+      payload
+    )
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error.response);
+      });
+  };
+
+  function ApiRequest(payload) {
+    API.patch(
+      "GoFlexeOrderPlacement",
+      `/tracking?type=changeTaskStatus`,
+      payload
+    )
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error.response);
+      });
+  }
+  const CompleteLeftforpickup = async () => {
+    let details = getTrackingIds(TrackingData, "DRIVER_OTW");
+    const data = {
+      trackingId: TrackingData.processId,
+      stageId: details.stageId,
+      taskId: details.taskId,
+      status: "NEXT",
+    };
+    const payload = {
+      body: data,
+    };
+    ApiRequest(payload);
+  };
+
+  const CompleteArrivedAtPickup = async () => {
+    let details = getTrackingIds(TrackingData, "ARRIVED_AT_PICKUP");
+    const data = {
+      trackingId: TrackingData.processId,
+      stageId: details.stageId,
+      taskId: details.taskId,
+      status: "NEXT",
+    };
+    const payload = {
+      body: data,
+    };
+    ApiRequest(payload);
+  };
+  const CompletePickupChecklist = async () => {
+    let details = getTrackingIds(TrackingData, "PICKUP_CHECKLIST");
+    const data = {
+      trackingId: TrackingData.processId,
+      stageId: details.stageId,
+      taskId: details.taskId,
+      status: "NEXT",
+    };
+    const payload = {
+      body: data,
+    };
+    ApiRequest(payload);
+  };
+  const CompleteArrivedAtDrop = async () => {
+    let details = getTrackingIds(TrackingData, "ARRIVED_AT_DROP_LOCATION");
+    const data = {
+      trackingId: TrackingData.processId,
+      stageId: details.stageId,
+      taskId: details.taskId,
+      status: "NEXT",
+    };
+    const payload = {
+      body: data,
+    };
+    ApiRequest(payload);
+  };
+
+  const CompleteDeliveryChecklist = async () => {
+    let details = getTrackingIds(TrackingData, "DELIVERY_CHECKLIST");
+    const data = {
+      trackingId: TrackingData.processId,
+      stageId: details.stageId,
+      taskId: details.taskId,
+      status: "NEXT",
+    };
+    const payload = {
+      body: data,
+    };
+    ApiRequest(payload);
+  };
 
   if (DeliveryList === true) {
     return (
@@ -123,6 +276,7 @@ const Track = (props) => {
                         disabled={ArrivedAtDrop == true ? true : false}
                         onChange={(e) => {
                           setArrivedAtDrop(e.target.checked);
+                          CompleteArrivedAtDrop();
                         }}
                         size="small"
                         color="primary"
@@ -349,6 +503,7 @@ const Track = (props) => {
                       setDeliveryChecklistPending(false);
                       setShipmentCompleted(true);
                       setDeliveryList(false);
+                      CompleteDeliveryChecklist();
                     }}
                     className="row"
                     variant="contained"
@@ -422,6 +577,7 @@ const Track = (props) => {
                       disabled={LeftForPickup == true ? true : false}
                       onChange={(e) => {
                         setLeftForPickup(e.target.checked);
+                        CompleteLeftforpickup();
                       }}
                     />
                   </TableCell>
@@ -444,6 +600,7 @@ const Track = (props) => {
                         value="checkedA"
                         onChange={(e) => {
                           setArrivedAtPickup(e.target.checked);
+                          CompleteArrivedAtPickup();
                         }}
                         size="small"
                         color="primary"
@@ -702,6 +859,7 @@ const Track = (props) => {
                       setDeliveryList(true);
                       setLeftForDelivery(true);
                       setPickupChecklistPending(false);
+                      CompletePickupChecklist();
                     }}
                     className="row"
                     variant="contained"
