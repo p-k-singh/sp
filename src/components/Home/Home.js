@@ -263,7 +263,7 @@ const Home = (props) => {
                       </div>
                       <div
                         style={{
-                          padding: 17,
+                          padding: 15,
                           paddingTop: 10,
                           paddingBottom: 0,
                           textAlign: "center",
