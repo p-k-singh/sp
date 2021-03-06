@@ -73,6 +73,8 @@ const Assignment = (props) => {
   const [TrackingId, setTrackingId] = useState("");
   const [TaskId, setTaskId] = useState("");
   const [StageId, setStageId] = useState("");
+  const [Allocated, setAllocated] = useState(false);
+  const [AllocatedLoading, setAllocatedLoading] = useState(false);
 
   var count = 0;
 
@@ -310,7 +312,6 @@ const Assignment = (props) => {
         setTrackingId(resp.processId);
         setTaskId(resp.stages[0].tasks[0].taskId);
         setStageId(resp.stages[0].stageId);
-        setLoading("false");
       })
       .catch((err) => {
         console.log(err);
@@ -318,14 +319,15 @@ const Assignment = (props) => {
       });
   }
   const trackingAssetAllocation = async () => {
+    setAllocatedLoading(true);
     const data = {
       trackingId: TrackingId,
       stageId: StageId,
       taskId: TaskId,
       custom: {
         data: {
-          allotedDrivers: chosenTrucks,
-          allotedTrucks: chosenDrivers,
+          allotedDrivers: chosenDrivers,
+          allotedTrucks: chosenTrucks,
         },
         attachments: {},
       },
@@ -341,9 +343,12 @@ const Assignment = (props) => {
     )
       .then((response) => {
         console.log(response);
+        setAllocated(true);
+        setAllocatedLoading(false);
       })
       .catch((error) => {
         console.log(error.response);
+        setAllocatedLoading(false);
       });
   };
   const changeTaskStatus = async () => {
@@ -996,13 +1001,19 @@ const Assignment = (props) => {
             marginBottom: 100,
           }}
         >
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={submitButtonHandler}
-          >
-            Save
-          </Button>
+          {AllocatedLoading == true ? (
+            <Spinner />
+          ) : Allocated == true ? (
+            <p>Truck Allocated successfully</p>
+          ) : (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={submitButtonHandler}
+            >
+              Save
+            </Button>
+          )}
         </div>
       </Card>
     </div>

@@ -97,9 +97,7 @@ const Track = (props) => {
   const getTrackingIds = (TrackingData, TaskName) => {
     let details = null;
     TrackingData.stages.forEach((stage) => {
-      // console.log(stage);
       stage.tasks.forEach((task) => {
-        // alert(task.name + TaskName);
         if (task.name == TaskName) {
           details = {
             stageId: stage.stageId,

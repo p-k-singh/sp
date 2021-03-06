@@ -8,7 +8,7 @@ import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import OrderDetails from "./OrderDetails/OrderDetails";
-import Track from "./Track/Track";
+import Track from "./Track/index";
 import Assignment from "./Assignment/Assignment";
 import PaymentIndex from "./Payments/PaymentIndex";
 
@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Details = (id,serviceOrderId) => {
+const Details = (id, serviceOrderId) => {
   const classes = useStyles();
   const [value, setValue] = useState(0);
 
@@ -96,7 +96,7 @@ const Home = (props) => {
   } = props;
 
   console.log("From Home " + params.id);
-  return <div>{Details(params.id,params.serviceOrderId)}</div>;
+  return <div>{Details(params.id, params.serviceOrderId)}</div>;
 };
 
 export default Home;
