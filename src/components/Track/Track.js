@@ -18,6 +18,7 @@ import TableRow from "@material-ui/core/TableRow";
 import WarningIcon from "@material-ui/icons/Warning";
 import Paper from "@material-ui/core/Paper";
 import Checkbox from "@material-ui/core/Checkbox";
+import { API, Auth } from "aws-amplify";
 
 const useStyles = makeStyles({
   table: {
@@ -58,6 +59,41 @@ const Track = (props) => {
   ] = React.useState(true);
   const [LeftForDelivery, setLeftForDelivery] = React.useState(false);
   const [ArrivedAtDrop, setArrivedAtDrop] = React.useState(false);
+  const [TrackingData, setTrackingData] = React.useState([]);
+  const [Loading, setLoading] = React.useState(false);
+  const [NoOfUnits, setNoOfUnits] = React.useState("");
+  const [SpecialInstructions, setSpecialInstructions] = React.useState("");
+  const [panDoc, setPanDoc] = useState();
+
+  const onSpecialInstructionsChangeController = (event) => {
+    setSpecialInstructions(event.target.value);
+  };
+  const onNoOfUnitsChangeController = (event) => {
+    setNoOfUnits(event.target.value);
+  };
+  const onPanProofChange = (event) => {
+    setPanDoc(event.target.files[0]);
+  };
+
+  useEffect(() => {
+    getTrackingId();
+  }, []);
+
+  function getTrackingId() {
+    API.get(
+      "GoFlexeOrderPlacement",
+      `/tracking?type=getProcess&orderId=${props.id}`
+    )
+      .then((resp) => {
+        console.log(resp);
+        setTrackingData(resp);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading("false");
+      });
+  }
+
   if (DeliveryList === true) {
     return (
       <div style={{ overflow: "hidden", marginTop: "20px" }}>
@@ -74,6 +110,7 @@ const Track = (props) => {
         >
           Delivery in Progress
         </Typography>
+
         <form>
           {LeftForDelivery == true ? (
             <TableContainer component={Paper}>
@@ -267,6 +304,42 @@ const Track = (props) => {
                               />
                             </TableCell>
                           </TableRow>
+                          <TableRow>
+                            <TableCell>
+                              <label>
+                                {" "}
+                                Consignors copy:{" "}
+                                <span style={{ fontSize: 10 }}>
+                                  {" "}
+                                  (*Given to drop location.)
+                                </span>{" "}
+                              </label>
+                              <p style={{ fontSize: 10 }}></p>
+                            </TableCell>{" "}
+                            <TableCell>
+                              <input
+                                style={{ marginLeft: "15px" }}
+                                type="file"
+                              />
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell>
+                              <label>
+                                Account Copy:
+                                <span style={{ fontSize: 10 }}>
+                                  {" "}
+                                  (*Given to transporter for their records.)
+                                </span>{" "}
+                              </label>
+                            </TableCell>{" "}
+                            <TableCell>
+                              <input
+                                style={{ marginLeft: "15px" }}
+                                type="file"
+                              />
+                            </TableCell>
+                          </TableRow>
                         </TableHead>
                       </Table>
                     </TableContainer>
@@ -360,7 +433,7 @@ const Track = (props) => {
                       padding: 10,
                     }}
                   >
-                    Driver has Left for Pickup
+                    Left for Pickup
                   </TableCell>
                 </TableRow>
                 {LeftForPickup == true ? (
@@ -414,26 +487,6 @@ const Track = (props) => {
                 aria-controls="panel1bh-content"
                 id="panel1bh-header"
               >
-                {/* <Typography
-                fullWidth
-                className={classes.title}
-                gutterBottom
-                inline
-                variant="body1"
-                align="left"
-                style={{ padding: 15 }}
-              >
-                Pickup CheckList{" "}
-                {PickupChecklistPending == false ? (
-                  <Tooltip title="Done">
-                    <Done style={{ color: "green" }} />
-                  </Tooltip>
-                ) : (
-                  <Tooltip title="Pending">
-                    <WarningIcon style={{ color: "orange" }} />
-                  </Tooltip>
-                )}
-              </Typography> */}
                 <TableContainer>
                   <Table aria-label="simple table">
                     <TableHead>
@@ -477,12 +530,21 @@ const Track = (props) => {
                       required
                       label="Number of Units"
                       fullWidth
+                      value={NoOfUnits}
+                      onChange={(event) => onNoOfUnitsChangeController(event)}
+                      // variant="outlined"
+                      // size="small"
                     />
                   </Grid>
                   <Grid item sm={6} xs={12}>
                     <TextField
-                      required
+                      // variant="outlined"
+                      // size="small"
                       type="text"
+                      value={SpecialInstructions}
+                      onChange={(event) =>
+                        onSpecialInstructionsChangeController(event)
+                      }
                       label="Special Instructions"
                       fullWidth
                     />
@@ -574,6 +636,7 @@ const Track = (props) => {
                                 <input
                                   style={{ marginLeft: "15px" }}
                                   type="file"
+                                  onChange={(event) => onPanProofChange(event)}
                                 />
                               </TableCell>
                             </TableRow>
@@ -607,6 +670,21 @@ const Track = (props) => {
                           <TableRow>
                             <TableCell>
                               <label>Signed Document by Customer: </label>
+                            </TableCell>{" "}
+                            <TableCell>
+                              <input
+                                style={{ marginLeft: "15px" }}
+                                type="file"
+                              />
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell>
+                              <label>Source Copy: </label>
+                              <p style={{ fontSize: 10 }}>
+                                signed by drop location and return to source for
+                                records.
+                              </p>
                             </TableCell>{" "}
                             <TableCell>
                               <input

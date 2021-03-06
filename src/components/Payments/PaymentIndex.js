@@ -80,10 +80,10 @@ const PaymentIndex = (props) => {
   if (loading === true) {
     return <Spinner />;
   }
-  if (data !== null) {
+  if (data !== null && data.paymentOption !== null) {
     return <ShowPaymentDetails data={data} />;
   } else {
-    return <h1>Payment not completed</h1>;
+    return <h1>Payment Pending</h1>;
   }
 };
 export default PaymentIndex;

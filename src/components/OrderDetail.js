@@ -52,14 +52,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Details = (props) => {
+const Details = (id,serviceOrderId) => {
   const classes = useStyles();
   const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-  console.log("getting from props" + props);
+  console.log("getting from props" + id);
   //console.log('addresss'+props.fromAddress);
   return (
     <div className={classes.root}>
@@ -77,14 +77,14 @@ const Details = (props) => {
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
-        <OrderDetails id={props} />
+        <OrderDetails id={id} />
       </TabPanel>
       <TabPanel value={value} index={1}></TabPanel>
       <TabPanel value={value} index={2}>
-        <Track />
+        <Track id={serviceOrderId} />
       </TabPanel>
       <TabPanel value={value} index={3}>
-        <PaymentIndex id={props} />
+        <PaymentIndex id={id} />
       </TabPanel>
     </div>
   );
@@ -96,7 +96,7 @@ const Home = (props) => {
   } = props;
 
   console.log("From Home " + params.id);
-  return <div>{Details(params.id)}</div>;
+  return <div>{Details(params.id,params.serviceOrderId)}</div>;
 };
 
 export default Home;

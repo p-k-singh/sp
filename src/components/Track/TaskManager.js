@@ -388,7 +388,7 @@ const TaskManager = (props) => {
             <AccordionDetails>
               <Grid container spacing={0}>
                 <Grid item xs={12} sm={12}>
-                  <Track />
+                  {/* <Track /> */}
                 </Grid>
                 <Grid item xs={12} sm={1}></Grid>
 

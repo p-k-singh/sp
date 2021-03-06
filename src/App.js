@@ -161,7 +161,7 @@ function App() {
               }}
             />
             <Route
-              path="/order/:id"
+              path="/order/:id/:serviceOrderId"
               render={(props) => {
                 return <OrderDetail {...props} />;
               }}

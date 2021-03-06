@@ -238,7 +238,7 @@ const MyOrders = () => {
                           marginBottom: 5,
                         }}
                         component={Link}
-                        to={`order/${eachOrder.customerOrderId}`}
+                        to={`order/${eachOrder.customerOrderId}/${eachOrder.ServiceOrderId}`}
                         variant="contained"
                         color="default"
                         // className={classes.allocationButton}
