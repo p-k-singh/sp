@@ -77,11 +77,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const data = [
-  { name: "Amount Recieved", Payment: 24000 },
-  { name: "Amount Pending ", Payment: 52000 },
-];
-
 const delayData = [
   { name: "Delayed Trucks", Quantity: 12 },
   { name: "Delayed Orders ", Quantity: 52 },
@@ -156,6 +151,17 @@ const Home = (props) => {
   useEffect(() => {
     loadData();
   }, []);
+
+  const data = [
+    {
+      name: "Amount Recieved",
+      Payment: Number(details !== null ? details.totalAmountPaid : 0),
+    },
+    {
+      name: "Amount Pending ",
+      Payment: Number(details !== null ? details.totalAmount : 0),
+    },
+  ];
 
   const [stores, setStores] = React.useState([
     { lat: 47.49855629475769, lng: -122.14184416996333 },
@@ -393,7 +399,7 @@ const Home = (props) => {
                               fontSize: 30,
                             }}
                           >
-                            ₹ 9,56,789
+                            ₹ {details.totalAmount}
                           </h6>
                         </Grid>
                       </Grid>
