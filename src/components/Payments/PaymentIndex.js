@@ -100,7 +100,8 @@ const ShowPaymentDetails = (props) => {
     <React.Fragment>
       <Card style={{ padding: 10 }}>
         <Typography style={{ fontSize: 20, marginBottom: 20 }}>
-          Total Amount paid: {data !== null ? data.totalAmount : "x"} INR
+          Total Amount paid:{" "}
+          {props.data !== null ? props.data.totalAmount : "x"} INR
         </Typography>
         {/* <HelpIcon /> */}
         <Typography style={{ fontSize: 18, marginBottom: 8 }}>

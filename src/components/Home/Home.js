@@ -29,12 +29,13 @@ import Accordion from "@material-ui/core/Accordion";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import { Map, GoogleApiWrapper } from "google-maps-react";
-import { API } from "aws-amplify";
 import "./Home.css";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import { Marker } from "google-maps-react";
+
+import { Auth, API } from "aws-amplify";
 import { Link } from "react-router-dom";
 import {
   LineChart,
@@ -123,6 +124,39 @@ const renderCustomizedLabel = ({
 
 const Home = (props) => {
   const [value, setValue] = React.useState(3.5);
+  const [details, setDetails] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
+
+  function loadData() {
+    setLoading("true");
+    Auth.currentUserInfo()
+      .then((userDetails) => {
+        const payload = {
+          type: "service-provider",
+          serviceProviderId: userDetails.username,
+        };
+        var params = JSON.stringify(payload);
+
+        API.get("GoFlexeOrderPlacement", `/aggregation?body=${params}`)
+          .then((resp) => {
+            console.log(resp);
+            setDetails(resp);
+            setLoading(false);
+          })
+          .catch((err) => {
+            console.log(err);
+            setLoading(false);
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
+  }
+  useEffect(() => {
+    loadData();
+  }, []);
+
   const [stores, setStores] = React.useState([
     { lat: 47.49855629475769, lng: -122.14184416996333 },
     { latitude: 47.359423, longitude: -122.021071 },
@@ -221,7 +255,11 @@ const Home = (props) => {
                   <Button component={Link} to={"my-orders"}>
                     <CardContent style={{ paddingTop: 10, paddingBottom: 10 }}>
                       <div class="circle" style={{ background: "green" }}>
-                        <h3 style={{ padding: 20, fontSize: 50 }}>12</h3>
+                        <h3 style={{ padding: 20, fontSize: 50 }}>
+                          {details.length !== 0
+                            ? details.serviceOrdersFulfilledCount
+                            : 0}
+                        </h3>
                       </div>
                       <div
                         style={{
@@ -242,7 +280,12 @@ const Home = (props) => {
                   <Button component={Link} to={"my-orders"}>
                     <CardContent style={{ paddingTop: 10, paddingBottom: 10 }}>
                       <div class="circle" style={{ background: "orange" }}>
-                        <h3 style={{ padding: 20, fontSize: 50 }}>8</h3>
+                        <h3 style={{ padding: 20, fontSize: 50 }}>
+                          {" "}
+                          {details.length !== 0
+                            ? details.serviceOrdersAcceptedCount
+                            : 0}
+                        </h3>
                       </div>
                       <div
                         style={{
@@ -263,7 +306,12 @@ const Home = (props) => {
                   <Button component={Link} to={"my-orders"}>
                     <CardContent style={{ paddingTop: 10, paddingBottom: 10 }}>
                       <div class="circle" style={{ background: "#C57A7A" }}>
-                        <h3 style={{ padding: 20, fontSize: 50 }}>5</h3>
+                        <h3 style={{ padding: 20, fontSize: 50 }}>
+                          {" "}
+                          {details.length !== 0
+                            ? details.serviceOrdersInTransitCount
+                            : 0}
+                        </h3>
                       </div>
                       <div
                         style={{

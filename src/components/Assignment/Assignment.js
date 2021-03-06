@@ -71,6 +71,8 @@ const Assignment = (props) => {
   const [desiredPickupDate, setDesiredPickupDate] = useState("");
   const [CustomerDetails, setCustomerDetails] = useState("");
   const [TrackingId, setTrackingId] = useState("");
+  const [TaskId, setTaskId] = useState("");
+  const [StageId, setStageId] = useState("");
 
   var count = 0;
 
@@ -301,23 +303,25 @@ const Assignment = (props) => {
   function getTrackingId() {
     API.get(
       "GoFlexeOrderPlacement",
-      `/tracking?type=getProcess&orderId=${params.customerOrderId}`
+      `/tracking?type=getProcess&orderId=${params.id}`
     )
       .then((resp) => {
         console.log(resp);
+        setTrackingId(resp.processId);
+        setTaskId(resp.stages[0].tasks[0].taskId);
+        setStageId(resp.stages[0].stageId);
         setLoading("false");
       })
       .catch((err) => {
         console.log(err);
-        setLoading("error");
+        setLoading("false");
       });
   }
   const trackingAssetAllocation = async () => {
-    let promiseList = [];
     const data = {
-      trackingId: "4f9693e7-acb9-4252-90d6-ae09a7fe01a9",
-      stageId: "ced77040-56c9-4979-b9fe-501aa28af9a0",
-      taskId: "f033a82b-3930-4085-9bd2-c6b32856759e",
+      trackingId: TrackingId,
+      stageId: StageId,
+      taskId: TaskId,
       customFields: {
         data: {
           allotedDrivers: allotedDrivers,
@@ -330,17 +334,40 @@ const Assignment = (props) => {
       body: data,
     };
 
-    promiseList.push(
-      API.patch("GoFlexeOrderPlacement", `/updateCustomFields`, payload)
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log(error.response);
-        })
-    );
+    API.patch(
+      "GoFlexeOrderPlacement",
+      `/tracking?type=updateCustomFields`,
+      payload
+    )
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error.response);
+      });
+  };
+  const changeTaskStatus = async () => {
+    const data = {
+      trackingId: TrackingId,
+      stageId: StageId,
+      taskId: TaskId,
+      status: "NEXT",
+    };
+    const payload = {
+      body: data,
+    };
 
-    return await Promise.all(promiseList);
+    API.patch(
+      "GoFlexeOrderPlacement",
+      `/tracking?type=changeTaskStatus`,
+      payload
+    )
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error.response);
+      });
   };
 
   const onPickupDateChangeController = (event) => {
@@ -401,7 +428,6 @@ const Assignment = (props) => {
         promiseList.push(
           API.post("GoFlexeOrderPlacement", `/capacity`, payload)
             .then((response) => {
-              // Add your code here
               console.log(response);
             })
             .catch((error) => {
@@ -540,11 +566,17 @@ const Assignment = (props) => {
 
   const submitButtonHandler = async () => {
     setLoading("uploading");
-    await trackingAssetAllocation();
+console.log("1")
     await submitNewTrucks();
+    console.log("2");
     await submitNewDrivers();
+    console.log("3");
+    await includeAllTrucks();
+    console.log("4");
 
-    var msg = await includeAllTrucks();
+    await trackingAssetAllocation();
+    await changeTaskStatus();
+
     //  submitNewDrivers();
     //console.log(allotedDrivers)
     // try{
