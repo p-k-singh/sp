@@ -225,12 +225,14 @@ const ShowPaymentDetails = (props) => {
         Proof of Payment :
         <a
           href={
-            props.data !== null && props.data.paymentMode == "others"
+            "https://goflexe-kyc.s3.ap-south-1.amazonaws.com/" +
+            (props.data !== null && props.data.paymentMode == "Others"
               ? props.data.paymentModeDetails.chequeLink
-              : ""
+              : "")
           }
+          target={"_blank"}
         >
-          Check here
+          (Open)
         </a>
         <Divider style={{ marginBottom: 20, marginTop: 50 }} />
       </Card>
