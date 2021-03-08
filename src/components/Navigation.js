@@ -312,7 +312,7 @@ export default function Dashboard() {
                   </ListItemAvatar>
                   <ListItemText
                     primary={"New Order Request"}
-                    secondary="Shipment from EtwarPur to Patna,Bihar"
+                    secondary="Tap to see Details"
                   />
                 </ListItem>
               </Link>

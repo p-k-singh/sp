@@ -193,8 +193,8 @@ const StorageAndCapacity = (props) => {
   };
 
   useEffect(() => {
-    setTrucksCapacity(600);
-    setStorageCapacity(250);
+    setTrucksCapacity(0);
+    setStorageCapacity(0);
   }, []);
 
   const changeDisplaySetting = (disp) => {
@@ -227,7 +227,7 @@ const StorageAndCapacity = (props) => {
                     id="panel1bh-header"
                   >
                     <Typography className={classes.heading}>
-                      Total Truck capacity:{" "}
+                      Total Trucks capacity:{" "}
                     </Typography>
                     <Typography className={classes.secondaryHeading}>
                       {" "}

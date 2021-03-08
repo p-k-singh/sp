@@ -215,7 +215,7 @@ export default function CollapsibleTable(props) {
             <TableCell align="right">Permit Id</TableCell>
             <TableCell align="right">Chassis Number</TableCell>
             <TableCell align="right">Engine Number</TableCell>
-            <TableCell align="right">Status</TableCell>
+            {/* <TableCell align="right">Status</TableCell> */}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -251,7 +251,7 @@ export default function CollapsibleTable(props) {
                   <TableCell align="right">{row.permitId}</TableCell>
                   <TableCell align="right">{row.chassisNumber}</TableCell>
                   <TableCell align="right">{row.engineNumber}</TableCell>
-                  <TableCell align="right">
+                  {/* <TableCell align="right">
                     {idx % 2 === 1 ? (
                       <Tooltip title="Done">
                         <Done style={{ color: "green", marginLeft: 20 }} />
@@ -263,7 +263,7 @@ export default function CollapsibleTable(props) {
                         />
                       </Tooltip>
                     )}
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
                 <TableRow>
                   <TableCell

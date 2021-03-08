@@ -111,7 +111,12 @@ const AcceptanceForm = (props) => {
                   id="requiredCapacity"
                   name="requiredCapacity"
                   label="Required Capacity"
-                  value="50 tonnes"
+                  value={
+                    (Order.items[0].measurable == true
+                      ? Number(Order.items[0].noOfUnits) *
+                        Number(Order.items[0].weightPerUnit)
+                      : Order.items[0].density) + " Kgs"
+                  }
                   disabled
                   fullWidth
                   autoComplete="available capacity"
