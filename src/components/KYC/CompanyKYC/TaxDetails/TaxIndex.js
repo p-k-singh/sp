@@ -47,7 +47,7 @@ const TaxInfoIndex = (props) => {
                                                 <th scope="row">PAN:</th>
                                                 <td>{taxDetails.pan}</td>
                                                 <td>
-                                                <a href={'https://goflexe-kyc.s3.ap-south-1.amazonaws.com/'+taxDetails.panLink} target={'_blank'} >(Open)</a>
+                                                <a href={'https://goflexe-kyc.s3.ap-south-1.amazonaws.com/'+taxDetails.panLink} target={'_blank'} >(View Document)</a>
                                                 </td>
                                             </tr>
                                         </Grid>
@@ -56,7 +56,7 @@ const TaxInfoIndex = (props) => {
                                                 <th scope="row">GSTIN:</th>
                                                 <td>{taxDetails.gstin}</td>
                                                 <td>
-                                                <a href={'https://goflexe-kyc.s3.ap-south-1.amazonaws.com/'+taxDetails.gstinLink} target={'_blank'} >(Open)</a>
+                                                <a href={'https://goflexe-kyc.s3.ap-south-1.amazonaws.com/'+taxDetails.gstinLink} target={'_blank'} >(View Document)</a>
                                                 </td>
                                             </tr>
                                         </Grid>

@@ -155,11 +155,13 @@ const Home = (props) => {
   const data = [
     {
       name: "Amount Recieved",
-      Payment: Number(details !== null ? details.totalAmountPaid : 0),
+      Payment: Number(
+        details !== null ? Math.round(details.totalAmountPaid) : 0
+      ),
     },
     {
       name: "Amount Pending ",
-      Payment: Number(details !== null ? details.totalAmount : 0),
+      Payment: Number(details !== null ? Math.round(details.totalAmount) : 0),
     },
   ];
 
@@ -289,7 +291,7 @@ const Home = (props) => {
                         <h3 style={{ padding: 20, fontSize: 50 }}>
                           {" "}
                           {details.length !== 0
-                            ? details.serviceOrdersAcceptedCount
+                            ? details.serviceOrdersUpcomingPickup
                             : 0}
                         </h3>
                       </div>
@@ -399,7 +401,7 @@ const Home = (props) => {
                               fontSize: 30,
                             }}
                           >
-                            ₹ {details.totalAmount}
+                            ₹ {Math.round(details.totalAmount)}
                           </h6>
                         </Grid>
                       </Grid>

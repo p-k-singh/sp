@@ -1,13 +1,13 @@
-import React from 'react';
-import Paper from '@material-ui/core/Paper';
-import PropTypes from 'prop-types';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
+import React from "react";
+import Paper from "@material-ui/core/Paper";
+import PropTypes from "prop-types";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import Typography from "@material-ui/core/Typography";
+import Box from "@material-ui/core/Box";
 
-import AcceptedOrders from './AcceptedOrders'
+import AcceptedOrders from "./AcceptedOrders";
 
 const useStyles = makeStyles({
   root: {
@@ -46,7 +46,6 @@ export default function CenteredTabs() {
   const [value, setValue] = React.useState(0);
   const theme = useTheme();
 
-
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -65,19 +64,25 @@ export default function CenteredTabs() {
         <Tab label="Completed" />
         <Tab label="Rejected" />
       </Tabs>
-      
-        <TabPanel value={value} index={0} dir={theme.direction}>
-          Pending Orders
-        </TabPanel>
-        <TabPanel value={value} index={1} dir={theme.direction}>
-          <AcceptedOrders />
-        </TabPanel>
-        <TabPanel value={value} index={2} dir={theme.direction}>
-          Completed Orders
-        </TabPanel>
-        <TabPanel value={value} index={3} dir={theme.direction}>
-          Rejected Orders
-        </TabPanel>
+
+      <TabPanel value={value} index={0} dir={theme.direction}>
+        <center>
+          <h3>You have no pending orders</h3>
+        </center>
+      </TabPanel>
+      <TabPanel value={value} index={1} dir={theme.direction}>
+        <AcceptedOrders />
+      </TabPanel>
+      <TabPanel value={value} index={2} dir={theme.direction}>
+        <center>
+          <h3> You have 0 completed orders</h3>
+        </center>
+      </TabPanel>
+      <TabPanel value={value} index={3} dir={theme.direction}>
+        <center>
+          <h3> You haven't rejected any orders yet</h3>
+        </center>
+      </TabPanel>
     </Paper>
   );
 }
