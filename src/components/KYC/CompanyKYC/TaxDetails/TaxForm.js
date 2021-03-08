@@ -29,22 +29,35 @@ const CompanyKYC = (props) => {
   const classes = useStyles();
   const [panDoc, setPanDoc] = useState();
   const [gstDoc, setGSTDoc] = useState();
+  const [PanValidator, setPanValidator] = useState("");
+  const [GstValidator, setGstValidator] = useState("");
   const [loading, setLoading] = useState(false);
+  const [submit, setSubmit] = useState(false);
   const [myState, setMyState] = useState({
     pan: "",
     gstin: "",
   });
   const fieldsChange = (event) => {
+    setPanValidator("");
+    setGstValidator("");
+    if (event.target.name == "pan" && event.target.value.length < 10) {
+      setPanValidator("PAN Number should be of 10 Digits");
+    }
+    if (event.target.name == "gstin" && event.target.value.length < 15) {
+      setGstValidator("Gst Number should be of 15 Digits");
+    }
     setMyState({ ...myState, [event.target.name]: event.target.value });
   };
   const submitKYC = () => {
-
-    if (myState.pan == "") {
-      alert("PAN Details cannot be empty");
+    if (PanValidator !== "" || GstValidator !== "") {
       return;
     }
-    if (myState.gst == "") {
-      alert("GSTIN cannot be empty");
+    if (myState.pan == "") {
+      setPanValidator("PAN Details cannot be empty");
+      return;
+    }
+    if (myState.gstin == "") {
+      setGstValidator("GSTIN cannot be empty");
       return;
     }
 
@@ -56,7 +69,7 @@ const CompanyKYC = (props) => {
       alert(" Please upload your GSTIN Proof");
       return;
     }
-    setLoading(true);
+    setSubmit(true);
     var panLink, gstinLink;
     const metaData = {
       contentType: panDoc.type,
@@ -131,17 +144,36 @@ const CompanyKYC = (props) => {
                             console.log(resp);
                             fun();
                           })
-                          .catch((err) => console.log(err));
+                          .catch((err) => {
+                            console.log(err);
+                            setSubmit(false);
+                          });
                       })
-                      .catch((err) => console.log(err));
+                      .catch((err) => {
+                        console.log(err);
+                        setSubmit(false);
+                      });
                   })
-                  .catch((err) => console.log(err));
+                  .catch((err) => {
+                    console.log(err);
+                    setSubmit(false);
+                  });
               })
-              .catch((err) => console.log(err));
+              .catch((err) => {
+                console.log(err);
+                setSubmit(false);
+              });
           })
-          .catch((err) => console.log(err));
+          .catch((err) => {
+            console.log(err);
+            setSubmit(false);
+          });
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setSubmit(false);
+      });
+
     setLoading(false);
   };
   const fun = () => {
@@ -176,6 +208,8 @@ const CompanyKYC = (props) => {
               required
               type="text"
               id="pan"
+              error={PanValidator !== ""}
+              helperText={PanValidator === "" ? "" : PanValidator}
               inputProps={{ maxLength: 10 }}
               name="pan"
               value={myState.pan}
@@ -188,6 +222,8 @@ const CompanyKYC = (props) => {
             <TextField
               required
               type="text"
+              error={GstValidator !== ""}
+              helperText={GstValidator}
               id="gstin"
               name="gstin"
               inputProps={{ maxLength: 15 }}
@@ -227,19 +263,22 @@ const CompanyKYC = (props) => {
             />
           </Grid>
         </Grid>
-
-        <Button
-          onClick={submitKYC}
-          className="row"
-          variant="contained"
-          style={{
-            float: "right",
-            backgroundColor: "#f9a825",
-            marginBottom: "10px",
-          }}
-        >
-          Next
-        </Button>
+        {submit == true ? (
+          <Spinner />
+        ) : (
+          <Button
+            onClick={submitKYC}
+            className="row"
+            variant="contained"
+            style={{
+              float: "right",
+              backgroundColor: "#f9a825",
+              marginBottom: "10px",
+            }}
+          >
+            Next
+          </Button>
+        )}
       </form>
     </div>
   );

@@ -41,29 +41,29 @@ export default function WarehouseCostDetails(props) {
   const classes = useRowStyles();
   const [openedPages, setOpenedPages] = useState([]);
   const [checkedBoxes, setCheckedBoxes] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState([]);
   const [toEdit, setToEdit] = useState(false);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(async () => {
-    setLoading(true)
-    var currentUser = await Auth.currentUserInfo();
-    var owner = currentUser.username;
-    API.get(
-      "GoFlexeOrderPlacement",
-      `/serviceprovidercost?type=serviceProviderId&serviceProviderId=${owner}`
-    )
-      .then((response) => {
-        console.log(response);
-        setRows(response);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error.response);
-        setLoading(false);
-      });
-  }, []);
+  // useEffect(async () => {
+  //   setLoading(true)
+  //   var currentUser = await Auth.currentUserInfo();
+  //   var owner = currentUser.username;
+  //   API.get(
+  //     "GoFlexeOrderPlacement",
+  //     `/serviceprovidercost?type=serviceProviderId&serviceProviderId=${owner}`
+  //   )
+  //     .then((response) => {
+  //       console.log(response);
+  //       setRows(response);
+  //       setLoading(false);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error.response);
+  //       setLoading(false);
+  //     });
+  // }, []);
 
   const handleOpen = (event, idx) => {
     const selectedIndex = openedPages.indexOf(idx);
@@ -158,9 +158,9 @@ export default function WarehouseCostDetails(props) {
         <TableHead>
           <TableRow>
             <TableCell />
-            <TableCell>Capability</TableCell>
+            <TableCell>Location</TableCell>
             <TableCell>Capacity</TableCell>
-            <TableCell>Range</TableCell>
+
             <TableCell>Pricing</TableCell>
           </TableRow>
         </TableHead>

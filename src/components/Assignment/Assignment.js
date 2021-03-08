@@ -70,6 +70,11 @@ const Assignment = (props) => {
   const [desiredDeliveryDate, setDesiredDeliveryDate] = useState("");
   const [desiredPickupDate, setDesiredPickupDate] = useState("");
   const [CustomerDetails, setCustomerDetails] = useState("");
+  const [TrackingId, setTrackingId] = useState("");
+  const [TaskId, setTaskId] = useState("");
+  const [StageId, setStageId] = useState("");
+  const [Allocated, setAllocated] = useState(false);
+  const [AllocatedLoading, setAllocatedLoading] = useState(false);
 
   var count = 0;
 
@@ -91,6 +96,7 @@ const Assignment = (props) => {
     fetchCapacityRequired();
     loadData();
     getCustomerDetails();
+    getTrackingId();
   }, []);
 
   useEffect(() => {
@@ -208,14 +214,19 @@ const Assignment = (props) => {
                 isValid = true;
               }
 
-              if (isValid === true) {
-                temp.push({
-                  label:
-                    resp[i].assetNumber + "(" + resp[i].capacity + " tons)",
-                  value: resp[i],
-                  isNew: false,
-                });
-              }
+              // if (isValid === true) {
+              //   temp.push({
+              //     label:
+              //       resp[i].assetNumber + "(" + resp[i].capacity + " tons)",
+              //     value: resp[i],
+              //     isNew: false,
+              //   });
+              // }
+              temp.push({
+                label: resp[i].assetNumber + "(" + resp[i].capacity + " tons)",
+                value: resp[i],
+                isNew: false,
+              });
             }
             setMyTrucks(temp);
             console.log(temp);
@@ -291,6 +302,78 @@ const Assignment = (props) => {
         setLoading("false");
       });
   }
+  function getTrackingId() {
+    API.get(
+      "GoFlexeOrderPlacement",
+      `/tracking?type=getProcess&orderId=${params.id}`
+    )
+      .then((resp) => {
+        console.log(resp);
+        setTrackingId(resp.processId);
+        setTaskId(resp.stages[0].tasks[0].taskId);
+        setStageId(resp.stages[0].stageId);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading("false");
+      });
+  }
+  const trackingAssetAllocation = async () => {
+    setAllocatedLoading(true);
+    const data = {
+      trackingId: TrackingId,
+      stageId: StageId,
+      taskId: TaskId,
+      custom: {
+        data: {
+          allotedDrivers: chosenDrivers,
+          allotedTrucks: chosenTrucks,
+        },
+        attachments: {},
+      },
+    };
+    const payload = {
+      body: data,
+    };
+
+    API.patch(
+      "GoFlexeOrderPlacement",
+      `/tracking?type=updateCustomFields`,
+      payload
+    )
+      .then((response) => {
+        console.log(response);
+        setAllocated(true);
+        setAllocatedLoading(false);
+      })
+      .catch((error) => {
+        console.log(error.response);
+        setAllocatedLoading(false);
+      });
+  };
+  const changeTaskStatus = async () => {
+    const data = {
+      trackingId: TrackingId,
+      stageId: StageId,
+      taskId: TaskId,
+      status: "NEXT",
+    };
+    const payload = {
+      body: data,
+    };
+
+    API.patch(
+      "GoFlexeOrderPlacement",
+      `/tracking?type=changeTaskStatus`,
+      payload
+    )
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error.response);
+      });
+  };
 
   const onPickupDateChangeController = (event) => {
     var pickupDate = event.target.value;
@@ -350,7 +433,6 @@ const Assignment = (props) => {
         promiseList.push(
           API.post("GoFlexeOrderPlacement", `/capacity`, payload)
             .then((response) => {
-              // Add your code here
               console.log(response);
             })
             .catch((error) => {
@@ -360,9 +442,6 @@ const Assignment = (props) => {
       }
     }
     return await Promise.all(promiseList);
-    //   return new Promise(resolve => {
-    //     return  resolve('done')
-    // })
   };
   const submitNewDrivers = async () => {
     let promiseList = [];
@@ -489,10 +568,17 @@ const Assignment = (props) => {
 
   const submitButtonHandler = async () => {
     setLoading("uploading");
-    await submitNewTrucks();
-    await submitNewDrivers();
+    // console.log("1");
+    //  await submitNewTrucks();
+    // console.log("2");
+    //  await submitNewDrivers();
+    // console.log("3");
+    // await includeAllTrucks();
+    // console.log("4");
 
-    var msg = await includeAllTrucks();
+    await trackingAssetAllocation();
+    await changeTaskStatus();
+
     //  submitNewDrivers();
     //console.log(allotedDrivers)
     // try{
@@ -641,7 +727,22 @@ const Assignment = (props) => {
         </Grid>
         <Tooltip title="Features available in Truck" arrow placement="top">
           <Grid item xs={12} sm={4}>
-            <Select
+            <TextField
+              disabled={chosenTrucks[i] === null || !chosenTrucks[i].isNew}
+              label="Capability"
+              fullWidth
+              value={
+                chosenTrucks[i] === null
+                  ? null
+                  : chosenTrucks[i].value.capabilities
+              }
+              onChange={(event) => onCapacityChangeController(event, i)}
+              variant="outlined"
+              InputLabelProps={{ shrink: true }}
+              size="small"
+              autoComplete="shipping address-line1"
+            />
+            {/* <Select
               isMulti
               styles={selectStyles}
               name="categories"
@@ -656,7 +757,7 @@ const Assignment = (props) => {
               className="basic-multi-select"
               onChange={(event) => onCapabilityChange(event, i)}
               classNamePrefix="select"
-            />
+            /> */}
             {/* <Multiselect
               style={{
                 searchBox: { minHeight: "55px" },
@@ -900,13 +1001,19 @@ const Assignment = (props) => {
             marginBottom: 100,
           }}
         >
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={submitButtonHandler}
-          >
-            Save
-          </Button>
+          {AllocatedLoading == true ? (
+            <Spinner />
+          ) : Allocated == true ? (
+            <p>Truck Allocated successfully</p>
+          ) : (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={submitButtonHandler}
+            >
+              Save
+            </Button>
+          )}
         </div>
       </Card>
     </div>

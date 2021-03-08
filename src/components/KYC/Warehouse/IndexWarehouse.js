@@ -8,6 +8,7 @@ import axios from "axios";
 import Spinner from "../../UI/Spinner";
 import ShowTrucks from "./ShowWarehouse";
 import { TextField, Grid, Button } from "@material-ui/core";
+import InputAdornment from "@material-ui/core/InputAdornment";
 const useStyles = makeStyles({
   root: {
     minWidth: 275,
@@ -42,6 +43,10 @@ const TruckKYC = (props) => {
   const [isAllIndiaPermit, setIsAllIndiaPermit] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [PropertyNameValidator, setPropertyNameValidator] = useState("");
+  const [CapacityValidator, setCapacityValidator] = useState("");
+  const [PanNoValidator, setPanNoValidator] = useState("");
+  const [GSTINValidator, setGSTINValidator] = useState("");
 
   const capabilityOptions = {
     options: constants.permitStates,
@@ -50,9 +55,17 @@ const TruckKYC = (props) => {
     setShowForm(!showForm);
   };
   const onPanChange = (event) => {
+    setPanNoValidator("");
+    if (event.target.value.length < 10) {
+      setPanNoValidator("PAN Number should be of 10 Digits");
+    }
     setPan(event.target.value);
   };
   const onGstinChange = (event) => {
+    setGSTINValidator("");
+    if (event.target.value.length < 15) {
+      setGSTINValidator("Gst Number should be of 15 Digits");
+    }
     setGstin(event.target.value);
   };
 
@@ -60,9 +73,11 @@ const TruckKYC = (props) => {
     setPanDoc(event.target.files[0]);
   };
   const onPropertyNameChange = (event) => {
+    setPropertyNameValidator("");
     setPropertyName(event.target.value);
   };
   const onWarehouseCapacityChange = (event) => {
+    setCapacityValidator("");
     if (event.target.value < 0) {
       event.target.value = 0;
     }
@@ -75,35 +90,30 @@ const TruckKYC = (props) => {
   const onRegistrationDocChange = (event) => {
     setRegistrationDoc(event.target.files[0]);
   };
-  const onMultiSelect = (selectedList, selectedItem) => {
-    if (selectedItem.id === "AI") {
-      setIsAllIndiaPermit(true);
-    }
-    if (isAllIndiaPermit !== true) {
-      setStatesOfPermit(selectedList);
-    }
-  };
-  const onMultiRemove = (selectedList, removedItem) => {
-    // alert(selectedList)
-    if (removedItem.id === "AI") {
-      setIsAllIndiaPermit(false);
-    }
-    if (isAllIndiaPermit !== true) {
-      setStatesOfPermit(selectedList);
-    }
-  };
 
   const submitKYCChained = () => {
+    if (
+      PropertyNameValidator !== "" ||
+      CapacityValidator !== "" ||
+      PanNoValidator !== "" ||
+      GSTINValidator !== ""
+    ) {
+    }
+
     if (propertyName == null || propertyName == "") {
-      alert("Property Name cannot be empty.");
+      setPropertyNameValidator("Property Name cannot be empty.");
       return;
     }
     if (capacity == null || capacity == 0) {
-      alert("Capacity cannot be empty.");
+      setCapacityValidator("Capacity cannot be empty.");
       return;
     }
     if (pan == null || pan == "") {
-      alert("PAN Number cannot be empty.");
+      setPanNoValidator("PAN Number cannot be empty.");
+      return;
+    }
+    if (gstin == null || gstin == "") {
+      setGSTINValidator("GSTIN cannot be empty.");
       return;
     }
     if (panDoc == null || panDoc == "") {
@@ -225,10 +235,6 @@ const TruckKYC = (props) => {
 
   const eachKYC = (
     <div style={{ overflow: "hidden", marginTop: "20px" }}>
-      {/* <Typography fullWidth className={classes.title} gutterBottom style={{backgroundColor:'#f0f0f0' }}>
-                             KYC
-                        </Typography> */}
-
       <form>
         <Typography className={classes.formHeadings}>
           Property Details
@@ -246,6 +252,8 @@ const TruckKYC = (props) => {
               type="text"
               id="propertyName"
               name="propertyName"
+              helperText={PropertyNameValidator}
+              error={PropertyNameValidator !== ""}
               label="Enter Property Name"
               fullWidth
               value={propertyName}
@@ -260,10 +268,17 @@ const TruckKYC = (props) => {
               onInput={(e) => {
                 e.target.value = Math.max(0, parseInt(e.target.value))
                   .toString()
-                  .slice(0, 10);
+                  .slice(0, 5);
               }}
               name="capacity"
+              helperText={CapacityValidator}
+              error={CapacityValidator !== ""}
               label="Enter Capacity(in sqft.)"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">Sqft.</InputAdornment>
+                ),
+              }}
               fullWidth
               value={capacity}
               onChange={(event) => onWarehouseCapacityChange(event)}
@@ -283,6 +298,8 @@ const TruckKYC = (props) => {
               type="text"
               id="pan"
               name="pan"
+              helperText={PanNoValidator}
+              error={PanNoValidator !== ""}
               label="Enter PAN No."
               fullWidth
               inputProps={{ maxLength: 10 }}
@@ -295,6 +312,8 @@ const TruckKYC = (props) => {
               type="text"
               id="gstin"
               name="gstin"
+              helperText={GSTINValidator}
+              error={GSTINValidator !== ""}
               label="Enter GSTIN"
               inputProps={{ maxLength: 15 }}
               fullWidth
@@ -302,9 +321,6 @@ const TruckKYC = (props) => {
               onChange={(event) => onGstinChange(event)}
             />
           </Grid>
-          {/* <Grid item xs={12} sm={6}>
-                    <input type="file" onChange={(event) => onRcChange(event,idx)} /> 
-                    </Grid> */}
         </Grid>
 
         <Typography className={classes.formHeadings}>

@@ -5,6 +5,8 @@ import Typography from "@material-ui/core/Typography";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
+import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
+import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import DeleteIcon from "@material-ui/icons/Delete";
 import CreatableSelect from "react-select/creatable";
 import Select from "react-select";
@@ -26,6 +28,7 @@ import {
   FormControl,
   InputLabel,
   Button,
+  Select as MaterialSelect,
   Switch,
   Card,
   Container,
@@ -38,7 +41,6 @@ import Spinner from "../../UI/Spinner";
 import PropTypes from "prop-types";
 import {
   Checkbox,
-  Select as MaterialSelect,
   IconButton,
   Divider,
   FormControlLabel,
@@ -73,6 +75,54 @@ const AddWarehouseCost = (props) => {
     items[i].additionalDetails.deliveryCommitment = newValue;
     setChosenProducts(items);
     setdeliveryCommitment(newValue);
+  };
+  const [Area, setArea] = useState("");
+  const [deliveryArea, setDeliveryArea] = useState("");
+  const [ZipValidator, setZipValidator] = useState("");
+  const [PinData, setPinData] = useState([]);
+  const onAreaChangeController = (event) => {
+    setArea(event.target.value);
+  };
+
+  const onPinChangeController = (event) => {
+    var PinPinCode = parseInt(event.target.value, 10);
+    if (PinPinCode < 0) {
+      setZipValidator("Cannot be a negative value");
+
+      return;
+    } else {
+      setZipValidator("");
+    }
+    var count = 0,
+      temp = PinPinCode;
+    while (temp > 0) {
+      count++;
+      temp = Math.floor(temp / 10);
+    }
+    if (count == 6) {
+      const api_url = "https://api.postalpincode.in/pincode/" + PinPinCode;
+
+      // Defining async function
+      async function getapi(url) {
+        // Storing response
+
+        const response = await fetch(url);
+
+        // Storing data in form of JSON
+        var data = await response.json();
+        console.log(data);
+        setPinData(
+          data !== null && data[0].PostOffice !== null ? data[0].PostOffice : ""
+        );
+      }
+      // Calling that async function
+      getapi(api_url);
+    }
+    if (count !== 6) {
+      setZipValidator("Must be of six digits");
+    } else {
+      setZipValidator("");
+    }
   };
 
   const handleInputChange = (event, i) => {
@@ -299,51 +349,79 @@ const AddWarehouseCost = (props) => {
         </Grid> */}
       </Grid>
       <Grid container spacing={3} style={{ paddingLeft: 40, paddingRight: 40 }}>
-        <Grid item xs={12} sm={4}>
-          <Select
-            styles={selectStyles}
-            className="basic-single"
-            classNamePrefix="Capability"
-            isSearchable
-            name="Capability"
-            placeholder="Capability"
-            value={chosenProducts[i].capability}
-            onChange={(event) => onCapabilitiesChange(event, i)}
-            options={constants.truckCapabilityOptions}
+        <Grid item xs={12} sm={3}>
+          <TextField
+            required
+            error={ZipValidator !== ""}
+            helperText={
+              ZipValidator === ""
+                ? PinData == ""
+                  ? ""
+                  : PinData[0].District + ", " + PinData[0].State
+                : ZipValidator
+            }
+            type="number"
+            id="PinCode
+              name="
+            PinCode
+            variant="outlined"
+            size="small"
+            label="Location"
+            fullWidth
+            // value={props.pickupPin}
+            onChange={(event) => onPinChangeController(event)}
+            autoComplete="Pickup postal-code"
           />
         </Grid>
+        {PinData.length !== 0 ? (
+          <Grid item xs={12} sm={3}>
+            <MaterialSelect
+              autoWidth={true}
+              fullWidth
+              native
+              onChange={(event) => onAreaChangeController(event)}
+              value={Area}
+              inputProps={{
+                name: "age",
+                id: "age-native-simple",
+              }}
+            >
+              {PinData.map((d) => (
+                <option>{d.Name}</option>
+              ))}
+            </MaterialSelect>
+          </Grid>
+        ) : (
+          <p></p>
+        )}
+
         <Grid item xs={12} sm={3}>
-          <Select
-            styles={selectStyles}
-            className="basic-single"
-            classNamePrefix="Capacity"
-            isSearchable
+          <TextField
+            type="text"
+            id="Capacity"
             name="Capacity"
-            placeholder="Capacity"
-            value={chosenProducts[i].capacity}
-            onChange={(event) => onCapacityChange(event, i)}
-            options={constants.CapacityOptions}
+            label="Capacity"
+            fullWidth
+            value={chosenProducts[i].additionalDetails.sourceLocation}
+            onChange={(event) => onsourceLocationChangeController(event, i)}
+            variant="outlined"
+            size="small"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">Sqft</InputAdornment>
+              ),
+            }}
+            autoComplete="shipping address-line1"
           />
         </Grid>
-        <Grid item xs={12} sm={3}>
-          <Select
-            styles={selectStyles}
-            className="basic-single"
-            classNamePrefix="Range"
-            isSearchable
-            name="Range"
-            placeholder="Range"
-            value={chosenProducts[i].rangeinKms}
-            onChange={(event) => onRangeinKmsChange(event, i)}
-            options={constants.RangeOptions}
-          />
-        </Grid>
+
         {chosenProducts[i].details == false ? (
-          <Grid item xs={12} sm={2}>
+          <Grid item xs={12} sm={3}>
             <TextField
               fullWidth
               label="Pricing"
               type="number"
+              helperText={"Inclusive of GST"}
               value={chosenProducts[i].pricing}
               onChange={(event) => onPricingController(event, i)}
               variant="outlined"
@@ -356,27 +434,38 @@ const AddWarehouseCost = (props) => {
         ) : (
           <p></p>
         )}
-        <Grid item sm={4} xs={12}>
+        <Grid item>
           <TableContainer>
             <Table aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <TableCell style={{ borderBottom: "none" }}>
-                    <Checkbox
-                      onChange={(e) => {
+                  <TableCell
+                    style={{ padding: 0, margin: 0, borderBottom: "none" }}
+                  >
+                    Add Addititonal Details (Optional)
+                  </TableCell>
+                  <TableCell
+                    align="left"
+                    style={{ padding: 0, margin: 0, borderBottom: "none" }}
+                  >
+                    <IconButton
+                      style={{ padding: 0, margin: 0, outline: "none" }}
+                      aria-label="expand row"
+                      size="small"
+                      onClick={(e) => {
                         var items = chosenProducts.slice();
-                        items[i].details = e.target.checked;
+                        chosenProducts[i].details == true
+                          ? (items[i].details = false)
+                          : (items[i].details = true);
                         setChosenProducts(items);
                       }}
-                      size="small"
-                      color="primary"
-                      inputProps={{
-                        "aria-label": "secondary checkbox",
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell align="left" style={{ borderBottom: "none" }}>
-                    Fill Additional Details
+                    >
+                      {chosenProducts[i].details == true ? (
+                        <KeyboardArrowUpIcon />
+                      ) : (
+                        <KeyboardArrowDownIcon />
+                      )}
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -468,48 +557,6 @@ const AddWarehouseCost = (props) => {
               size="small"
             />
           </Grid>
-          <Grid
-            container
-            spacing={2}
-            style={{ paddingLeft: 40, paddingRight: 40, padding: 30 }}
-            alignItems="center"
-          >
-            <Grid item>Delivery Commitment:</Grid>
-            <Grid item xs style={{ marginTop: 5 }}>
-              <Slider
-                value={
-                  typeof chosenProducts[i].additionalDetails
-                    .deliveryCommitment === "number"
-                    ? chosenProducts[i].additionalDetails.deliveryCommitment
-                    : 1
-                }
-                onChange={(event, newValue) =>
-                  handleSliderChange(event, newValue, i)
-                }
-                defaultValue={6}
-                valueLabelDisplay="auto"
-                aria-labelledby="input-slider"
-                max={30}
-              />
-            </Grid>
-            <Grid item>
-              <Input
-                className={classes.input}
-                value={chosenProducts[i].additionalDetails.deliveryCommitment}
-                margin="dense"
-                onChange={handleInputChange}
-                onBlur={handleBlur}
-                inputProps={{
-                  step: 10,
-                  min: 0,
-                  max: 100,
-                  type: "number",
-                  "aria-labelledby": "input-slider",
-                }}
-              />
-            </Grid>
-            <Grid item>Days</Grid>
-          </Grid>
         </Grid>
       ) : (
         <p></p>
@@ -544,17 +591,6 @@ const AddWarehouseCost = (props) => {
               style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}
             ></Grid>
             {list}
-            <Button
-              variant="contained"
-              className="AllButtons"
-              style={{
-                marginTop: 10,
-                marginLeft: 50,
-              }}
-              onClick={() => addproduct()}
-            >
-              Add More
-            </Button>
           </form>
         </CardContent>
         <div
@@ -565,6 +601,16 @@ const AddWarehouseCost = (props) => {
             margin: 20,
           }}
         >
+          <Button
+            variant="contained"
+            style={{
+              marginTop: 10,
+              marginLeft: 50,
+            }}
+            onClick={() => addproduct()}
+          >
+            Add More
+          </Button>
           <Button
             variant="contained"
             className="AllButtons"

@@ -5,7 +5,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Auth, API } from "aws-amplify";
 import axios from "axios";
 import InfoIcon from "@material-ui/icons/Info";
-
 import Tooltip from "@material-ui/core/Tooltip";
 import { Link } from "react-router-dom";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -31,6 +30,11 @@ const CompanyKYC = (props) => {
   const classes = useStyles();
   const [registrationDoc, setRegistrationDoc] = useState();
   const [loading, setLoading] = useState(false);
+  const [submit, setSubmit] = useState(false);
+  const [PhoneValidator, setPhoneValidator] = useState("");
+  const [EmailValidator, setEmailValidator] = useState("");
+  const [NameValidator, setNameValidator] = useState("");
+  const [AddressValidator, setAddressValidator] = useState("");
   const [myState, setMyState] = useState({
     registeredName: "",
     registeredAddress: "",
@@ -38,28 +42,68 @@ const CompanyKYC = (props) => {
     registeredContactNo: "",
   });
   const fieldsChange = (event) => {
-    if (event.target.name == "phone" || event.target.value < 0) {
-      event.target.value = 0;
+    setEmailValidator("");
+    setPhoneValidator("");
+    setAddressValidator("");
+    setNameValidator("");
+    var count = 0,
+      temp = event.target.value;
+    while (temp > 0) {
+      count++;
+      temp = Math.floor(temp / 10);
     }
 
+    if (
+      event.target.name == "registeredEmail" &&
+      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+        event.target.value
+      ) === false
+    ) {
+      setEmailValidator("Enter a Valid Email Address");
+    }
+    if (event.target.name == "registeredContactNo" && count < 10) {
+      setPhoneValidator("Phone Number should contain 10 Digits");
+    }
+
+    if (event.target.name == "registeredContactNo" && event.target.value < 0) {
+      event.target.value = 0;
+    }
     setMyState({ ...myState, [event.target.name]: event.target.value });
   };
   const submitKYC = () => {
     if (
-      myState.registeredName == "" ||
-      myState.registeredAddress == "" ||
-      myState.registeredEmail == "" ||
-      myState.registeredContactNo == ""
+      PhoneValidator !== "" ||
+      EmailValidator !== "" ||
+      NameValidator !== "" ||
+      AddressValidator !== ""
     ) {
-      alert("Company Details cannot be blank");
       return;
     }
+     if (myState.registeredName == "") {
+       setNameValidator("Registered Name cannot be blank");
+       return;
+     }
+     if (myState.registeredEmail == "") {
+       setEmailValidator("Email cannot be empty");
+       return;
+     }
+     if (
+       myState.registeredContactNo == "" ||
+       myState.registeredContactNo == null
+     ) {
+       setPhoneValidator("Contact Number cannot be empty");
+       return;
+     }
+     if (myState.registeredAddress == "") {
+       setAddressValidator("Address cannot be empty");
+       return;
+     }
     if (registrationDoc == "" || registrationDoc == null) {
       alert(" Please upload the Registration Certificate");
       return;
     }
 
-    setLoading(true);
+    setSubmit(true);
     var docLink;
     const metaData = {
       contentType: registrationDoc.type,
@@ -111,17 +155,27 @@ const CompanyKYC = (props) => {
                     console.log(resp);
                     fun();
                   })
-                  .catch((err) => console.log(err));
+                  .catch((err) => {
+                    console.log(err);
+                    setSubmit(false);
+                  });
               })
-              .catch((err) => console.log(err));
+              .catch((err) => {
+                console.log(err);
+                setSubmit(false);
+              });
           })
-          .catch((err) => console.log(err));
+          .catch((err) => {
+            console.log(err);
+            setSubmit(false);
+          });
       })
-      .catch((err) => console.log(err));
-    setLoading(false);
+      .catch((err) => {
+        console.log(err);
+        setSubmit(false);
+      });
   };
   const fun = () => {
-    //alert(JSON.stringify(props))
     props.loadData();
   };
   const onRegistrationProofChange = (event) => {
@@ -133,11 +187,7 @@ const CompanyKYC = (props) => {
 
   return (
     <div style={{ overflow: "hidden" }}>
-      {/* <Typography fullWidth className={classes.title} gutterBottom style={{ backgroundColor: '#66bb6a' }}>
-                            Pending KYC
-                        </Typography> */}
       <form>
-        {/* <Typography className={classes.formHeadings} >Company Details</Typography> */}
         <Grid
           container
           spacing={3}
@@ -149,6 +199,9 @@ const CompanyKYC = (props) => {
               id="registeredName"
               name="registeredName"
               label="Registered Name"
+              error={NameValidator !== ""}
+              helperText={NameValidator}
+              inputProps={{ maxLength: 50 }}
               value={myState.registeredName}
               onChange={(event) => fieldsChange(event)}
               fullWidth
@@ -160,6 +213,8 @@ const CompanyKYC = (props) => {
               id="registeredAddress"
               name="registeredAddress"
               label="Registered Address"
+              helperText={AddressValidator}
+              error={AddressValidator !== ""}
               value={myState.registeredAddress}
               onChange={(event) => fieldsChange(event)}
               fullWidth
@@ -171,6 +226,9 @@ const CompanyKYC = (props) => {
               id="registeredEmail"
               name="registeredEmail"
               label="Offcial Email Id"
+              error={EmailValidator !== ""}
+              inputProps={{ maxLength: 50 }}
+              helperText={EmailValidator}
               value={myState.registeredEmail}
               onChange={(event) => fieldsChange(event)}
               fullWidth
@@ -182,6 +240,8 @@ const CompanyKYC = (props) => {
               id="registeredContactNo"
               name="registeredContactNo"
               label="Contact number"
+              error={PhoneValidator !== ""}
+              helperText={PhoneValidator}
               onInput={(e) => {
                 e.target.value = Math.max(0, parseInt(e.target.value))
                   .toString()
@@ -219,19 +279,22 @@ const CompanyKYC = (props) => {
             </Grid>
           </Grid>
         </Grid>
-
-        <Button
-          onClick={submitKYC}
-          className="row"
-          variant="contained"
-          style={{
-            float: "right",
-            backgroundColor: "#f9a825",
-            marginBottom: "10px",
-          }}
-        >
-          Next
-        </Button>
+        {submit == true ? (
+          <Spinner />
+        ) : (
+          <Button
+            onClick={submitKYC}
+            className="row"
+            variant="contained"
+            style={{
+              float: "right",
+              backgroundColor: "#f9a825",
+              marginBottom: "10px",
+            }}
+          >
+            Next
+          </Button>
+        )}
       </form>
     </div>
   );

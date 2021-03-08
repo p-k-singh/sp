@@ -8,9 +8,9 @@ import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import OrderDetails from "./OrderDetails/OrderDetails";
-import Track from "./Track/Track";
+import Track from "./Track/index";
 import Assignment from "./Assignment/Assignment";
-import PaymentIndex from './Payments/PaymentIndex'
+import PaymentIndex from "./Payments/PaymentIndex";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -52,14 +52,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Details = (props) => {
+const Details = (id, serviceOrderId) => {
   const classes = useStyles();
   const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-  console.log("getting from props" + props);
+  console.log("getting from props" + id);
   //console.log('addresss'+props.fromAddress);
   return (
     <div className={classes.root}>
@@ -77,14 +77,15 @@ const Details = (props) => {
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
-        <OrderDetails id={props} />
+        <OrderDetails id={id} />
       </TabPanel>
       <TabPanel value={value} index={1}></TabPanel>
       <TabPanel value={value} index={2}>
-       
-        <Track />
+        <Track id={serviceOrderId} />
       </TabPanel>
-       <TabPanel value={value} index={3}>< PaymentIndex /></TabPanel>
+      <TabPanel value={value} index={3}>
+        <PaymentIndex id={id} />
+      </TabPanel>
     </div>
   );
 };
@@ -95,7 +96,7 @@ const Home = (props) => {
   } = props;
 
   console.log("From Home " + params.id);
-  return <div>{Details(params.id)}</div>;
+  return <div>{Details(params.id, params.serviceOrderId)}</div>;
 };
 
 export default Home;

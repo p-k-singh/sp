@@ -14,7 +14,7 @@ import AcceptanceForm from "./components/AcceptanceForm";
 import MyOrders from "./components/MyOrders/MyOrders";
 import AllocationForm from "./components/Allocation/AllocationForm";
 import AssignmentForm from "./components/Assignment/Assignment";
-import Track from "./components/Track/Track";
+import Track from "./components/Track/index";
 import Help from "./components/Help/Help";
 import TaskManager from "./components/Track/TaskManager";
 import UserManager from "./components/UserManager/userManager";
@@ -161,7 +161,7 @@ function App() {
               }}
             />
             <Route
-              path="/order/:id"
+              path="/order/:id/:serviceOrderId"
               render={(props) => {
                 return <OrderDetail {...props} />;
               }}

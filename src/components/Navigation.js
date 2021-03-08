@@ -171,7 +171,7 @@ export default function Dashboard() {
   const [username, setUsername] = React.useState("");
   const [numberOfNotifications, setNumberOfNotifications] = useState(0);
   const [notifications, setNotifications] = useState(
-    "abf96696-e920-4c59-93f5-8870263ae2bf"
+    "cfb86978-9ea3-427b-9bd4-da518f708cf1"
   );
   const { userHasAuthenticated } = useAppContext();
   const handleDrawerOpen = () => {
@@ -209,6 +209,7 @@ export default function Dashboard() {
     }
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(async () => {
     //async function checkUse
     var currentUser = await Auth.currentUserInfo();
@@ -324,7 +325,7 @@ export default function Dashboard() {
                     </Avatar>
                   </ListItemAvatar>
                   <ListItemText
-                    primary={"Order Id. " + Math.floor(Math.random() * 10000)}
+                    primary={"Shipment from Haryana to Rajasthan"}
                     secondary="Shipment Delivered Successfully"
                   />
                 </ListItem>
@@ -338,7 +339,7 @@ export default function Dashboard() {
                     </Avatar>
                   </ListItemAvatar>
                   <ListItemText
-                    primary={"Order Id. " + Math.floor(Math.random() * 10000)}
+                    primary={"Shipment from Bhopal to Indore"}
                     secondary="Pickup Completed Successfully"
                   />
                 </ListItem>
@@ -352,25 +353,12 @@ export default function Dashboard() {
                     </Avatar>
                   </ListItemAvatar>
                   <ListItemText
-                    primary={"Order Id. " + Math.floor(Math.random() * 10000)}
+                    primary={"Shipment from Hyderabad to Banglore"}
                     secondary="Driver Arrived at Drop Location"
                   />
                 </ListItem>
               </Link>
               <Divider />
-              <Link to="/Track">
-                <ListItem alignItems="flex-start">
-                  <ListItemAvatar>
-                    <Avatar>
-                      <LocalShippingIcon />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={"Order Id. " + Math.floor(Math.random() * 10000)}
-                    secondary="Driver has left for Pickup"
-                  />
-                </ListItem>
-              </Link>
             </List>
           </Menu>
 
