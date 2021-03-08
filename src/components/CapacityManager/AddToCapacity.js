@@ -91,18 +91,14 @@ const AddTocapacity = (props) => {
   const [type, setType] = useState("truck");
   const [currentUser, setCurrentUser] = useState(null);
   const [truckNumber, setTruckNumber] = useState();
-  const [CostId, setCostId] = useState();
-  const [size, setSize] = useState();
+  const [CostId, setCostId] = useState("");
   const [unit, setUnit] = useState("tons");
-  const [ownership, setOwnership] = useState("self");
-  const [location, setLocation] = useState();
   const [capacity, setCapacity] = useState();
   const [price, setPrice] = useState();
   const [distance, setDistance] = useState();
   const [isNew, setIsNew] = useState(true);
   const [ThirtyDaysPricing, setThirtyDaysPricing] = useState();
   const [ImmidiatePricing, setImmidiatePricing] = useState();
-  const [pin, setPin] = useState();
   const [capability, setCapability] = useState("");
   const [Features, setFeatures] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -391,7 +387,8 @@ const AddTocapacity = (props) => {
           destinationLocation: DestinationLocation,
           thirtyDaysPricing: ThirtyDaysPricing,
           immediatePricing: ImmidiatePricing,
-          deliveryCommitment: DeliveryPromise,
+          deliveryCommitment:
+            DeliveryPromise !== null ? DeliveryPromise.value : "",
         },
       ],
     };
@@ -434,7 +431,8 @@ const AddTocapacity = (props) => {
           destinationLocation: DestinationLocation,
           thirtyDaysPricing: ThirtyDaysPricing,
           immediatePricing: ImmidiatePricing,
-          deliveryCommitment: DeliveryPromise,
+          deliveryCommitment:
+            DeliveryPromise !== null ? DeliveryPromise.value : "",
         },
       ],
     };
@@ -505,7 +503,6 @@ const AddTocapacity = (props) => {
     //   return;
     // }
     isNew == true ? SubmitNewPricing() : EditOldPricing();
-
     setLoading(true);
     var currentUser = await Auth.currentUserInfo();
     var owner = currentUser.username;
@@ -513,15 +510,31 @@ const AddTocapacity = (props) => {
       owner: owner,
       type: type.value,
       assetNumber: truckNumber,
-      capacity: capacity.value,
       unit: unit,
-      capabilities: capability.value,
+      features: Features,
       availableFromDateTime: availableFrom,
       availableToDateTime: availableTo,
-      ownershipType: "Blank",
-      location: "Blank",
       active: assetActive,
-      // pincode: pin,
+      costDetails: {
+        costId: CostId,
+        isEdited: isNew == true ? false : true,
+        rangeinkms: distance.value,
+        price: price,
+        capability: capability.value,
+        capacity: capacity.value,
+        additionalDetails: {
+          sourceLocation: SourceLocation,
+          sourceArea: "",
+          sourcePinData: [],
+          destinationArea: "",
+          destinationPinData: [],
+          destinationLocation: DestinationLocation,
+          thirtyDaysPricing: ThirtyDaysPricing,
+          immediatePricing: ImmidiatePricing,
+          deliveryCommitment:
+            DeliveryPromise !== null ? DeliveryPromise.value : "",
+        },
+      },
     };
     const payload = {
       body: data,
@@ -859,7 +872,7 @@ const AddTocapacity = (props) => {
                           onChange={(event) =>
                             onDestinationAreaChangeController(event)
                           }
-                          value={sourceArea}
+                          value={destinationArea}
                           inputProps={{
                             name: "age",
                             id: "age-native-simple",

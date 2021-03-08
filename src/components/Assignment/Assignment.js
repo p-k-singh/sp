@@ -75,6 +75,7 @@ const Assignment = (props) => {
   const [StageId, setStageId] = useState("");
   const [Allocated, setAllocated] = useState(false);
   const [AllocatedLoading, setAllocatedLoading] = useState(false);
+  const [stageCount, setStageCount] = useState(0);
 
   var count = 0;
 
@@ -99,6 +100,17 @@ const Assignment = (props) => {
     getTrackingId();
   }, []);
 
+  const getAllocationDetails = (resp) => {
+    resp.stages.forEach((stage) => {
+      stage.tasks.forEach((task) => {
+        if (task.name == "ASSET_ALLOCATION" && task.status == "COMPLETED") {
+          setStageCount(1);
+          return;
+        }
+      });
+    });
+  };
+
   useEffect(() => {
     var sum = 0;
 
@@ -110,6 +122,7 @@ const Assignment = (props) => {
   }, [chosenTrucks]);
 
   function fetchCapacityRequired() {
+    setLoading("true");
     const url =
       "https://t2v0d33au7.execute-api.ap-south-1.amazonaws.com/Staging01/customerorder/" +
       params.customerOrderId;
@@ -303,12 +316,14 @@ const Assignment = (props) => {
       });
   }
   function getTrackingId() {
+    setLoading("true");
     API.get(
       "GoFlexeOrderPlacement",
       `/tracking?type=getProcess&orderId=${params.id}`
     )
       .then((resp) => {
         console.log(resp);
+        getAllocationDetails(resp);
         setTrackingId(resp.processId);
         setTaskId(resp.stages[0].tasks[0].taskId);
         setStageId(resp.stages[0].stageId);
@@ -343,15 +358,16 @@ const Assignment = (props) => {
     )
       .then((response) => {
         console.log(response);
-        setAllocated(true);
         setAllocatedLoading(false);
       })
       .catch((error) => {
         console.log(error.response);
         setAllocatedLoading(false);
+        alert("An error occoured, Please try again");
       });
   };
   const changeTaskStatus = async () => {
+    setAllocatedLoading(true);
     const data = {
       trackingId: TrackingId,
       stageId: StageId,
@@ -369,9 +385,13 @@ const Assignment = (props) => {
     )
       .then((response) => {
         console.log(response);
+        setAllocated(true);
+        setAllocatedLoading(false);
       })
       .catch((error) => {
         console.log(error.response);
+        alert("An error occoured, Please try again");
+        setAllocatedLoading(false);
       });
   };
 
@@ -578,6 +598,7 @@ const Assignment = (props) => {
 
     await trackingAssetAllocation();
     await changeTaskStatus();
+    getTrackingId();
 
     //  submitNewDrivers();
     //console.log(allotedDrivers)
@@ -894,6 +915,13 @@ const Assignment = (props) => {
   }
   if (loading === "uploading") {
     return <Spinner />;
+  }
+  if (stageCount == 1) {
+    return (
+      <center>
+        <h3>Truck Alloted Successfully</h3>
+      </center>
+    );
   }
 
   return (

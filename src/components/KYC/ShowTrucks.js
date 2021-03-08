@@ -19,11 +19,11 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import Checkbox from "@material-ui/core/Checkbox";
 import EditIcon from "@material-ui/icons/Edit";
 import RefreshIcon from "@material-ui/icons/Refresh";
-import {Button} from '@material-ui/core'
+import { Button } from "@material-ui/core";
 import Done from "@material-ui/icons/Done";
 import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
 import Tooltip from "@material-ui/core/Tooltip";
-import {Link} from 'react-router-dom'
+import { Link } from "react-router-dom";
 
 const useRowStyles = makeStyles({
   root: {
@@ -96,38 +96,35 @@ export default function CollapsibleTable(props) {
     setOpenedPages(newSelected);
   };
   const downloadDoc = (docLink) => {
-    console.log('https://goflexe-kyc.s3.ap-south-1.amazonaws.com/'+docLink)
-    var url = 'https://goflexe-kyc.s3.ap-south-1.amazonaws.com/'+docLink
+    console.log("https://goflexe-kyc.s3.ap-south-1.amazonaws.com/" + docLink);
+    var url = "https://goflexe-kyc.s3.ap-south-1.amazonaws.com/" + docLink;
 
-    
-  //   download(url)
-  //   function download(url){
-  //     $('<iframe>', { id:'idown', src:url }).hide().appendTo('body').click();
-  // }
-  // $("#downloadButton").click(function(){
-  //     $.ajax({
-  //         url: 'example.com/your_end_point',
-  //         success: function(url){
-  //             download(url);
-  //         }
-  //     })
-  // });
+    //   download(url)
+    //   function download(url){
+    //     $('<iframe>', { id:'idown', src:url }).hide().appendTo('body').click();
+    // }
+    // $("#downloadButton").click(function(){
+    //     $.ajax({
+    //         url: 'example.com/your_end_point',
+    //         success: function(url){
+    //             download(url);
+    //         }
+    //     })
+    // });
     // ('<iframe>', { id:'idown', src:url }).hide().appendTo('body').click()
-   
-      // fetch('https://goflexe-kyc.s3.ap-south-1.amazonaws.com/'+docLink)
-      //   .then(response => {
-      //     response.blob().then(blob => {
-      //       let url = window.URL.createObjectURL(blob);
-      //       let a = document.createElement('a');
-      //       a.href = url;
-      //       a.download = 'employees.json';
-      //       a.click();
-      //     });
-      //     //window.location.href = response.url;
-      // });
-    
 
-  }
+    // fetch('https://goflexe-kyc.s3.ap-south-1.amazonaws.com/'+docLink)
+    //   .then(response => {
+    //     response.blob().then(blob => {
+    //       let url = window.URL.createObjectURL(blob);
+    //       let a = document.createElement('a');
+    //       a.href = url;
+    //       a.download = 'employees.json';
+    //       a.click();
+    //     });
+    //     //window.location.href = response.url;
+    // });
+  };
 
   const handleChecked = (event, idx) => {
     const selectedIndex = checkedBoxes.indexOf(idx);
@@ -178,11 +175,11 @@ export default function CollapsibleTable(props) {
               <TableCell />
               {checkedBoxes.length === 1 ? (
                 <TableCell align="right">
-                   <Button
+                  <Button
                     variant="contained"
                     color="default"
                     className={classes.button}
-                   // startIcon={<EditIcon label="Edit" />}
+                    // startIcon={<EditIcon label="Edit" />}
                   >
                     Edit
                   </Button>{" "}
@@ -192,7 +189,7 @@ export default function CollapsibleTable(props) {
               )}
               {checkedBoxes.length > 0 ? (
                 <TableCell align="right">
-                   <Button
+                  <Button
                     variant="contained"
                     color="secondary"
                     className={classes.button}
@@ -218,7 +215,7 @@ export default function CollapsibleTable(props) {
             <TableCell align="right">Permit Id</TableCell>
             <TableCell align="right">Chassis Number</TableCell>
             <TableCell align="right">Engine Number</TableCell>
-            <TableCell align="right">Status</TableCell>
+            {/* <TableCell align="right">Status</TableCell> */}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -247,8 +244,6 @@ export default function CollapsibleTable(props) {
                       onChange={(event) => handleChecked(event, idx)}
                       inputProps={{ "aria-label": "secondary checkbox" }}
                     />
-
-                    
                   </TableCell>
                   <TableCell component="th" scope="row">
                     {row.truckNumber}
@@ -256,8 +251,8 @@ export default function CollapsibleTable(props) {
                   <TableCell align="right">{row.permitId}</TableCell>
                   <TableCell align="right">{row.chassisNumber}</TableCell>
                   <TableCell align="right">{row.engineNumber}</TableCell>
-                  <TableCell align="right">
-                  {idx % 2 === 1 ? (
+                  {/* <TableCell align="right">
+                    {idx % 2 === 1 ? (
                       <Tooltip title="Done">
                         <Done style={{ color: "green", marginLeft: 20 }} />
                       </Tooltip>
@@ -268,7 +263,7 @@ export default function CollapsibleTable(props) {
                         />
                       </Tooltip>
                     )}
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
                 <TableRow>
                   <TableCell
@@ -285,7 +280,7 @@ export default function CollapsibleTable(props) {
                           <td>
                             {" "}
                             {row.statesOfPermit.map(
-                              (permitState) => permitState.name + " ."
+                              (permitState) => permitState.label + ", "
                             )}
                           </td>
                         </TableRow>
@@ -296,19 +291,35 @@ export default function CollapsibleTable(props) {
                           </TableRow>
                         )}
                         <TableRow>
-                     <th>RC Document:</th>
-                     <td>
-                       <a href={'https://goflexe-kyc.s3.ap-south-1.amazonaws.com/'+row.rcLink} target={'_blank'} >Open</a>
-                       {/* <Button onClick={()=>downloadDoc(row.rcLink)}>Download</Button> */}
-                     </td>
-                   </TableRow>
-                   <TableRow>
-                     <th>Permit Document:</th>
-                     <td>
-                       <a href={'https://goflexe-kyc.s3.ap-south-1.amazonaws.com/'+row.permitLink} target={'_blank'} >Open</a>
-                       {/* <Button onClick={()=>downloadDoc(row.rcLink)}>Download</Button> */}
-                     </td>
-                   </TableRow>
+                          <th>RC Document:</th>
+                          <td>
+                            <a
+                              href={
+                                "https://goflexe-kyc.s3.ap-south-1.amazonaws.com/" +
+                                row.rcLink
+                              }
+                              target={"_blank"}
+                            >
+                              View Document
+                            </a>
+                            {/* <Button onClick={()=>downloadDoc(row.rcLink)}>Download</Button> */}
+                          </td>
+                        </TableRow>
+                        <TableRow>
+                          <th>Permit Document:</th>
+                          <td>
+                            <a
+                              href={
+                                "https://goflexe-kyc.s3.ap-south-1.amazonaws.com/" +
+                                row.permitLink
+                              }
+                              target={"_blank"}
+                            >
+                              View Document
+                            </a>
+                            {/* <Button onClick={()=>downloadDoc(row.rcLink)}>Download</Button> */}
+                          </td>
+                        </TableRow>
                       </Box>
                     </Collapse>
                   </TableCell>

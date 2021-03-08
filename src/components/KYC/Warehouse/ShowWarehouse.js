@@ -294,9 +294,15 @@ export default function CollapsibleTable(props) {
                         <TableRow>
                           <th>RC Document:</th>
                           <td>
-                            <Button onClick={() => downloadDoc(row.rcLink)}>
-                              Download
-                            </Button>
+                            <a
+                              href={
+                                "https://goflexe-kyc.s3.ap-south-1.amazonaws.com/" +
+                                row.rcLink
+                              }
+                              target={"_blank"}
+                            >
+                              View Document
+                            </a>
                           </td>
                         </TableRow>
                       </Box>

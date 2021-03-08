@@ -200,7 +200,15 @@ export default function CollapsibleTable(props) {
                   <TableCell>{row.phone}</TableCell>
                   <TableCell>{row.licenceId}</TableCell>
                   <TableCell>
-                  <a href={'https://goflexe-kyc.s3.ap-south-1.amazonaws.com/'+row.licenceUrl} target={'_blank'} >Open</a>
+                    <a
+                      href={
+                        "https://goflexe-kyc.s3.ap-south-1.amazonaws.com/" +
+                        row.licenceUrl
+                      }
+                      target={"_blank"}
+                    >
+                      View Document
+                    </a>
                   </TableCell>
                 </TableRow>
               </React.Fragment>

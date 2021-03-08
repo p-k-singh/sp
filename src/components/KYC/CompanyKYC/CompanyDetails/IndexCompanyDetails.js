@@ -69,7 +69,7 @@ const AccountInfoIndex = (props) => {
                                             <tr>
                                                 <th>Registraion Proof:</th>
                                                 <td>
-                                                <a href={'https://goflexe-kyc.s3.ap-south-1.amazonaws.com/'+comDetails.registrationDocLink} target={'_blank'} >Open</a>
+                                                <a href={'https://goflexe-kyc.s3.ap-south-1.amazonaws.com/'+comDetails.registrationDocLink} target={'_blank'} >View Document</a>
                                                 </td>
                                             </tr>
                                         </Grid>

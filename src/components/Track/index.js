@@ -65,7 +65,6 @@ const Track = (props) => {
       temp++;
     }
     setCount(temp);
-    // alert(temp);
   }
 
   const getTrackingIds = (trackingData, TaskName) => {
@@ -142,6 +141,9 @@ const Track = (props) => {
   }
   if (count == 4) {
     return <h1>Shipment Delivered Waiting For Customer Feedback</h1>;
+  }
+  if (count == 5) {
+    return <h1>Shipment Delivered Successfully</h1>;
   }
 };
 export default Track;
