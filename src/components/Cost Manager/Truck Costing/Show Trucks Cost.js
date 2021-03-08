@@ -172,7 +172,8 @@ export default function TruckCostDetails(props) {
               <React.Fragment>
                 <TableRow className={classes.root}>
                   <TableCell>
-                    {row.additionalDetails[0].immediatePricing == null ? (
+                    {row.additionalDetails[0].immediatePricing == null ||
+                    row.additionalDetails[0].immediatePricing == "" ? (
                       <IconButton
                         disabled={true}
                         aria-label="expand row"
