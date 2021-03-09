@@ -95,9 +95,10 @@ const Assignment = (props) => {
     };
     setUser();
     fetchCapacityRequired();
-    loadData();
+    
     getCustomerDetails();
     getTrackingId();
+    loadData();
   }, []);
 
   const getAllocationDetails = (resp) => {
@@ -133,7 +134,6 @@ const Assignment = (props) => {
         console.log(resp);
         setDesiredDeliveryDate(resp.data.Item.deliveryDate);
         setDesiredPickupDate(resp.data.Item.pickupdate);
-
         resp.data.Item.items.map((item) => {
           if (item.measurable === true) {
             sum += item.noOfUnits * item.weightPerUnit;
@@ -191,6 +191,12 @@ const Assignment = (props) => {
           .then((resp) => {
             console.log(resp);
             var temp = [];
+            var pickupParts = desiredPickupDate.substring(0, 10).split("-");
+            var ComparePickup = new Date(
+              pickupParts[0],
+              pickupParts[1] - 1,
+              pickupParts[2]
+            );
 
             for (var i = 0; i < resp.length; i++) {
               var isValid = false;
@@ -213,13 +219,13 @@ const Assignment = (props) => {
                 fromparts[1] - 1,
                 fromparts[2]
               );
-              var pickupParts = desiredPickupDate.substring(0, 10).split("-");
-              var ComparePickup = new Date(
-                pickupParts[0],
-                pickupParts[1] - 1,
-                pickupParts[2]
-              );
+              
 
+
+// alert(availableTo)
+// alert(availablefrom)
+
+// alert(ComparePickup)
               if (
                 ComparePickup <= availableTo &&
                 ComparePickup >= availablefrom
@@ -343,6 +349,8 @@ const Assignment = (props) => {
         data: {
           allotedDrivers: chosenDrivers,
           allotedTrucks: chosenTrucks,
+          pickupDate:estimatedPickupDate,
+          deliveryDate:estimatedDeliveryDate
         },
         attachments: {},
       },
@@ -363,7 +371,6 @@ const Assignment = (props) => {
       .catch((error) => {
         console.log(error.response);
         setAllocatedLoading(false);
-        alert("An error occoured, Please try again");
       });
   };
   const changeTaskStatus = async () => {
@@ -588,13 +595,10 @@ const Assignment = (props) => {
 
   const submitButtonHandler = async () => {
     setLoading("uploading");
-    // console.log("1");
-    //  await submitNewTrucks();
-    // console.log("2");
-    //  await submitNewDrivers();
-    // console.log("3");
-    // await includeAllTrucks();
-    // console.log("4");
+     await submitNewTrucks();
+     await submitNewDrivers();
+    await includeAllTrucks();
+    
 
     await trackingAssetAllocation();
     await changeTaskStatus();
@@ -623,6 +627,7 @@ const Assignment = (props) => {
           value: {
             capacity: 0,
             capabilities: [],
+            features : [],
             assetNumber: newValue.label,
             location: "",
             ownershipType: null,
@@ -700,20 +705,14 @@ const Assignment = (props) => {
   };
   const onCapacityChangeController = (event, i) => {
     var items = chosenTrucks.slice();
-    items[i].value.capacity = event.target.value;
-    if (items[i].value.capacity < 0) items[i].value.capacity = 0;
+    items[i].value.capacity = event;
     setChosenTrucks(items);
   };
-  const onLocationChangeController = (event, i) => {
+  const onFeaturesChange = (event, i) => {
     var items = chosenTrucks.slice();
-    items[i].value.location = event.target.value;
+    items[i].value.features = event;
     setChosenTrucks(items);
-  };
-  const ownershipChangeController = (event, i) => {
-    var items = chosenTrucks.slice();
-    items[i].value.ownershipType = event;
-    setChosenTrucks(items);
-  };
+  }
   const onLicenseIdChangeController = (event, i) => {
     var items = chosenDrivers.slice();
     items[i].licenceId = event.target.value;
@@ -746,8 +745,21 @@ const Assignment = (props) => {
             />
           </Tooltip>
         </Grid>
-        <Tooltip title="Features available in Truck" arrow placement="top">
-          <Grid item xs={12} sm={4}>
+
+        <Grid item xs={12} sm={4}>
+          {chosenTrucks[i] !== null && chosenTrucks[i].isNew ? (
+            <Select
+              styles={selectStyles}
+              className="basic-single"
+              classNamePrefix="Capability"
+              isSearchable
+              name="Capability"
+              placeholder="Capability"
+              value={chosenTrucks[i].value.capabilities}
+              onChange={(event) => onCapabilityChange(event, i)}
+              options={constants.truckCapabilityOptions}
+            />
+          ) : (
             <TextField
               disabled={chosenTrucks[i] === null || !chosenTrucks[i].isNew}
               label="Capability"
@@ -757,42 +769,14 @@ const Assignment = (props) => {
                   ? null
                   : chosenTrucks[i].value.capabilities
               }
-              onChange={(event) => onCapacityChangeController(event, i)}
               variant="outlined"
               InputLabelProps={{ shrink: true }}
               size="small"
               autoComplete="shipping address-line1"
             />
-            {/* <Select
-              isMulti
-              styles={selectStyles}
-              name="categories"
-              value={
-                chosenTrucks[i] === null
-                  ? null
-                  : chosenTrucks[i].value.capabilities
-              }
-              options={constants.truckCapabilityOptions}
-              placeholder="Category(Select Multiple)"
-              isDisabled={chosenTrucks[i] === null || !chosenTrucks[i].isNew}
-              className="basic-multi-select"
-              onChange={(event) => onCapabilityChange(event, i)}
-              classNamePrefix="select"
-            /> */}
-            {/* <Multiselect
-              style={{
-                searchBox: { minHeight: "55px" },
-                multiselectContainer: { height: "80px" },
-              }}
-              selectedValues={chosenTrucks[i].capabilities} // Preselected value to persist in dropdown
-              options={capabilityOptions.options} // Options to display in the dropdown
-              onSelect={(list, item) => onMultiSelect(list, item, i)} // Function will trigger on select event
-              onRemove={(list, item) => onMultiRemove(list, item, i)} // Function will trigger on remove event
-              displayValue="name" // Property name to display in the dropdown options
-              placeholder="Capabilities"
-            /> */}
-          </Grid>
-        </Tooltip>
+          )}
+        </Grid>
+
         <Grid item xs={12} sm={2} style={{ marginLeft: 50 }}>
           <IconButton onClick={() => handleItemDeleted(i)}>
             <Tooltip title="Delete">
@@ -804,58 +788,33 @@ const Assignment = (props) => {
       {chosenTrucks[i] !== null && chosenTrucks[i].isNew && (
         <Grid container spacing={3} style={{ marginLeft: 30 }}>
           <Grid item xs={12} sm={4}>
-            <TextField
-              required
-              type="number"
-              //error={capacityValidator !== ""}
-              //helperText={capacityValidator === "" ? " " : capacityValidator}
-              id="size"
-              name="size"
-              label="Capacity(in tons)"
-              fullWidth
+            <Select
+              styles={selectStyles}
+              className="basic-single"
+              classNamePrefix="Capacity"
+              isSearchable
+              name="Capacity"
+              placeholder="Capacity"
               value={chosenTrucks[i].value.capacity}
               onChange={(event) => onCapacityChangeController(event, i)}
-              variant="outlined"
-              size="small"
-              autoComplete="shipping address-line1"
+              options={constants.truckCapacityOptions}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <Tooltip title="Home Loaction of the Asset">
-              <TextField
-                required
-                type="text"
-                id="location"
-                name="location"
-                label="Base Location"
-                fullWidth
-                value={chosenTrucks[i].value.location}
-                onChange={(event) => onLocationChangeController(event, i)}
-                variant="outlined"
-                size="small"
-                autoComplete="shipping address-line1"
-              />
-            </Tooltip>
+            <Select
+              isMulti
+              styles={selectStyles}
+              name="Features"
+              value={chosenTrucks[i].value.features}
+              options={constants.truckFeatures}
+              placeholder="Features(Select multiple)"
+              className="basic-multi-select"
+              onChange={(event) => onFeaturesChange(event, i)}
+              classNamePrefix="select"
+            />
           </Grid>
 
-          <Grid item xs={12} sm={4}>
-            <FormControl className={classes.formControl}>
-              <InputLabel htmlFor="age-native-simple">Ownership</InputLabel>
-              <Tooltip title="Whether the asset is owned or outsourced to another company">
-                <Select
-                  styles={selectStyles}
-                  className="basic-single"
-                  classNamePrefix="ownership"
-                  isSearchable
-                  name="ownership"
-                  placeholder="Ownership"
-                  value={chosenTrucks[i].value.ownershipType}
-                  onChange={(event) => ownershipChangeController(event, i)}
-                  options={constants.ownerShip}
-                />
-              </Tooltip>
-            </FormControl>
-          </Grid>
+          <Grid item xs={12} sm={4}></Grid>
         </Grid>
       )}
 

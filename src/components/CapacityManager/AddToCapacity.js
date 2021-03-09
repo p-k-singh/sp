@@ -170,6 +170,7 @@ const AddTocapacity = (props) => {
         tempAdditional=costData[i].additionalDetails;
       
     }
+    
     return {tempCost,tempAdditional};
   }
   function setChangesBasedOnCapabilityAndDistance (capability,distance){
