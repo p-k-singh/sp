@@ -10,7 +10,7 @@ import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Tooltip from "@material-ui/core/Tooltip";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import {sayHello,sayHi} from './FindMatch'
 import InfoIcon from "@material-ui/icons/Info";
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
@@ -118,9 +118,9 @@ const AddTocapacity = (props) => {
   const [sourceZipValidator, setSourceZipValidator] = useState("");
   const [destinationZipValidator, setDestinationZipValidator] = useState("");
 
-  const capabilityOptions = {
-    options: constants.capabilityOptions,
-  };
+  const [additionalCostDetails,setAdditionalCostDetails] = useState(null);
+  const [basicCostDetails,setBasicCostDetails] = useState(null);
+
 
   const selectStyles = {
     menu: (base) => ({
@@ -131,6 +131,161 @@ const AddTocapacity = (props) => {
   const warehouseCapabilityOptions = {
     options: constants.warehouseCapabilityOptions,
   };
+
+
+  /**this is the region for setting the prices for already added costs */
+  function setChangesBasedOnCapability (capability){
+    var tempCost = {
+      capability:capability
+    };
+    var tempAdditional = null;
+    for(var i=0;i<costData.length;i++){
+      if( !capability || capability.value!==costData[i].capability)
+      continue;
+        tempCost = {
+          capability:capability,
+          capacity:getCapacity(costData[i].capacity),
+          distance:getDistance(costData[i].rangeinkms)
+        }
+        tempAdditional=costData[i].additionalDetails;
+    }
+    return {tempCost,tempAdditional};
+  }
+  function setChangesBasedOnCapabilityAndCapacity (capability,capacity){
+    var tempCost = {
+      capability:capability,
+      capacity:capacity
+    };
+    var tempAdditional = null;
+    for(var i=0;i<costData.length;i++){
+      if( !capability || capability.value!==costData[i].capability)
+      continue;
+      if( !capacity || capacity.value!==costData[i].capacity)
+      continue;
+        tempCost = {
+          capability:capability,
+          capacity:capacity,
+          distance:getDistance(costData[i].rangeinkms)
+        }
+        tempAdditional=costData[i].additionalDetails;
+      
+    }
+    return {tempCost,tempAdditional};
+  }
+  function setChangesBasedOnCapabilityAndDistance (capability,distance){
+  
+    var tempCost = {
+      capability:capability,
+      distance:distance
+    };
+    var tempAdditional = null;
+    for(var i=0;i<costData.length;i++){
+      if( !capability || capability.value!==costData[i].capability)
+      continue;
+      if(!distance || distance.value.lowRange!==costData[i].rangeinkms.lowRange || distance.value.highRange!==costData[i].rangeinkms.highRange)
+      continue;
+      
+        tempCost = {
+          capability:capability,
+          capacity:getCapacity(costData[i].capacity),
+          distance:distance
+        }
+        tempAdditional=costData[i].additionalDetails;
+       
+      
+    }
+    return {tempCost,tempAdditional};
+  }
+  function setChangesBasedOnCapabilityAndDistanceAndCapacity(capability,capacity,distance){
+    
+    var tempCost = {
+      capability:capability,
+      capacity:capacity,
+      distance:distance
+    };
+    var tempAdditional = null;
+    for(var i=0;i<costData.length;i++){
+      if( !capability || capability.value!==costData[i].capability){
+        continue;
+      }
+      
+      if(!distance || distance.value.lowRange!==costData[i].rangeinkms.lowRange || distance.value.highRange!==costData[i].rangeinkms.highRange)
+      {
+        continue;
+      }
+      if(!capacity || capacity.value!==costData[i].capacity){
+        continue;
+      }
+        tempCost = {
+          capability:capability,
+          capacity:capacity,
+          distance:distance
+        }
+        tempAdditional=costData[i].additionalDetails;
+    }
+    return {tempCost,tempAdditional};
+  }
+
+
+  const getCapacity = (capacity) => {
+    for(var i=0;i<constants.truckCapacityOptions.length;i++){
+     
+      if(capacity===constants.truckCapacityOptions[i].value){
+        return constants.truckCapacityOptions[i];
+      }
+    }
+    return null;
+  }
+  
+  const getDistance = (distance) => {
+    for(var i=0;i<constants.DistanceOptions.length;i++){
+      if(distance.lowRange===constants.DistanceOptions[i].value.lowRange && distance.highRange===constants.DistanceOptions[i].value.highRange){
+        return constants.DistanceOptions[i];
+      }
+    }
+    return null;
+  }
+
+
+  const basicCostDetailsChangeController = (event,field) => {
+    var result ; 
+    if(field==='capability'){
+       result = setChangesBasedOnCapability(event)
+    }
+    else if(field==='capacity'){
+        result = setChangesBasedOnCapabilityAndDistanceAndCapacity(basicCostDetails.capability,event,basicCostDetails.distance)
+      
+      if(!result.tempAdditional){
+        result = setChangesBasedOnCapabilityAndCapacity(basicCostDetails.capability,event)
+      }
+    }
+    else if(field==='distance'){
+        result = setChangesBasedOnCapabilityAndDistanceAndCapacity(basicCostDetails.capability,basicCostDetails.capacity,event)
+      if(!result.tempAdditional)
+      result = setChangesBasedOnCapabilityAndDistance(basicCostDetails.capability,event)
+    }
+    else{
+      alert('something went wrong');
+      return ; 
+    }
+    setBasicCostDetails({
+      capability:result.tempCost.capability,
+      capacity:result.tempCost.capacity,
+      distance:result.tempCost.distance
+    })
+    setAdditionalCostDetails(result.tempAdditional)
+    
+  }
+
+
+  /**Region ended */
+
+
+
+
+
+
+
 
   const typeChangeController = (event) => {
     setType(event);
@@ -179,55 +334,52 @@ const AddTocapacity = (props) => {
     setCapacity(null);
     setDeliveryPromise(null);
     setDistance(null);
-    for (i = 0; i < costData.length; i++) {
-      if (event.value === costData[i].label) {
-        setIsNew(false);
-        setPrice(costData[i].value.price);
-        setCostId(costData[i].value.costId);
-        setImmidiatePricing(
-          costData[i].value.additionalDetails[0].immediatePricing
-        );
-        setThirtyDaysPricing(
-          costData[i].value.additionalDetails[0].thirtyDaysPricing
-        );
-        setSourceLocation(
-          costData[i].value.additionalDetails[0].sourceLocation
-        );
-        setDestinationLocation(
-          costData[i].value.additionalDetails[0].destinationLocation
-        );
-        for (j = 0; j < constants.truckCapacityOptions.length; j++) {
-          if (
-            constants.truckCapacityOptions[j].value ===
-            costData[i].value.capacity
-          ) {
-            setCapacity(constants.truckCapacityOptions[j]);
-          }
-        }
-        for (j = 0; j < constants.DeliveryCommitmentOptions.length; j++) {
-          if (
-            constants.DeliveryCommitmentOptions[j].value ==
-            costData[i].value.additionalDetails[0].deliveryCommitment
-          ) {
-            setDeliveryPromise(constants.DeliveryCommitmentOptions[j].value);
-            setDeliveryPromiseName(constants.DeliveryCommitmentOptions[j]);
-          }
-        }
+    // for (i = 0; i < costData.length; i++) {
+    //   if (event.value === costData[i].label) {
+    //     setIsNew(false);
+    //     setPrice(costData[i].value.price);
+    //     setCostId(costData[i].value.costId);
+    //     setImmidiatePricing(
+    //       costData[i].value.additionalDetails[0].immediatePricing
+    //     );
+    //     setThirtyDaysPricing(
+    //       costData[i].value.additionalDetails[0].thirtyDaysPricing
+    //     );
+    //     setSourceLocation(
+    //       costData[i].value.additionalDetails[0].sourceLocation
+    //     );
+    //     setDestinationLocation(
+    //       costData[i].value.additionalDetails[0].destinationLocation
+    //     );
+    //     for (j = 0; j < constants.truckCapacityOptions.length; j++) {
+    //       if (
+    //         constants.truckCapacityOptions[j].value ===
+    //         costData[i].value.capacity
+    //       ) {
+    //         setCapacity(constants.truckCapacityOptions[j]);
+    //       }
+    //     }
+    //     for (j = 0; j < constants.DeliveryCommitmentOptions.length; j++) {
+    //       if (
+    //         constants.DeliveryCommitmentOptions[j].value ==
+    //         costData[i].value.additionalDetails[0].deliveryCommitment
+    //       ) {
+    //         setDeliveryPromise(constants.DeliveryCommitmentOptions[j].value);
+    //         setDeliveryPromiseName(constants.DeliveryCommitmentOptions[j]);
+    //       }
+    //     }
 
-        for (j = 0; j < constants.DistanceOptions.length; j++) {
-          if (
-            constants.DistanceOptions[j].value.lowRange ===
-            costData[i].value.rangeinkms.lowRange
-          ) {
-            setDistance(constants.DistanceOptions[j]);
-          }
-        }
-      }
-    }
+    //     for (j = 0; j < constants.DistanceOptions.length; j++) {
+    //       if (
+    //         constants.DistanceOptions[j].value.lowRange ===
+    //         costData[i].value.rangeinkms.lowRange
+    //       ) {
+    //         setDistance(constants.DistanceOptions[j]);
+    //       }
+    //     }
+    //   }
+    // }
     setCapability(event);
-  };
-  const onCapacityChange = (event) => {
-    setCapacity(event);
   };
   const onPriceChange = (event) => {
     setPrice(event.target.value);
@@ -328,10 +480,6 @@ const AddTocapacity = (props) => {
     setDestinationLocation(event.target.value);
   };
 
-  const onDistanceChange = (event) => {
-    setDistance(event);
-  };
-
   useEffect(async () => {
     const setUser = async () => {
       var currentUser = await Auth.currentUserInfo();
@@ -347,15 +495,15 @@ const AddTocapacity = (props) => {
     )
       .then((resp) => {
         console.log(resp);
-
-        var temp = costData.slice();
-        for (var i = 0; i < resp.length; i++) {
-          temp.push({
-            label: resp[i].capability,
-            value: resp[i],
-          });
-        }
-        setCostData(temp);
+        setCostData(resp);  
+        // var temp = costData.slice();
+        // for (var i = 0; i < resp.length; i++) {
+        //   temp.push({
+        //     label: resp[i].capability,
+        //     value: resp[i],
+        //   });
+        // }
+        
         //  alert(JSON.stringify(temp));
         setLoading(false);
       })
@@ -365,193 +513,126 @@ const AddTocapacity = (props) => {
       });
   }, []);
 
-  const EditOldPricing = async () => {
-    setLoading(true);
-    var items = [];
+  // const EditOldPricing = async () => {
+  //   setLoading(true);
+  //   var items = [];
 
-    const data = {
-      costId: CostId,
-      serviceProviderId: currentUser,
-      assetType: type.value,
-      capability: capability.value,
-      capacity: capacity.value,
-      rangeinkms: distance.value,
-      price: price,
-      additionalDetails: [
-        {
-          sourceLocation: SourceLocation,
-          sourceArea: "",
-          sourcePinData: [],
-          destinationArea: "",
-          destinationPinData: [],
-          destinationLocation: DestinationLocation,
-          thirtyDaysPricing: ThirtyDaysPricing,
-          immediatePricing: ImmidiatePricing,
-          deliveryCommitment:
-            DeliveryPromise !== null ? DeliveryPromise.value : "",
-        },
-      ],
-    };
-    const payload = {
-      body: data,
-    };
-    items.push(
-      API.put("GoFlexeOrderPlacement", `/serviceprovidercost`, payload)
-        .then((response) => {
-          console.log(response);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.log(error.response);
-          setLoading(false);
-        })
-    );
-    setLoading(false);
-    return await Promise.all(items);
-  };
+  //   const data = {
+  //     costId: CostId,
+  //     serviceProviderId: currentUser,
+  //     assetType: type.value,
+  //     capability: capability.value,
+  //     capacity: capacity.value,
+  //     rangeinkms: distance.value,
+  //     price: price,
+  //     additionalDetails: [
+  //       {
+  //         sourceLocation: SourceLocation,
+  //         sourceArea: "",
+  //         sourcePinData: [],
+  //         destinationArea: "",
+  //         destinationPinData: [],
+  //         destinationLocation: DestinationLocation,
+  //         thirtyDaysPricing: ThirtyDaysPricing,
+  //         immediatePricing: ImmidiatePricing,
+  //         deliveryCommitment:
+  //           DeliveryPromise !== null ? DeliveryPromise.value : "",
+  //       },
+  //     ],
+  //   };
+  //   const payload = {
+  //     body: data,
+  //   };
+  //   items.push(
+  //     API.put("GoFlexeOrderPlacement", `/serviceprovidercost`, payload)
+  //       .then((response) => {
+  //         console.log(response);
+  //         setLoading(false);
+  //       })
+  //       .catch((error) => {
+  //         console.log(error.response);
+  //         setLoading(false);
+  //       })
+  //   );
+  //   setLoading(false);
+  //   return await Promise.all(items);
+  // };
 
-  const SubmitNewPricing = async () => {
-    setLoading(true);
-    var items = [];
+  // const SubmitNewPricing = async () => {
+  //   setLoading(true);
+  //   var items = [];
 
-    const data = {
-      serviceProviderId: currentUser,
-      assetType: type.value,
-      capability: capability.value,
-      capacity: capacity.value,
-      rangeinkms: distance.value,
-      price: price,
-      additionalDetails: [
-        {
-          sourceLocation: SourceLocation,
-          sourceArea: "",
-          sourcePinData: [],
-          destinationArea: "",
-          destinationPinData: [],
-          destinationLocation: DestinationLocation,
-          thirtyDaysPricing: ThirtyDaysPricing,
-          immediatePricing: ImmidiatePricing,
-          deliveryCommitment:
-            DeliveryPromise !== null ? DeliveryPromise.value : "",
-        },
-      ],
-    };
-    const payload = {
-      body: data,
-    };
-    items.push(
-      API.post("GoFlexeOrderPlacement", `/serviceprovidercost`, payload)
-        .then((response) => {
-          console.log(response);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.log(error.response);
-          setLoading(false);
-        })
-    );
-    setLoading(false);
-    return await Promise.all(items);
-  };
+  //   const data = {
+  //     serviceProviderId: currentUser,
+  //     assetType: type.value,
+  //     capability: capability.value,
+  //     capacity: capacity.value,
+  //     rangeinkms: distance.value,
+  //     price: price,
+  //     additionalDetails: [
+  //       {
+  //         sourceLocation: SourceLocation,
+  //         sourceArea: "",
+  //         sourcePinData: [],
+  //         destinationArea: "",
+  //         destinationPinData: [],
+  //         destinationLocation: DestinationLocation,
+  //         thirtyDaysPricing: ThirtyDaysPricing,
+  //         immediatePricing: ImmidiatePricing,
+  //         deliveryCommitment:
+  //           DeliveryPromise !== null ? DeliveryPromise.value : "",
+  //       },
+  //     ],
+  //   };
+  //   const payload = {
+  //     body: data,
+  //   };
+  //   items.push(
+  //     API.post("GoFlexeOrderPlacement", `/serviceprovidercost`, payload)
+  //       .then((response) => {
+  //         console.log(response);
+  //         setLoading(false);
+  //       })
+  //       .catch((error) => {
+  //         console.log(error.response);
+  //         setLoading(false);
+  //       })
+  //   );
+  //   setLoading(false);
+  //   return await Promise.all(items);
+  // };
+  
+
+
   const submitCapacity = async () => {
-    if (type.value == null || type.value == "") {
-      alert("Please select Asset type.");
-      return;
+    var costId = isDataAlreadyPresent() ;
+    if(costId){
+      // PUT the data
+      // await + logic to put the data 
     }
-    // if (capacityValidator !== "") {
-    //   alert(capacityValidator);
-    //   return;
-    // }
-    // if (size == null || size == 0) {
-    //   alert("Capacity cannot be blank.");
-    //   return;
-    // }
-    if (
-      (type.value === "truck" && truckNumber == "") ||
-      (type.value === "truck" && truckNumber == null)
-    ) {
-      alert("Truck Number cannot be empty.");
-      return;
+    else{
+      //POST the data
+      // await + logic to post the data
+      // costId = API.post(.....)
     }
-    // if (capability == null || capability == "") {
-    //   alert("Please select capabilities of the selected Asset.");
-    //   return;
-    // }
-    if (
-      availableTo == null ||
-      availableTo == "" ||
-      availableFrom == null ||
-      availableFrom == ""
-    ) {
-      alert("Availability Dates cannot be empty");
-      return;
+    // now post the original data with these data
+    //
+  } 
+
+  const isDataAlreadyPresent = () => {
+    for(var i=0;i<costData.length;i++){
+      if(basicCostDetails.capability.value===costData[i].capability){
+        if(basicCostDetails.capacity.value===costData[i].capacity){
+          if(basicCostDetails.distance.value.lowRange===costData[i].rangeinkms.lowRange && basicCostDetails.distance.value.highRange===costData[i].rangeinkms.highRange ){
+            return costData[i].costId;
+          }
+        }
+      }
     }
-    // if (ownership.value == null || ownership.value == "") {
-    //   alert("Ownership cannot be empty");
-    //   return;
-    // }
-    // if (pinValidator !== "") {
-    //   alert(pinValidator);
-    //   return;
-    // }
-    // if (location == null || location == "") {
-    //   alert("Base Location cannot be blank");
-    //   return;
-    // }
-    // if (pin == null || pin == 0) {
-    //   alert("Pin cannot be Empty");
-    //   return;
-    // }
-    isNew == true ? SubmitNewPricing() : EditOldPricing();
-    setLoading(true);
-    var currentUser = await Auth.currentUserInfo();
-    var owner = currentUser.username;
-    const data = {
-      owner: owner,
-      type: type.value,
-      assetNumber: truckNumber,
-      unit: unit,
-      features: Features,
-      availableFromDateTime: availableFrom,
-      availableToDateTime: availableTo,
-      active: assetActive,
-      costDetails: {
-        costId: CostId,
-        isEdited: isNew == true ? false : true,
-        rangeinkms: distance.value,
-        price: price,
-        capability: capability.value,
-        capacity: capacity.value,
-        additionalDetails: {
-          sourceLocation: SourceLocation,
-          sourceArea: "",
-          sourcePinData: [],
-          destinationArea: "",
-          destinationPinData: [],
-          destinationLocation: DestinationLocation,
-          thirtyDaysPricing: ThirtyDaysPricing,
-          immediatePricing: ImmidiatePricing,
-          deliveryCommitment:
-            DeliveryPromise !== null ? DeliveryPromise.value : "",
-        },
-      },
-    };
-    const payload = {
-      body: data,
-    };
-    API.post("GoFlexeOrderPlacement", `/capacity`, payload)
-      .then((response) => {
-        console.log(response);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error.response);
-        setLoading(false);
-      });
-    console.log(data);
-    setLoading(false);
-    props.changeDisplaySetting("storage");
-  };
+    return null;
+  }
+
+
   const setFeaturesKeyValues = (event, idx) => {
     var items = Features.slice();
     items[idx].data = event.target.value;
@@ -665,8 +746,8 @@ const AddTocapacity = (props) => {
               isSearchable
               name="Capability"
               placeholder="Capability"
-              value={capability}
-              onChange={(event) => onCapabilityChange(event)}
+              value={basicCostDetails===null?null:basicCostDetails.capability}
+              onChange = {(event) => basicCostDetailsChangeController(event,'capability')}
               options={constants.truckCapabilityOptions}
             />
           </Grid>
@@ -689,14 +770,14 @@ const AddTocapacity = (props) => {
               />
             </Grid>
           </Tooltip>
-          {capability.length !== 0 ? (
+          {(basicCostDetails!==null && basicCostDetails.capability!==null )? (
             <Grid container spacing={3} style={{ padding: 50 }}>
               <Grid item xs={12} sm={4}>
                 {ExpandDetails == false ? (
                   <TextField
                     size="small"
                     variant="outlined"
-                    helperText={"*Immidiate Pricing inclusive of GST per Trip"}
+                    helperText={"*Immediate Pricing inclusive of GST per Trip"}
                     value={price}
                     label="Price"
                     InputLabelProps={{ shrink: true }}
@@ -714,8 +795,9 @@ const AddTocapacity = (props) => {
                   isSearchable
                   name="Capacity"
                   placeholder="Capacity"
-                  value={capacity}
-                  onChange={(event) => onCapacityChange(event)}
+                  value={basicCostDetails===null?null:basicCostDetails.capacity}
+                  //onChange={(event) => onCapacityChange(event)}
+                  onChange={(event)=>basicCostDetailsChangeController(event,"capacity")}
                   options={constants.truckCapacityOptions}
                 />
               </Grid>
@@ -727,8 +809,9 @@ const AddTocapacity = (props) => {
                   isSearchable
                   name="Distance"
                   placeholder="Distance"
-                  value={distance}
-                  onChange={(event) => onDistanceChange(event)}
+                  value={basicCostDetails===null?null:basicCostDetails.distance}
+                  //onChange={(event) => onDistanceChange(event)}
+                  onChange={(event)=>basicCostDetailsChangeController(event,'distance')}
                   options={constants.DistanceOptions}
                 />
               </Grid>
