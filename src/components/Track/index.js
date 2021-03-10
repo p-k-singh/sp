@@ -154,7 +154,7 @@ const Track = (props) => {
     );
   }
   if (count > 3) {
-    return <h1>Shipment Delivered Successfully</h1>;
+    return <center><h1>Shipment Delivered Successfully</h1></center>;
   }
   // if (count == 5) {
   //   return <h1>Shipment Delivered Successfully</h1>;

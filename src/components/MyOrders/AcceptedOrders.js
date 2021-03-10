@@ -245,23 +245,44 @@ const MyOrders = () => {
                           "COMPLETED" ? (
                             eachOrder.trackingDetails.stages[2].status ==
                             "COMPLETED" ? (
-                              <Button
-                                style={{
-                                  maxWidth: "150px",
-                                  minWidth: "150px",
-                                  maxHeight: "50px",
-                                  marginTop: 5,
-                                  marginBottom: 7,
-                                }}
-                                variant="contained"
-                                color="default"
-                                startIcon={<LocalShippingIcon />}
-                                component={Link}
-                                // <Track id={serviceOrderId} />
-                                to={`/track/${eachOrder.ServiceOrderId}`}
-                              >
-                                Delivery
-                              </Button>
+                              eachOrder.trackingDetails.stages[3].status ==
+                              "COMPLETED" ? (
+                                <Button
+                                disabled={true}
+                                  style={{
+                                    maxWidth: "150px",
+                                    minWidth: "150px",
+                                    maxHeight: "50px",
+                                    marginTop: 5,
+                                    marginBottom: 7,
+                                  }}
+                                  variant="contained"
+                                  color="default"
+                                  startIcon={<LocalShippingIcon />}
+                                  component={Link}
+                                  to={`/track/${eachOrder.ServiceOrderId}`}
+                                >
+                                 Delivered
+                                </Button>
+                              ) : (
+                                <Button
+                                  style={{
+                                    maxWidth: "150px",
+                                    minWidth: "150px",
+                                    maxHeight: "50px",
+                                    marginTop: 5,
+                                    marginBottom: 7,
+                                  }}
+                                  variant="contained"
+                                  color="default"
+                                  startIcon={<LocalShippingIcon />}
+                                  component={Link}
+                                  // <Track id={serviceOrderId} />
+                                  to={`/track/${eachOrder.ServiceOrderId}`}
+                                >
+                                  Delivery
+                                </Button>
+                              )
                             ) : (
                               <Button
                                 style={{

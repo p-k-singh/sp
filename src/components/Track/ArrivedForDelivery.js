@@ -359,8 +359,9 @@ const DeliveryComponent = (props) => {
               setDeliveryChecklistPending(false);
               setShipmentCompleted(true);
               setDeliveryList(false);
-              await CompleteDeliveryChecklist();
               await SendDeliveryChecklistData();
+              await CompleteDeliveryChecklist();
+            
             }}
             className="row"
             variant="contained"

@@ -363,8 +363,9 @@ const ArrivedAtPickupComponent = (props) => {
           ) : (
             <Button
               onClick={async() => {
-                await CompletePickupChecklist();
                 await SendPickupChecklistData();
+                await CompletePickupChecklist();
+               
               }}
               className="row"
               variant="contained"
