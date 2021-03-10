@@ -117,8 +117,7 @@ const AddTocapacity = (props) => {
   const [destinationPinData, setDestinationPinData] = useState([]);
   const [sourceZipValidator, setSourceZipValidator] = useState("");
   const [destinationZipValidator, setDestinationZipValidator] = useState("");
-
-  const [additionalCostDetails,setAdditionalCostDetails] = useState(null);
+  const [additionalCostDetails, setAdditionalCostDetails] = useState(null);
   const [basicCostDetails,setBasicCostDetails] = useState(null);
 
 
@@ -274,8 +273,30 @@ const AddTocapacity = (props) => {
       capacity:result.tempCost.capacity,
       distance:result.tempCost.distance,
     })
-    setAdditionalCostDetails(result.tempAdditional)
+
+if(result.tempAdditional){
+ setAdditionalCostDetails(result.tempAdditional);
+}else{
+   setAdditionalCostDetails({
+     price: "",
+     routeDetails: [
+       {
+         sourceArea: "",
+         deliveryCommitment: "",
+         destinationArea: "",
+         immediatePricing: "",
+         deliveryCommitmentname: {},
+         destinationLocation: "",
+         sourceLocation: "",
+         thirtyDaysPricing: "",
+       },
+     ],
+   });
+}
+
+   
   }
+
 
 
   /**Region ended */
@@ -377,25 +398,39 @@ const AddTocapacity = (props) => {
     setCapability(event);
   };
   const onPriceChange = (event) => {
+    setAdditionalCostDetails({ price: event.target.value });
 
-    setPrice(event.target.value);
   };
   const onDeliveryCommitmentChange = (event) => {
-    setDeliveryPromise(event.value);
-    setDeliveryPromiseName(event);
+     var items = additionalCostDetails.routeDetails;
+     items[0].deliveryCommitmentname = event;
+     items[0].deliveryCommitment = event.value;
+     setAdditionalCostDetails({ routeDetails: items });
   };
   const onImmidiatePricingChangeController = (event) => {
-    setImmidiatePricing(event.target.value);
+    var items = additionalCostDetails.routeDetails;
+    items[0].immediatePricing = event.target.value;
+    setAdditionalCostDetails({ routeDetails: items });
   };
   const onThirtyDaysPricingController = (event) => {
-    setThirtyDaysPricing(event.target.value);
+   var items = additionalCostDetails.routeDetails;
+   items[0].thirtyDaysPricing = event.target.value;
+   setAdditionalCostDetails(
+     {routeDetails:items}
+   );
+ 
   };
 
   const onSourceLocationChange = (event) => {
+   
     var sourcePinCode = parseInt(event.target.value, 10);
+     var items = additionalCostDetails.routeDetails;
+     items[0].sourceLocation = event.target.value;
+     setAdditionalCostDetails({ routeDetails: items });
+
+
     if (sourcePinCode < 0) {
       setSourceZipValidator("Cannot be a negative value");
-
       return;
     } else {
       setSourceZipValidator("");
@@ -411,10 +446,8 @@ const AddTocapacity = (props) => {
 
       // Defining async function
       async function getapi(url) {
-        // Storing response
-
+       // Storing response
         const response = await fetch(url);
-
         // Storing data in form of JSON
         var data = await response.json();
         console.log(data);
@@ -431,9 +464,11 @@ const AddTocapacity = (props) => {
       setSourceZipValidator("");
     }
 
-    setSourceLocation(event.target.value);
   };
   const onDestinationLocationChange = (event) => {
+     var items = additionalCostDetails.routeDetails;
+     items[0].destinationLocation = event.target.value;
+     setAdditionalCostDetails({ routeDetails: items });
     var DestinationPinCode = parseInt(event.target.value, 10);
     if (DestinationPinCode < 0) {
       setDestinationZipValidator("Cannot be a negative value");
@@ -473,7 +508,6 @@ const AddTocapacity = (props) => {
     } else {
       setDestinationZipValidator("");
     }
-    setDestinationLocation(event.target.value);
   };
 
   useEffect(async () => {
@@ -509,111 +543,115 @@ const AddTocapacity = (props) => {
       });
   }, []);
 
-  // const EditOldPricing = async () => {
-  //   setLoading(true);
-  //   var items = [];
+  const EditOldPricing = async () => {
+    var costId = isDataAlreadyPresent();
+    setLoading(true);
+    var items = [];
+    const data = {
+      costId: costId,
+      serviceProviderId: currentUser,
+      assetType: type.value,
+      capability: basicCostDetails.capability,
+      capacity: basicCostDetails.capacity,
+      rangeinkms: basicCostDetails.distance,
+      additionalDetails:additionalCostDetails
+    };
+    const payload = {
+      body: data,
+    };
+    items.push(
+      API.put("GoFlexeOrderPlacement", `/serviceprovidercost`, payload)
+        .then((response) => {
+          console.log(response);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.log(error.response);
+          setLoading(false);
+        })
+    );
+    setLoading(false);
+    return await Promise.all(items);
+  };;
 
-  //   const data = {
-  //     costId: CostId,
-  //     serviceProviderId: currentUser,
-  //     assetType: type.value,
-  //     capability: capability.value,
-  //     capacity: capacity.value,
-  //     rangeinkms: distance.value,
-  //     price: price,
-  //     additionalDetails: [
-  //       {
-  //         sourceLocation: SourceLocation,
-  //         sourceArea: "",
-  //         sourcePinData: [],
-  //         destinationArea: "",
-  //         destinationPinData: [],
-  //         destinationLocation: DestinationLocation,
-  //         thirtyDaysPricing: ThirtyDaysPricing,
-  //         immediatePricing: ImmidiatePricing,
-  //         deliveryCommitment:
-  //           DeliveryPromise !== null ? DeliveryPromise.value : "",
-  //       },
-  //     ],
-  //   };
-  //   const payload = {
-  //     body: data,
-  //   };
-  //   items.push(
-  //     API.put("GoFlexeOrderPlacement", `/serviceprovidercost`, payload)
-  //       .then((response) => {
-  //         console.log(response);
-  //         setLoading(false);
-  //       })
-  //       .catch((error) => {
-  //         console.log(error.response);
-  //         setLoading(false);
-  //       })
-  //   );
-  //   setLoading(false);
-  //   return await Promise.all(items);
-  // };
-
-  // const SubmitNewPricing = async () => {
-  //   setLoading(true);
-  //   var items = [];
-
-  //   const data = {
-  //     serviceProviderId: currentUser,
-  //     assetType: type.value,
-  //     capability: capability.value,
-  //     capacity: capacity.value,
-  //     rangeinkms: distance.value,
-  //     price: price,
-  //     additionalDetails: [
-  //       {
-  //         sourceLocation: SourceLocation,
-  //         sourceArea: "",
-  //         sourcePinData: [],
-  //         destinationArea: "",
-  //         destinationPinData: [],
-  //         destinationLocation: DestinationLocation,
-  //         thirtyDaysPricing: ThirtyDaysPricing,
-  //         immediatePricing: ImmidiatePricing,
-  //         deliveryCommitment:
-  //           DeliveryPromise !== null ? DeliveryPromise.value : "",
-  //       },
-  //     ],
-  //   };
-  //   const payload = {
-  //     body: data,
-  //   };
-  //   items.push(
-  //     API.post("GoFlexeOrderPlacement", `/serviceprovidercost`, payload)
-  //       .then((response) => {
-  //         console.log(response);
-  //         setLoading(false);
-  //       })
-  //       .catch((error) => {
-  //         console.log(error.response);
-  //         setLoading(false);
-  //       })
-  //   );
-  //   setLoading(false);
-  //   return await Promise.all(items);
-  // };
+ 
   
 
 
   const submitCapacity = async () => {
-    var costId = isDataAlreadyPresent() ;
-    if(costId){
+    var costId = isDataAlreadyPresent();
+    if (costId) {
       // PUT the data
-      // await + logic to put the data 
-    }
-    else{
-      //POST the data
-      // await + logic to post the data
-      // costId = API.post(.....)
+      // await + logic to put the data
+      await EditOldPricing();
+    } else {  
+      const SubmitNewPricing = async () => {
+        setLoading(true);
+        const data = {
+          serviceProviderId: currentUser,
+          assetType: type.value,
+          capability: basicCostDetails.capability,
+          capacity: basicCostDetails.capacity,
+          rangeinkms: basicCostDetails.distance,
+          additionalDetails: additionalCostDetails,
+        };
+        const payload = {
+          body: data,
+        };
+
+        costId = API.post(
+          "GoFlexeOrderPlacement",
+          `/serviceprovidercost`,
+          payload
+        )
+          .then((response) => {
+            console.log(response);
+            setLoading(false);
+          })
+          .catch((error) => {
+            console.log(error.response);
+            setLoading(false);
+          });
+
+        setLoading(false);
+        
+      };
+       await SubmitNewPricing();
     }
     // now post the original data with these data
     //
-  } 
+    setLoading(true);
+    var currentUser = await Auth.currentUserInfo();
+    var owner = currentUser.username;
+    const data = {
+      owner: owner,
+      type: type.value,
+      assetNumber: truckNumber,
+      unit: unit,
+      features: Features,
+      availableFromDateTime: availableFrom,
+      availableToDateTime: availableTo,
+      active: assetActive,
+      capability: basicCostDetails.capability,
+      capacity: basicCostDetails.capacity.value,
+      costId: costId,
+    };
+    const payload = {
+      body: data,
+    };
+    API.post("GoFlexeOrderPlacement", `/capacity`, payload)
+      .then((response) => {
+        console.log(response);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error.response);
+        setLoading(false);
+      });
+    console.log(data);
+    setLoading(false);
+    props.changeDisplaySetting("storage");
+  };
 
   const isDataAlreadyPresent = () => {
     for(var i=0;i<costData.length;i++){

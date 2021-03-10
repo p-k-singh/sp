@@ -157,7 +157,7 @@ const AddTruckCost = (props) => {
         },
       ],
     });
-    setDestinationPinCodes(spins);
+    setSourcePinCodes(spins);
     var dpins = destinationPinCodes.slice();
     dpins.push({
       destinationLocation: [
@@ -195,7 +195,6 @@ const AddTruckCost = (props) => {
   };
   const addroute = (i) => {
     var items = chosenProducts.slice();
-
     var spins = sourcePinCodes.slice();
     spins[i].sourceLocation.push({
       pin: "",
@@ -260,7 +259,10 @@ const AddTruckCost = (props) => {
         .then((response) => {
           response.json().then((data) => {
             if (data !== null && data[0].PostOffice !== null) {
-              items[i].additionalDetails[j].sourcePinData = data[0].PostOffice;
+              items[i].additionalDetails[j].sourcePinData = data[0].PostOffice; 
+               items[i].additionalDetails[j].sourceArea =
+                 data[0].PostOffice[0].Name;
+               
             }
             setChosenProducts(items);
           });
