@@ -172,8 +172,10 @@ export default function TruckCostDetails(props) {
               <React.Fragment>
                 <TableRow className={classes.root}>
                   <TableCell>
-                    {row.additionalDetails[0].immediatePricing == null ||
-                    row.additionalDetails[0].immediatePricing == "" ? (
+                    {row.additionalDetails.routeDetails[0].immediatePricing ==
+                      null ||
+                    row.additionalDetails.routeDetails[0].immediatePricing ==
+                      "" ? (
                       <IconButton
                         disabled={true}
                         aria-label="expand row"
@@ -217,9 +219,10 @@ export default function TruckCostDetails(props) {
                   </TableCell>
                   <TableCell>
                     ₹{" "}
-                    {row.price == null || row.price == ""
-                      ? row.additionalDetails[0].immediatePricing
-                      : row.price}{" "}
+                    {row.additionalDetails.price == null ||
+                    row.additionalDetails.price == ""
+                      ? row.additionalDetails.routeDetails[0].immediatePricing
+                      : row.additionalDetails.price}{" "}
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -236,7 +239,7 @@ export default function TruckCostDetails(props) {
                       >
                         More Details
                       </Typography>
-                      {row.additionalDetails.map((details, i) => {
+                      {row.additionalDetails.routeDetails.map((details, i) => {
                         return (
                           <Box margin={1}>
                             <Typography

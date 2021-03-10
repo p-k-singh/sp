@@ -30,7 +30,21 @@ const Track = (props) => {
   const [TrackingData, setTrackingData] = React.useState([]);
   const [Loading, setLoading] = React.useState(false);
   const [count, setCount] = useState(0);
+
+  let params = null;
+  if (props.id) {
+    params = {
+      id: props.id,
+    };
+  } else {
+    console.log(props);
+    params = {
+      id: props.match.params.id,
+    };
+  }
+  
   useEffect(() => {
+    console.log(props)
     getTrackingData();
   }, []);
 
@@ -38,7 +52,7 @@ const Track = (props) => {
     setLoading(true);
     API.get(
       "GoFlexeOrderPlacement",
-      `/tracking?type=getProcess&orderId=${props.id}`
+      `/tracking?type=getProcess&orderId=${params.id}`
     )
       .then((resp) => {
         console.log(resp);
@@ -139,11 +153,11 @@ const Track = (props) => {
       />
     );
   }
-  if (count == 4) {
-    return <h1>Shipment Delivered Waiting For Customer Feedback</h1>;
-  }
-  if (count == 5) {
+  if (count > 3) {
     return <h1>Shipment Delivered Successfully</h1>;
   }
+  // if (count == 5) {
+  //   return <h1>Shipment Delivered Successfully</h1>;
+  // }
 };
 export default Track;

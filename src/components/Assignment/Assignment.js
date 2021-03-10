@@ -52,11 +52,9 @@ const Assignment = (props) => {
   // const [truckNumber,setTruckNumber]=useState([]);
   const [chosenTrucks, setChosenTrucks] = useState([]);
   const [chosenDrivers, setChosenDrivers] = useState([]);
-  const [CustomerEmail, setCustomerEmail] = useState([]);
   const {
     match: { params },
   } = props;
-  const [capability, setCapability] = useState([null]);
   const [loading, setLoading] = useState("true");
   const [capacityRequired, setCapacityRequired] = useState();
   const [capacityAlloted, setCapacityAlloted] = useState(0);
@@ -78,7 +76,6 @@ const Assignment = (props) => {
   const [stageCount, setStageCount] = useState(0);
 
   var count = 0;
-
   const selectStyles = {
     menu: (base) => ({
       ...base,
@@ -86,19 +83,17 @@ const Assignment = (props) => {
     }),
   };
 
-  useEffect(() => {
-    // loadCapabilities()
+  useEffect( () => {
     const setUser = async () => {
       var currentUser = await Auth.currentUserInfo();
       var owner = currentUser.username;
       setCurrentUser(owner);
     };
+   
     setUser();
-    fetchCapacityRequired();
-    
-    getCustomerDetails();
-    getTrackingId();
-    loadData();
+   fetchCapacityRequired();
+   getTrackingId();
+
   }, []);
 
   const getAllocationDetails = (resp) => {
@@ -134,6 +129,7 @@ const Assignment = (props) => {
         console.log(resp);
         setDesiredDeliveryDate(resp.data.Item.deliveryDate);
         setDesiredPickupDate(resp.data.Item.pickupdate);
+        loadData(resp.data.Item.pickupdate);
         resp.data.Item.items.map((item) => {
           if (item.measurable === true) {
             sum += item.noOfUnits * item.weightPerUnit;
@@ -175,28 +171,25 @@ const Assignment = (props) => {
       });
   }
 
-  function loadData() {
+  function loadData(desiredDate) {
     setLoading("true");
-
-    //fetching truck details
     Auth.currentUserInfo()
-
       .then((currentUser) => {
         var owner = currentUser.username;
         API.get(
           "GoFlexeOrderPlacement",
           `/capacity?type=owner&ownerId=${owner}&asset=truck`
         )
-
-          .then((resp) => {
+        .then((resp) => {
             console.log(resp);
             var temp = [];
-            var pickupParts = desiredPickupDate.substring(0, 10).split("-");
+            var pickupParts = desiredDate.substring(0, 10).split("-");
             var ComparePickup = new Date(
               pickupParts[0],
               pickupParts[1] - 1,
               pickupParts[2]
             );
+            alert(ComparePickup)
 
             for (var i = 0; i < resp.length; i++) {
               var isValid = false;
@@ -219,13 +212,7 @@ const Assignment = (props) => {
                 fromparts[1] - 1,
                 fromparts[2]
               );
-              
 
-
-// alert(availableTo)
-// alert(availablefrom)
-
-// alert(ComparePickup)
               if (
                 ComparePickup <= availableTo &&
                 ComparePickup >= availablefrom
@@ -233,19 +220,19 @@ const Assignment = (props) => {
                 isValid = true;
               }
 
-              // if (isValid === true) {
-              //   temp.push({
-              //     label:
-              //       resp[i].assetNumber + "(" + resp[i].capacity + " tons)",
-              //     value: resp[i],
-              //     isNew: false,
-              //   });
-              // }
-              temp.push({
-                label: resp[i].assetNumber + "(" + resp[i].capacity + " tons)",
-                value: resp[i],
-                isNew: false,
-              });
+              if (isValid === true) {
+                temp.push({
+                  label:
+                    resp[i].assetNumber + "(" + resp[i].capacity + " tons)",
+                  value: resp[i],
+                  isNew: false,
+                });
+              }
+              // temp.push({
+              //   label: resp[i].assetNumber + "(" + resp[i].capacity + " tons)",
+              //   value: resp[i],
+              //   isNew: false,
+              // });
             }
             setMyTrucks(temp);
             console.log(temp);
@@ -294,33 +281,32 @@ const Assignment = (props) => {
         setLoading("error");
       });
   }
-  function getCustomerDetails(userDetails) {
-    setLoading("true");
-
-    API.get(
-      "GoFlexeOrderPlacement",
-      `/kyc/info?type=customer&id=${CustomerEmail}`
-    )
-      .then((resp) => {
-        console.log(resp);
-        if (resp.length === 0) {
-          setCustomerDetails(null);
-        } else {
-          if (resp[0].companyInfo !== undefined) {
-            setCustomerDetails(resp[0].companyInfo);
-          }
-        }
-        setLoading("false");
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading("false");
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading("false");
-      });
-  }
+  // function getCustomerDetails(userDetails) {
+  //   setLoading("true");
+  //   API.get(
+  //     "GoFlexeOrderPlacement",
+  //     `/kyc/info?type=customer&id=${CustomerEmail}`
+  //   )
+  //     .then((resp) => {
+  //       console.log(resp);
+  //       if (resp.length === 0) {
+  //         setCustomerDetails(null);
+  //       } else {
+  //         if (resp[0].companyInfo !== undefined) {
+  //           setCustomerDetails(resp[0].companyInfo);
+  //         }
+  //       }
+  //       setLoading("false");
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       setLoading("false");
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       setLoading("false");
+  //     });
+  // }
   function getTrackingId() {
     setLoading("true");
     API.get(
@@ -595,8 +581,8 @@ const Assignment = (props) => {
 
   const submitButtonHandler = async () => {
     setLoading("uploading");
-     await submitNewTrucks();
-     await submitNewDrivers();
+    await submitNewTrucks();
+    await submitNewDrivers();
     await includeAllTrucks();
     
 

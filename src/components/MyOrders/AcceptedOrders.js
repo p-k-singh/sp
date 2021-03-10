@@ -52,6 +52,7 @@ const useStyles = makeStyles((theme) => ({
 const MyOrders = () => {
   const classes = useStyles();
   const [activeOrders, setActiveOrders] = useState([]);
+  const [OrderData, setOrderData] = useState([]);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     setLoading(true);
@@ -63,6 +64,25 @@ const MyOrders = () => {
         "GoFlexeOrderPlacement",
         `/serviceorder?username=${currentUsername}`
       );
+      console.log(temp);
+
+      // return temp;
+      var i;
+      for (i = 0; i < temp.length; i++) {
+        var temporderData = await API.get(
+          "GoFlexeOrderPlacement",
+          `/customerorder/${temp[i].customerOrderId}`
+        );
+        temp[i].customerDetails = temporderData;
+      }
+      for (i = 0; i < temp.length; i++) {
+        var tempTrackData = await API.get(
+          "GoFlexeOrderPlacement",
+          `/tracking?type=getProcess&orderId=${temp[i].ServiceOrderId}`
+        );
+        temp[i].trackingDetails = tempTrackData;
+      }
+
       console.log(temp);
       setActiveOrders(temp);
       setLoading(false);
@@ -91,9 +111,6 @@ const MyOrders = () => {
   } else {
     return (
       <div>
-        {/* <Typography className={classes.title} gutterBottom style={{}}>
-                                    My Active Orders
-                    </Typography>   */}
         <section className="">
           <div>
             <Grid
@@ -134,7 +151,7 @@ const MyOrders = () => {
                     padding: 16,
                   }}
                 >
-                  <Grid container spacing={5}>
+                  <Grid container spacing={0}>
                     <Grid item xs={2}>
                       <figure
                         style={{
@@ -152,100 +169,157 @@ const MyOrders = () => {
 
                     <Grid
                       item
-                      xs={5}
+                      xs={6}
                       style={{
                         marginTop: 15,
                         marginBottom: 20,
                       }}
                     >
-                      {/* <table >
-                      <tr
-                        style={{
-                          marginBottom: 25,
-                          marginRight: 50,
-                        }}
-                      >
-                        <th scope="row">User Id : </th>
-                        <td>
-                          <td>{eachOrder.displayId}</td>
-                        </td>
-                      </tr>
-                      <tr>
-                        <th scope="row">User Id : </th>
-                        <td>
-                          <td>{eachOrder.displayId}</td>
-                        </td>
-                      </tr>  </table> */}
-                      <h6
-                        style={{
-                          marginBottom: 25,
-                          marginRight: 50,
-                        }}
-                      >
-                        Order No. {}
-                        <span>{eachOrder.displayId}</span>
-                      </h6>
-
-                      <h6>
-                        Order Id :{eachOrder.ServiceOrderId.substring(0, 8)}
-                      </h6>
+                      <Grid container spacing={0}>
+                        <Grid item sm={6} xs={6}>
+                          <h6
+                            style={{
+                              marginBottom: 25,
+                            }}
+                          >
+                            Order Id :{" "}
+                            {/* <span>{eachOrder.Item.items[0].productType}</span> */}
+                            <span>
+                              {eachOrder.customerDetails.Item.OrderId.substring(
+                                0,
+                                5
+                              )}
+                            </span>
+                          </h6>
+                        </Grid>
+                        <Grid itemsm={6} xs={6}>
+                          <h6>
+                            Distance :{" "}
+                            <span>
+                              {
+                                eachOrder.customerDetails.Item.distanceRange
+                                  .value.lowRange
+                              }
+                              -
+                              {
+                                eachOrder.customerDetails.Item.distanceRange
+                                  .value.highRange
+                              }{" "}
+                              km
+                            </span>
+                          </h6>
+                        </Grid>
+                        <Grid itemsm={12} xs={6}>
+                          <h6>
+                            Total Weight :{" "}
+                            <span>
+                              {(eachOrder.customerDetails.Item.items[0]
+                                .measurable == true
+                                ? Number(
+                                    eachOrder.customerDetails.Item.items[0]
+                                      .noOfUnits
+                                  ) *
+                                  Number(
+                                    eachOrder.customerDetails.Item.items[0]
+                                      .weightPerUnit
+                                  )
+                                : eachOrder.customerDetails.Item.items[0]
+                                    .totalWeight) + " Kgs"}
+                            </span>
+                          </h6>
+                        </Grid>
+                        <Grid itemsm={12} xs={6}>
+                          <h6>
+                            Total Amount :{" "}
+                            {eachOrder.customerDetails.Item.estimatedPrice}
+                          </h6>
+                        </Grid>
+                      </Grid>
                     </Grid>
-                    {/* <Grid
-                      item
-                      xs={4}
-                      style={{
-                        marginTop: 15,
-                        marginBottom: 20,
-                      }}
-                    >
-                      <h6
-                        style={{
-                          marginBottom: 25,
-                        }}
-                      ></h6>
-                      <h6>
-                        {/* Delivery Date :{" "}
-                        {String(eachOrder.estimatedDeliveryDate).substring(
-                          0,
-                          10
-                        )} */}
 
-                    <Grid item xs={4}>
-                      <Button
-                        style={{
-                          maxWidth: "150px",
-                          minWidth: "150px",
-                          maxHeight: "50px",
-                          marginTop: 5,
-                          marginBottom: 7,
-                        }}
-                        component={Link}
-                        to={`assignment/${eachOrder.ServiceOrderId}/${eachOrder.customerOrderId}`}
-                        variant="contained"
-                        color="default"
-                        startIcon={<LocalShippingIcon />}
-                        // component={Link}
-                        // to="/track"
-                      >
-                        Assign
-                      </Button>
-                      <Button
-                        style={{
-                          minWidth: "150px",
-                          maxWidth: "150px",
-                          maxHeight: "50px",
-                          marginTop: 7,
-                          marginBottom: 5,
-                        }}
-                        component={Link}
-                        to={`order/${eachOrder.customerOrderId}/${eachOrder.ServiceOrderId}`}
-                        variant="contained"
-                        color="default"
-                        // className={classes.allocationButton}
-                        startIcon={<ClassTwoToneIcon />}
-                      >
-                        Details
-                      </Button>
+                    <Grid item itemsm={12} xs={3}>
+                      <Grid container spacing={0}>
+                        <Grid item sm={12} xs={5}></Grid>
+                        <Grid item sm={12} xs={6}>
+                          {eachOrder.trackingDetails.stages[0].status ==
+                          "COMPLETED" ? (
+                            eachOrder.trackingDetails.stages[2].status ==
+                            "COMPLETED" ? (
+                              <Button
+                                style={{
+                                  maxWidth: "150px",
+                                  minWidth: "150px",
+                                  maxHeight: "50px",
+                                  marginTop: 5,
+                                  marginBottom: 7,
+                                }}
+                                variant="contained"
+                                color="default"
+                                startIcon={<LocalShippingIcon />}
+                                component={Link}
+                                // <Track id={serviceOrderId} />
+                                to={`/track/${eachOrder.ServiceOrderId}`}
+                              >
+                                Delivery
+                              </Button>
+                            ) : (
+                              <Button
+                                style={{
+                                  maxWidth: "150px",
+                                  minWidth: "150px",
+                                  maxHeight: "50px",
+                                  marginTop: 5,
+                                  marginBottom: 7,
+                                }}
+                                variant="contained"
+                                color="default"
+                                startIcon={<LocalShippingIcon />}
+                                component={Link}
+                                // <Track id={serviceOrderId} />
+                                to={`/track/${eachOrder.ServiceOrderId}`}
+                              >
+                                Pickup
+                              </Button>
+                            )
+                          ) : (
+                            <Button
+                              style={{
+                                maxWidth: "150px",
+                                minWidth: "150px",
+                                maxHeight: "50px",
+                                marginTop: 5,
+                                marginBottom: 7,
+                              }}
+                              component={Link}
+                              to={`assignment/${eachOrder.ServiceOrderId}/${eachOrder.customerOrderId}`}
+                              variant="contained"
+                              color="default"
+                              startIcon={<LocalShippingIcon />}
+                              // component={Link}
+                              // to="/track"
+                            >
+                              Assign
+                            </Button>
+                          )}
+                          <Button
+                            style={{
+                              minWidth: "150px",
+                              maxWidth: "150px",
+                              maxHeight: "50px",
+                              marginTop: 7,
+                              marginBottom: 5,
+                            }}
+                            component={Link}
+                            to={`order/${eachOrder.customerOrderId}/${eachOrder.ServiceOrderId}`}
+                            variant="contained"
+                            color="default"
+                            // className={classes.allocationButton}
+                            startIcon={<ClassTwoToneIcon />}
+                          >
+                            Details
+                          </Button>
+                        </Grid>
+                      </Grid>
                     </Grid>
                   </Grid>
                 </CardContent>

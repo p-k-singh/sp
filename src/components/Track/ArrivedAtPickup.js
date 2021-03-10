@@ -362,9 +362,9 @@ const ArrivedAtPickupComponent = (props) => {
             <Spinner />
           ) : (
             <Button
-              onClick={() => {
-                CompletePickupChecklist();
-                SendPickupChecklistData();
+              onClick={async() => {
+                await CompletePickupChecklist();
+                await SendPickupChecklistData();
               }}
               className="row"
               variant="contained"

@@ -99,6 +99,7 @@ const AddTruckCost = (props) => {
       rangeinKms: null,
       pricing: null,
       details: false,
+
       additionalDetails: [
         {
           sourceLocation: "",
@@ -370,16 +371,41 @@ const AddTruckCost = (props) => {
   const SubmitPricing = async () => {
     setLoading(true);
     var items = [];
+  
+
+
     for (var i = 0; i < chosenProducts.length; i++) {
+
+        var routeDetails = [];
+    for (var j = 0; j < chosenProducts[i].additionalDetails.length; j++) {
+   routeDetails.push({
+     sourceLocation: chosenProducts[i].additionalDetails[j].sourceLocation,
+     sourceArea: chosenProducts[i].additionalDetails[j].sourceArea,
+     destinationArea: chosenProducts[i].additionalDetails[j].destinationArea,
+     destinationLocation:
+       chosenProducts[i].additionalDetails[j].destinationLocation,
+     thirtyDaysPricing:
+       chosenProducts[i].additionalDetails[j].thirtyDaysPricing,
+     immediatePricing: chosenProducts[i].additionalDetails[j].immediatePricing,
+     deliveryCommitment:
+       chosenProducts[i].additionalDetails[j].deliveryCommitment,
+     deliveryCommitmentname:
+       chosenProducts[i].additionalDetails[j].deliveryCommitmentname,
+   });
+    }
+
+
       const data = {
         serviceProviderId: currentUser,
         assetType: "truck",
         capability: chosenProducts[i].capability.value,
         capacity: chosenProducts[i].capacity.value,
         rangeinkms: chosenProducts[i].rangeinKms.value,
-        price:
+        additionalDetails:{ 
+          price:
           chosenProducts[i].details !== true ? chosenProducts[i].pricing : null,
-        additionalDetails: chosenProducts[i].additionalDetails,
+          routeDetails: routeDetails
+        }
       };
       const payload = {
         body: data,

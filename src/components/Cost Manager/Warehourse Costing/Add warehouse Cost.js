@@ -319,11 +319,28 @@ const AddWarehouseCost = (props) => {
             autoComplete="shipping address-line1"
           />
         </Grid>
+        <Grid item xs={12} sm={3}>
+          <TextField
+            fullWidth
+            label="Duration"
+            type="number"
+            helperText={""}
+            value={chosenProducts[i].pricing}
+            onChange={(event) => onPricingController(event, i)}
+            variant="outlined"
+            size="small"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">Days</InputAdornment>
+              ),
+            }}
+          />
+        </Grid>
 
         <Grid item xs={12} sm={3}>
           <TextField
             fullWidth
-            label="Pricing"
+            label="Price / Metric Ton"
             type="number"
             helperText={"Inclusive of GST"}
             value={chosenProducts[i].pricing}
@@ -335,6 +352,22 @@ const AddWarehouseCost = (props) => {
             }}
           />
         </Grid>
+        <Grid item xs={12} sm={3}>
+          <TextField
+            fullWidth
+            label="Price / Sqft"
+            type="number"
+            helperText={"Inclusive of GST"}
+            value={chosenProducts[i].pricing}
+            onChange={(event) => onPricingController(event, i)}
+            variant="outlined"
+            size="small"
+            InputProps={{
+              endAdornment: <InputAdornment position="end">₹</InputAdornment>,
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} sm={1}></Grid>
 
         <Grid item>
           <TableContainer>
@@ -409,6 +442,50 @@ const AddWarehouseCost = (props) => {
               />
             </Grid>
           ))}
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Covered Area Available"
+              type="number"
+              value={chosenProducts[i].pricing}
+              onChange={(event) => onPricingController(event, i)}
+              variant="outlined"
+              size="small"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">Sqft</InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Open Area Available"
+              type="number"
+              value={chosenProducts[i].pricing}
+              onChange={(event) => onPricingController(event, i)}
+              variant="outlined"
+              size="small"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">Sqft</InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={12}>
+            <TextField
+              fullWidth
+              label="Remarks"
+              type="text"
+              value={chosenProducts[i].pricing}
+              onChange={(event) => onPricingController(event, i)}
+              variant="outlined"
+              size="small"
+             
+            />
+          </Grid>
         </Grid>
       ) : (
         <p></p>

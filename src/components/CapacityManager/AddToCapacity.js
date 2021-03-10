@@ -145,7 +145,7 @@ const AddTocapacity = (props) => {
         tempCost = {
           capability:capability,
           capacity:getCapacity(costData[i].capacity),
-          distance:getDistance(costData[i].rangeinkms)
+          distance:getDistance(costData[i].rangeinkms),
         }
         tempAdditional=costData[i].additionalDetails;
     }
@@ -170,7 +170,7 @@ const AddTocapacity = (props) => {
         tempAdditional=costData[i].additionalDetails;
       
     }
-    
+
     return {tempCost,tempAdditional};
   }
   function setChangesBasedOnCapabilityAndDistance (capability,distance){
@@ -237,7 +237,6 @@ const AddTocapacity = (props) => {
     }
     return null;
   }
-  
   const getDistance = (distance) => {
     for(var i=0;i<constants.DistanceOptions.length;i++){
       if(distance.lowRange===constants.DistanceOptions[i].value.lowRange && distance.highRange===constants.DistanceOptions[i].value.highRange){
@@ -250,6 +249,7 @@ const AddTocapacity = (props) => {
 
   const basicCostDetailsChangeController = (event,field) => {
     var result ; 
+
     if(field==='capability'){
        result = setChangesBasedOnCapability(event)
     }
@@ -272,19 +272,13 @@ const AddTocapacity = (props) => {
     setBasicCostDetails({
       capability:result.tempCost.capability,
       capacity:result.tempCost.capacity,
-      distance:result.tempCost.distance
+      distance:result.tempCost.distance,
     })
     setAdditionalCostDetails(result.tempAdditional)
-    
   }
 
 
   /**Region ended */
-
-
-
-
-
 
 
 
@@ -383,6 +377,7 @@ const AddTocapacity = (props) => {
     setCapability(event);
   };
   const onPriceChange = (event) => {
+
     setPrice(event.target.value);
   };
   const onDeliveryCommitmentChange = (event) => {
@@ -747,8 +742,12 @@ const AddTocapacity = (props) => {
               isSearchable
               name="Capability"
               placeholder="Capability"
-              value={basicCostDetails===null?null:basicCostDetails.capability}
-              onChange = {(event) => basicCostDetailsChangeController(event,'capability')}
+              value={
+                basicCostDetails === null ? null : basicCostDetails.capability
+              }
+              onChange={(event) =>
+                basicCostDetailsChangeController(event, "capability")
+              }
               options={constants.truckCapabilityOptions}
             />
           </Grid>
@@ -771,23 +770,8 @@ const AddTocapacity = (props) => {
               />
             </Grid>
           </Tooltip>
-          {(basicCostDetails!==null && basicCostDetails.capability!==null )? (
+          {basicCostDetails !== null && basicCostDetails.capability !== null ? (
             <Grid container spacing={3} style={{ padding: 50 }}>
-              <Grid item xs={12} sm={4}>
-                {ExpandDetails == false ? (
-                  <TextField
-                    size="small"
-                    variant="outlined"
-                    helperText={"*Immediate Pricing inclusive of GST per Trip"}
-                    value={price}
-                    label="Price"
-                    InputLabelProps={{ shrink: true }}
-                    onChange={(event) => onPriceChange(event)}
-                  />
-                ) : (
-                  <br />
-                )}
-              </Grid>
               <Grid item xs={12} sm={4}>
                 <Select
                   styles={selectStyles}
@@ -796,9 +780,13 @@ const AddTocapacity = (props) => {
                   isSearchable
                   name="Capacity"
                   placeholder="Capacity"
-                  value={basicCostDetails===null?null:basicCostDetails.capacity}
+                  value={
+                    basicCostDetails === null ? null : basicCostDetails.capacity
+                  }
                   //onChange={(event) => onCapacityChange(event)}
-                  onChange={(event)=>basicCostDetailsChangeController(event,"capacity")}
+                  onChange={(event) =>
+                    basicCostDetailsChangeController(event, "capacity")
+                  }
                   options={constants.truckCapacityOptions}
                 />
               </Grid>
@@ -810,11 +798,34 @@ const AddTocapacity = (props) => {
                   isSearchable
                   name="Distance"
                   placeholder="Distance"
-                  value={basicCostDetails===null?null:basicCostDetails.distance}
+                  value={
+                    basicCostDetails === null ? null : basicCostDetails.distance
+                  }
                   //onChange={(event) => onDistanceChange(event)}
-                  onChange={(event)=>basicCostDetailsChangeController(event,'distance')}
+                  onChange={(event) =>
+                    basicCostDetailsChangeController(event, "distance")
+                  }
                   options={constants.DistanceOptions}
                 />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                {ExpandDetails == false ? (
+                  <TextField
+                    size="small"
+                    variant="outlined"
+                    helperText={"*Immediate Pricing inclusive of GST per Trip"}
+                    value={
+                      additionalCostDetails === null
+                        ? null
+                        : additionalCostDetails.price
+                    }
+                    label="Price"
+                    InputLabelProps={{ shrink: true }}
+                    onChange={(event) => onPriceChange(event)}
+                  />
+                ) : (
+                  <br />
+                )}
               </Grid>
               <Grid item>
                 <TableContainer
@@ -889,7 +900,11 @@ const AddTocapacity = (props) => {
                       }
                       PinCode
                       onChange={(event) => onSourceLocationChange(event)}
-                      value={SourceLocation}
+                      value={
+                        additionalCostDetails === null
+                          ? null
+                          : additionalCostDetails.routeDetails[0].sourceLocation
+                      }
                       size="small"
                       variant="outlined"
                       autoComplete="Pickup postal-code"
@@ -938,7 +953,12 @@ const AddTocapacity = (props) => {
                               destinationPinData[0].State
                           : destinationZipValidator
                       }
-                      value={DestinationLocation}
+                      value={
+                        additionalCostDetails === null
+                          ? null
+                          : additionalCostDetails.routeDetails[0]
+                              .destinationLocation
+                      }
                       className={classes.textField}
                       variant="outlined"
                       size="small"
@@ -983,7 +1003,12 @@ const AddTocapacity = (props) => {
                       className={classes.textField}
                       variant="outlined"
                       size="small"
-                      value={ThirtyDaysPricing}
+                      value={
+                        additionalCostDetails === null
+                          ? null
+                          : additionalCostDetails.routeDetails[0]
+                              .thirtyDaysPricing
+                      }
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="end">₹</InputAdornment>
@@ -999,7 +1024,12 @@ const AddTocapacity = (props) => {
                       }
                       label="Immediate Payment Pricing"
                       //type="number"
-                      value={ImmidiatePricing}
+                      value={
+                        additionalCostDetails === null
+                          ? null
+                          : additionalCostDetails.routeDetails[0]
+                              .immediatePricing
+                      }
                       helperText={"*Inclusive of GST Per Trip"}
                       className={classes.textField}
                       variant="outlined"
@@ -1015,7 +1045,12 @@ const AddTocapacity = (props) => {
                   <Grid item xs={12} sm={6}>
                     <Select
                       styles={selectStyles}
-                      value={DeliveryPromiseName}
+                      value={
+                        additionalCostDetails === null
+                          ? null
+                          : additionalCostDetails.routeDetails[0]
+                              .deliveryCommitmentname
+                      }
                       className="basic-single"
                       onChange={(event) => onDeliveryCommitmentChange(event)}
                       classNamePrefix="Delivery Commitment"

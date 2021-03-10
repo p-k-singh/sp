@@ -355,12 +355,12 @@ const DeliveryComponent = (props) => {
             </TableContainer>
           </Grid>
           <Button
-            onClick={() => {
+            onClick={async () => {
               setDeliveryChecklistPending(false);
               setShipmentCompleted(true);
               setDeliveryList(false);
-              CompleteDeliveryChecklist();
-              SendDeliveryChecklistData();
+              await CompleteDeliveryChecklist();
+              await SendDeliveryChecklistData();
             }}
             className="row"
             variant="contained"
