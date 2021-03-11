@@ -117,7 +117,21 @@ const AddTocapacity = (props) => {
   const [destinationPinData, setDestinationPinData] = useState([]);
   const [sourceZipValidator, setSourceZipValidator] = useState("");
   const [destinationZipValidator, setDestinationZipValidator] = useState("");
-  const [additionalCostDetails, setAdditionalCostDetails] = useState(null);
+  const [additionalCostDetails, setAdditionalCostDetails] = useState({
+    price: "",
+    routeDetails: [
+      {
+        sourceArea: "",
+        deliveryCommitment: "",
+        destinationArea: "",
+        immediatePricing: "",
+        deliveryCommitmentname: {},
+        destinationLocation: "",
+        sourceLocation: "",
+        thirtyDaysPricing: "",
+      },
+    ],
+  });
   const [basicCostDetails,setBasicCostDetails] = useState(null);
 
 
@@ -258,16 +272,35 @@ const AddTocapacity = (props) => {
       if(!result.tempAdditional){
         result = setChangesBasedOnCapabilityAndCapacity(basicCostDetails.capability,event)
       }
+      if (!result.tempAdditional) {
+        result = {
+          tempCost: {
+            capability: basicCostDetails.capability,
+            capacity: event,
+            distance: basicCostDetails.distance
+          },
+        };
+      }
     }
     else if(field==='distance'){
         result = setChangesBasedOnCapabilityAndDistanceAndCapacity(basicCostDetails.capability,basicCostDetails.capacity,event)
       if(!result.tempAdditional)
       result = setChangesBasedOnCapabilityAndDistance(basicCostDetails.capability,event)
+       if (!result.tempAdditional) {
+         result = {
+           tempCost: {
+             capability: basicCostDetails.capability,
+             capacity: basicCostDetails.capacity,
+             distance: event,
+           },
+         };
+       }
     }
     else{
       alert('something went wrong');
       return ; 
     }
+    // alert(JSON.stringify(result.tempCost))
     setBasicCostDetails({
       capability:result.tempCost.capability,
       capacity:result.tempCost.capacity,
@@ -551,10 +584,31 @@ if(result.tempAdditional){
       costId: costId,
       serviceProviderId: currentUser,
       assetType: type.value,
-      capability: basicCostDetails.capability,
-      capacity: basicCostDetails.capacity,
-      rangeinkms: basicCostDetails.distance,
-      additionalDetails:additionalCostDetails
+      capability: basicCostDetails.capability.value,
+      capacity: basicCostDetails.capacity.value,
+      rangeinkms: basicCostDetails.distance.value,
+      // additionalDetails:additionalCostDetails
+      additionalDetails: {
+        price: additionalCostDetails.price,
+        routeDetails: [
+        {
+          sourceLocation: additionalCostDetails.routeDetails[0].sourceLocation,
+          sourceArea: additionalCostDetails.routeDetails[0].sourceArea,
+          destinationArea:
+            additionalCostDetails.routeDetails[0].destinationArea,
+          destinationLocation:
+            additionalCostDetails.routeDetails[0].destinationLocation,
+          thirtyDaysPricing:
+            additionalCostDetails.routeDetails[0].thirtyDaysPricing,
+          immediatePricing:
+            additionalCostDetails.routeDetails[0].immediatePricing,
+          deliveryCommitment:
+            additionalCostDetails.routeDetails[0].deliveryCommitment,
+          deliveryCommitmentname:
+            additionalCostDetails.routeDetails[0].deliveryCommitmentname,
+        },
+      ],
+      }
     };
     const payload = {
       body: data,
@@ -586,14 +640,37 @@ if(result.tempAdditional){
       await EditOldPricing();
     } else {  
       const SubmitNewPricing = async () => {
+        // alert(JSON.stringify(basicCostDetails))
         setLoading(true);
         const data = {
           serviceProviderId: currentUser,
           assetType: type.value,
-          capability: basicCostDetails.capability,
-          capacity: basicCostDetails.capacity,
-          rangeinkms: basicCostDetails.distance,
-          additionalDetails: additionalCostDetails,
+          capability: basicCostDetails.capability.value,
+          capacity: basicCostDetails.capacity.value,
+          rangeinkms: basicCostDetails.distance.value,
+          // additionalDetails: additionalCostDetails,
+          additionalDetails: {
+            price: additionalCostDetails.price,
+            routeDetails: [
+              {
+                sourceLocation:
+                  additionalCostDetails.routeDetails[0].sourceLocation,
+                sourceArea: additionalCostDetails.routeDetails[0].sourceArea,
+                destinationArea:
+                  additionalCostDetails.routeDetails[0].destinationArea,
+                destinationLocation:
+                  additionalCostDetails.routeDetails[0].destinationLocation,
+                thirtyDaysPricing:
+                  additionalCostDetails.routeDetails[0].thirtyDaysPricing,
+                immediatePricing:
+                  additionalCostDetails.routeDetails[0].immediatePricing,
+                deliveryCommitment:
+                  additionalCostDetails.routeDetails[0].deliveryCommitment,
+                deliveryCommitmentname:
+                  additionalCostDetails.routeDetails[0].deliveryCommitmentname,
+              },
+            ],
+          },
         };
         const payload = {
           body: data,
@@ -624,15 +701,15 @@ if(result.tempAdditional){
     var currentUser = await Auth.currentUserInfo();
     var owner = currentUser.username;
     const data = {
-      owner: owner,
-      type: type.value,
+      ownerId: owner,
+      assetType: type.value,
       assetNumber: truckNumber,
       unit: unit,
-      features: Features,
+      features: Features.value,
       availableFromDateTime: availableFrom,
       availableToDateTime: availableTo,
       active: assetActive,
-      capability: basicCostDetails.capability,
+      capability: basicCostDetails.capability.value,
       capacity: basicCostDetails.capacity.value,
       costId: costId,
     };
@@ -939,7 +1016,7 @@ if(result.tempAdditional){
                       PinCode
                       onChange={(event) => onSourceLocationChange(event)}
                       value={
-                        additionalCostDetails === null
+                        !additionalCostDetails
                           ? null
                           : additionalCostDetails.routeDetails[0].sourceLocation
                       }

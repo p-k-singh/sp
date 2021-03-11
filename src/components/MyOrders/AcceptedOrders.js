@@ -99,12 +99,10 @@ const MyOrders = () => {
       );
     } else {
       return (
-        <div>
-          <Typography
-            style={{ fontSize: 20, height: 50, padding: 10, paddingLeft: 55 }}
-          >
+        <div><center>
+         <h3>
             You have not accepted any orders yet.
-          </Typography>
+          </h3></center>
         </div>
       );
     }
@@ -198,12 +196,12 @@ const MyOrders = () => {
                             <span>
                               {
                                 eachOrder.customerDetails.Item.distanceRange
-                                  .value.lowRange
+                                  .lowRange
                               }
                               -
                               {
                                 eachOrder.customerDetails.Item.distanceRange
-                                  .value.highRange
+                                  .highRange
                               }{" "}
                               km
                             </span>

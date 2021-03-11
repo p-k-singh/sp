@@ -141,14 +141,6 @@ const useStyles = makeStyles((theme) => ({
 export default function Dashboard() {
   const list = [
     { title: "Dashboard", to: "/", icon: <DashboardIcon /> },
-    { title: "My Orders", to: "/my-orders", icon: <AddShoppingCartIcon /> },
-    {
-      title: "Availability Manager",
-      to: "/capacity",
-      icon: <BatteryFullIcon />,
-    },
-    { title: "Cost Manager", to: "/CostManager", icon: <MonetizationOnIcon /> },
-
     {
       title: "My WorkList",
       to: "/TaskManager",
@@ -158,6 +150,13 @@ export default function Dashboard() {
         // </Badge>
       ),
     },
+    { title: "My Orders", to: "/my-orders", icon: <AddShoppingCartIcon /> },
+    {
+      title: "Availability Manager",
+      to: "/capacity",
+      icon: <BatteryFullIcon />,
+    },
+    { title: "Cost Manager", to: "/CostManager", icon: <MonetizationOnIcon /> },
     { title: "User Manager", to: "/userManager", icon: <GroupIcon /> },
     { title: "KYC", to: "/kyc", icon: <FileCopyIcon /> },
     { title: "Help", to: "/help", icon: <Help /> },

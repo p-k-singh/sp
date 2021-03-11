@@ -189,7 +189,7 @@ const Assignment = (props) => {
               pickupParts[1] - 1,
               pickupParts[2]
             );
-            alert(ComparePickup)
+        
 
             for (var i = 0; i < resp.length; i++) {
               var isValid = false;
@@ -353,6 +353,7 @@ const Assignment = (props) => {
       .then((response) => {
         console.log(response);
         setAllocatedLoading(false);
+        getTrackingId()
       })
       .catch((error) => {
         console.log(error.response);
@@ -378,6 +379,7 @@ const Assignment = (props) => {
     )
       .then((response) => {
         console.log(response);
+        getAllocationDetails(response);
         setAllocated(true);
         setAllocatedLoading(false);
       })
@@ -580,7 +582,7 @@ const Assignment = (props) => {
   // }
 
   const submitButtonHandler = async () => {
-    setLoading("uploading");
+    setLoading(true);
     await submitNewTrucks();
     await submitNewDrivers();
     await includeAllTrucks();
@@ -589,6 +591,7 @@ const Assignment = (props) => {
     await trackingAssetAllocation();
     await changeTaskStatus();
     getTrackingId();
+    setLoading(false);
 
     //  submitNewDrivers();
     //console.log(allotedDrivers)

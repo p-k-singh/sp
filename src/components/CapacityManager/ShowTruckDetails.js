@@ -194,15 +194,13 @@ export default function CollapsibleTable(props) {
                     />
                   </TableCell>
                   <TableCell component="th" scope="row">
-                    {row.type === "truck" ? "Truck" : "Warehouse"}
+                    {row.assetType === "truck" ? "Truck" : "Warehouse"}
                   </TableCell>
                   <TableCell align="left">
                     {row.capacity} Tons
                     {/* {row.unitOfMeasurement} */}
                   </TableCell>
-                  <TableCell align="left">
-                    {row.capabilities.toString()}
-                  </TableCell>
+                  <TableCell align="left">{row.capability}</TableCell>
                   {/* <TableCell align="right">{row.ownershipType}</TableCell>
                   <TableCell align="right">{row.location}</TableCell> */}
                 </TableRow>
@@ -218,7 +216,7 @@ export default function CollapsibleTable(props) {
                         </Typography>
                         <TableRow>
                           <th>Capability: </th>
-                          <td> {row.capabilities}</td>
+                          <td> {row.capability}</td>
                         </TableRow>
                         <TableRow>
                           <th>Asset Id: </th>
