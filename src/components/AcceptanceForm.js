@@ -152,7 +152,7 @@ const AcceptanceForm = (props) => {
                   id="estimatedPickup"
                   name="estimatedPickup"
                   label="Estimated Pickup"
-                  value={Order.pickupdate}
+                  value={Order.pickupDate}
                   disabled
                   fullWidth
                   autoComplete="estimated pickup"

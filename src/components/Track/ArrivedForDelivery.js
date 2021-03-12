@@ -39,7 +39,7 @@ const useStyles = makeStyles({
   },
 });
 
-const DeliveryComponent = (props) => {
+const ArrivedAtDrop = (props) => {
   const classes = useStyles();
   const [DeliveryList, setDeliveryList] = React.useState(false);
   const [ShipmentCompleted, setShipmentCompleted] = React.useState(false);
@@ -57,13 +57,6 @@ const DeliveryComponent = (props) => {
   ] = React.useState(true);
   const [LeftForDelivery, setLeftForDelivery] = React.useState(false);
   const [ArrivedAtDrop, setArrivedAtDrop] = React.useState(false);
-
-  const [Loading, setLoading] = React.useState(false);
-  const [NoOfUnits, setNoOfUnits] = React.useState("");
-  const [SpecialInstructions, setSpecialInstructions] = React.useState("");
-  const [panDoc, setPanDoc] = useState();
-  const [count, setCount] = useState(0);
-  const [currentTask, setCurrentTask] = useState(0);
   const [NoOfDamagedProducts, setNoOfDamagedProducts] = React.useState("");
   const onNoOfDamagedProductsChangeController = (event) => {
     setNoOfDamagedProducts(event.target.value);
@@ -73,63 +66,11 @@ const DeliveryComponent = (props) => {
     getTaskProgress();
   }, []);
 
-  const SendDeliveryChecklistData = async () => {
-    let details = props.getTrackingIds(
-      props.TrackingData,
-      "DELIVERY_CHECKLIST"
-    );
-
-    const data = {
-      trackingId: props.TrackingData.processId,
-      stageId: details.stageId,
-      taskId: details.taskId,
-      custom: {
-        data: {
-          productDamagedinTransit: ProductDamagedinTransit,
-          productPilferageinTransit: ProductPilferageinTransit,
-          noOfDamagedProducts: NoOfDamagedProducts,
-        },
-        attachments: {},
-      },
-    };
-    const payload = {
-      body: data,
-    };
-
-    API.patch(
-      "GoFlexeOrderPlacement",
-      `/tracking?type=updateCustomFields`,
-      payload
-    )
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log(error.response);
-      });
-  };
 
   const CompleteArrivedAtDrop = async () => {
     let details = props.getTrackingIds(
       props.TrackingData,
       "ARRIVED_AT_DROP_LOCATION"
-    );
-    const data = {
-      trackingId: props.TrackingData.processId,
-      stageId: details.stageId,
-      taskId: details.taskId,
-      status: "NEXT",
-    };
-    const payload = {
-      body: data,
-    };
-    props.ApiRequest(payload);
-  };
-
-  const CompleteDeliveryChecklist = async () => {
-    let details = props.getTrackingIds(
-      props.TrackingData,
-      "DELIVERY_CHECKLIST"
     );
     const data = {
       trackingId: props.TrackingData.processId,
@@ -157,228 +98,6 @@ const DeliveryComponent = (props) => {
     });
   };
 
-  const DeliveryChecklistComponent = (
-    <Accordion expanded={DeliveryChecklistPending}>
-      <AccordionSummary
-        style={{
-          backgroundColor: "rgba(0, 0, 0, .03)",
-          borderBottom: "1px solid rgba(0, 0, 0, .125)",
-        }}
-        expandIcon={
-          <ExpandMoreIcon
-          // onClick={() => {
-          //   setDeliveryChecklistPending(
-          //     DeliveryChecklistPending == false ? true : false
-          //   );
-          // }}
-          />
-        }
-        aria-controls="panel1bh-content"
-        id="panel1bh-header"
-      >
-        <TableContainer>
-          <Table aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell style={{ borderBottom: "none" }}>
-                  {DeliveryChecklistPending == false ? (
-                    <Tooltip title="Done">
-                      <Done style={{ color: "green" }} />
-                    </Tooltip>
-                  ) : (
-                    <Tooltip title="Pending">
-                      <WarningIcon style={{ color: "orange" }} />
-                    </Tooltip>
-                  )}
-                </TableCell>
-                <TableCell
-                  align="left"
-                  style={{
-                    borderBottom: "none",
-                    fontSize: 20,
-                    height: 50,
-                    padding: 10,
-                  }}
-                >
-                  Delivery CheckList
-                </TableCell>
-              </TableRow>
-            </TableHead>
-          </Table>
-        </TableContainer>
-      </AccordionSummary>
-      <AccordionDetails>
-        <Grid
-          container
-          spacing={3}
-          style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}
-        >
-          <Grid item sm={6} xs={12}>
-            <TableContainer>
-              <Table aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>
-                      <Checkbox
-                        size="small"
-                        color="primary"
-                        onChange={(e) => {
-                          setProductPilferageinTransit(e.target.checked);
-                        }}
-                        inputProps={{
-                          "aria-label": "secondary checkbox",
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell align="left">
-                      Product Pilferage inTransit
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-              </Table>
-            </TableContainer>
-          </Grid>
-
-          <Grid item sm={6} xs={12}>
-            <TableContainer>
-              <Table aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>
-                      <Checkbox
-                        onChange={(e) => {
-                          setProductDamagedinTransit(e.target.checked);
-                        }}
-                        size="small"
-                        color="primary"
-                        inputProps={{
-                          "aria-label": "secondary checkbox",
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell align="left">
-                      Product Damaged in Transit
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-              </Table>
-            </TableContainer>
-          </Grid>
-          {ProductDamagedinTransit == true ? (
-            <Grid item sm={6} xs={12}>
-              <TextField
-                type="number"
-                required
-                value={NoOfDamagedProducts}
-                onChange={(event) =>
-                  onNoOfDamagedProductsChangeController(event)
-                }
-                label="Number of Damaged Products"
-                fullWidth
-              />
-            </Grid>
-          ) : (
-            <p></p>
-          )}
-          <Grid item xs={12}>
-            <TableContainer>
-              <Table aria-label="simple table">
-                <TableHead>
-                  {ProductDamagedinTransit == true ? (
-                    <TableRow>
-                      <TableCell>
-                        <label>Upload Photo of Damaged Product: </label>
-                      </TableCell>{" "}
-                      <TableCell>
-                        <input style={{ marginLeft: "15px" }} type="file" />
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    <p></p>
-                  )}
-                  <TableRow>
-                    <TableCell>
-                      <label>Upload Photo of UnLoaded Truck: </label>
-                    </TableCell>{" "}
-                    <TableCell>
-                      <input style={{ marginLeft: "15px" }} type="file" />
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <label>Signed Document by Driver/executive: </label>
-                    </TableCell>{" "}
-                    <TableCell>
-                      <input style={{ marginLeft: "15px" }} type="file" />
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <label>Signed Document by Customer: </label>
-                    </TableCell>{" "}
-                    <TableCell>
-                      <input style={{ marginLeft: "15px" }} type="file" />
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <label>
-                        {" "}
-                        Consignors copy:{" "}
-                        <span style={{ fontSize: 10 }}>
-                          {" "}
-                          (*Given to drop location.)
-                        </span>{" "}
-                      </label>
-                      <p style={{ fontSize: 10 }}></p>
-                    </TableCell>{" "}
-                    <TableCell>
-                      <input style={{ marginLeft: "15px" }} type="file" />
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <label>
-                        Account Copy:
-                        <span style={{ fontSize: 10 }}>
-                          {" "}
-                          (*Given to transporter for their records.)
-                        </span>{" "}
-                      </label>
-                    </TableCell>{" "}
-                    <TableCell>
-                      <input style={{ marginLeft: "15px" }} type="file" />
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-              </Table>
-            </TableContainer>
-          </Grid>
-          <Button
-            onClick={async () => {
-              setDeliveryChecklistPending(false);
-              setShipmentCompleted(true);
-              setDeliveryList(false);
-              await SendDeliveryChecklistData();
-              await CompleteDeliveryChecklist();
-            
-            }}
-            className="row"
-            variant="contained"
-            style={{
-              float: "right",
-              backgroundColor: "#f9a825",
-              marginBottom: "10px",
-              margin: 20,
-            }}
-          >
-            Shipment Delivered
-          </Button>
-        </Grid>
-      </AccordionDetails>
-    </Accordion>
-  );
-
   return (
     <div style={{ overflow: "hidden", marginTop: "20px" }}>
       <Typography
@@ -392,7 +111,7 @@ const DeliveryComponent = (props) => {
         }}
         fullWidth
       >
-        Delivery in Progress
+        {props.Tasks[0].taskLabel}
       </Typography>
 
       <form>
@@ -428,9 +147,8 @@ const DeliveryComponent = (props) => {
             </TableHead>
           </Table>
         </TableContainer>
-        {DeliveryChecklistComponent}
       </form>
     </div>
   );
 };
-export default DeliveryComponent;
+export default ArrivedAtDrop;

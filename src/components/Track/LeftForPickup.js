@@ -71,7 +71,7 @@ const LeftForPickupComponent = (props) => {
         }}
         fullWidth
       >
-        Pickup in Progress
+        {props.StageName}
       </Typography>
       <form>
         <Grid
@@ -101,7 +101,7 @@ const LeftForPickupComponent = (props) => {
                     padding: 10,
                   }}
                 >
-                  Left for Pickup
+                  {props.Tasks[0].taskLabel}
                 </TableCell>
               </TableRow>
             </TableHead>

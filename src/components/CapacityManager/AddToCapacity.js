@@ -323,6 +323,7 @@ if(result.tempAdditional){
          sourceLocation: "",
          thirtyDaysPricing: "",
        },
+       
      ],
    });
 }
@@ -549,10 +550,10 @@ if(result.tempAdditional){
       var owner = currentUser.username;
       setCurrentUser(owner);
     };
-    setUser();
-    var currentUser = await Auth.currentUserInfo();
-    var owner = currentUser.username;
-    API.get(
+    await setUser();
+     var currentUser = await Auth.currentUserInfo();
+     var owner = currentUser.username;
+    await API.get(
       "GoFlexeOrderPlacement",
       `/serviceprovidercost?type=serviceProviderId&serviceProviderId=${owner}`
     )
@@ -578,36 +579,53 @@ if(result.tempAdditional){
 
   const EditOldPricing = async () => {
     var costId = isDataAlreadyPresent();
+    var currentUser = await Auth.currentUserInfo();
+    var Owner = currentUser.username;
     setLoading(true);
+      var tempRouteDetails = [];
+      if (additionalCostDetails.routeDetails) {
+        for (var j = 0; j < additionalCostDetails.routeDetails.length; j++) {
+          tempRouteDetails.push({
+            sourceLocation:
+              additionalCostDetails.routeDetails[j].sourceLocation,
+            sourceArea: additionalCostDetails.routeDetails[j].sourceArea,
+            destinationArea:
+              additionalCostDetails.routeDetails[j].destinationArea,
+            destinationLocation:
+              additionalCostDetails.routeDetails[j].destinationLocation,
+            thirtyDaysPricing:
+              additionalCostDetails.routeDetails[j].thirtyDaysPricing,
+            immediatePricing:
+              additionalCostDetails.routeDetails[j].immediatePricing,
+            deliveryCommitment:
+              additionalCostDetails.routeDetails[j].deliveryCommitment,
+            deliveryCommitmentname:
+              additionalCostDetails.routeDetails[j].deliveryCommitmentname,
+          });
+        }
+      } else {
+        tempRouteDetails.push({
+          sourceArea: null,
+          deliveryCommitment: null,
+          destinationArea: null,
+          immediatePricing: null,
+          deliveryCommitmentname: {},
+          destinationLocation: null,
+          sourceLocation: null,
+          thirtyDaysPricing: null,
+        });
+      }
     var items = [];
     const data = {
       costId: costId,
-      serviceProviderId: currentUser,
+      serviceProviderId: Owner,
       assetType: type.value,
       capability: basicCostDetails.capability.value,
       capacity: basicCostDetails.capacity.value,
       rangeinkms: basicCostDetails.distance.value,
-      // additionalDetails:additionalCostDetails
       additionalDetails: {
         price: additionalCostDetails.price,
-        routeDetails: [
-        {
-          sourceLocation: additionalCostDetails.routeDetails[0].sourceLocation,
-          sourceArea: additionalCostDetails.routeDetails[0].sourceArea,
-          destinationArea:
-            additionalCostDetails.routeDetails[0].destinationArea,
-          destinationLocation:
-            additionalCostDetails.routeDetails[0].destinationLocation,
-          thirtyDaysPricing:
-            additionalCostDetails.routeDetails[0].thirtyDaysPricing,
-          immediatePricing:
-            additionalCostDetails.routeDetails[0].immediatePricing,
-          deliveryCommitment:
-            additionalCostDetails.routeDetails[0].deliveryCommitment,
-          deliveryCommitmentname:
-            additionalCostDetails.routeDetails[0].deliveryCommitmentname,
-        },
-      ],
+        routeDetails: tempRouteDetails
       }
     };
     const payload = {
@@ -640,10 +658,45 @@ if(result.tempAdditional){
       await EditOldPricing();
     } else {  
       const SubmitNewPricing = async () => {
-        // alert(JSON.stringify(basicCostDetails))
+
         setLoading(true);
+          var tempRouteDetails = [];
+          var currentUser = await Auth.currentUserInfo();
+          var Owner = currentUser.username;
+if (additionalCostDetails.routeDetails) {
+  for (var j = 0; j < additionalCostDetails.routeDetails.length; j++) {
+    tempRouteDetails.push({
+      sourceLocation: additionalCostDetails.routeDetails[j].sourceLocation,
+      sourceArea: additionalCostDetails.routeDetails[j].sourceArea,
+      destinationArea: additionalCostDetails.routeDetails[j].destinationArea,
+      destinationLocation:
+        additionalCostDetails.routeDetails[j].destinationLocation,
+      thirtyDaysPricing:
+        additionalCostDetails.routeDetails[j].thirtyDaysPricing,
+      immediatePricing: additionalCostDetails.routeDetails[j].immediatePricing,
+      deliveryCommitment:
+        additionalCostDetails.routeDetails[j].deliveryCommitment,
+      deliveryCommitmentname:
+        additionalCostDetails.routeDetails[j].deliveryCommitmentname,
+    });
+  }
+}else{
+  tempRouteDetails.push({
+    sourceArea: null,
+    deliveryCommitment: null,
+    destinationArea: null,
+    immediatePricing: null,
+    deliveryCommitmentname: {},
+    destinationLocation: null,
+    sourceLocation: null,
+    thirtyDaysPricing: null,
+  });
+}
+
+         
+
         const data = {
-          serviceProviderId: currentUser,
+          serviceProviderId: Owner,
           assetType: type.value,
           capability: basicCostDetails.capability.value,
           capacity: basicCostDetails.capacity.value,
@@ -651,25 +704,7 @@ if(result.tempAdditional){
           // additionalDetails: additionalCostDetails,
           additionalDetails: {
             price: additionalCostDetails.price,
-            routeDetails: [
-              {
-                sourceLocation:
-                  additionalCostDetails.routeDetails[0].sourceLocation,
-                sourceArea: additionalCostDetails.routeDetails[0].sourceArea,
-                destinationArea:
-                  additionalCostDetails.routeDetails[0].destinationArea,
-                destinationLocation:
-                  additionalCostDetails.routeDetails[0].destinationLocation,
-                thirtyDaysPricing:
-                  additionalCostDetails.routeDetails[0].thirtyDaysPricing,
-                immediatePricing:
-                  additionalCostDetails.routeDetails[0].immediatePricing,
-                deliveryCommitment:
-                  additionalCostDetails.routeDetails[0].deliveryCommitment,
-                deliveryCommitmentname:
-                  additionalCostDetails.routeDetails[0].deliveryCommitmentname,
-              },
-            ],
+            routeDetails: tempRouteDetails,
           },
         };
         const payload = {
@@ -1016,7 +1051,7 @@ if(result.tempAdditional){
                       PinCode
                       onChange={(event) => onSourceLocationChange(event)}
                       value={
-                        !additionalCostDetails
+                       !additionalCostDetails
                           ? null
                           : additionalCostDetails.routeDetails[0].sourceLocation
                       }

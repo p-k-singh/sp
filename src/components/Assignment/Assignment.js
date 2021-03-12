@@ -55,7 +55,7 @@ const Assignment = (props) => {
   const {
     match: { params },
   } = props;
-  const [loading, setLoading] = useState("true");
+  const [loading, setLoading] = useState(true);
   const [capacityRequired, setCapacityRequired] = useState();
   const [capacityAlloted, setCapacityAlloted] = useState(0);
   const [allotedDrivers, setAllotedDrivers] = useState();
@@ -97,15 +97,18 @@ const Assignment = (props) => {
   }, []);
 
   const getAllocationDetails = (resp) => {
+    setLoading(true);
     resp.stages.forEach((stage) => {
       stage.tasks.forEach((task) => {
         if (task.name == "ASSET_ALLOCATION" && task.status == "COMPLETED") {
           setStageCount(1);
+          setLoading(false);
           return;
         }
       });
     });
   };
+  
 
   useEffect(() => {
     var sum = 0;
@@ -118,7 +121,7 @@ const Assignment = (props) => {
   }, [chosenTrucks]);
 
   function fetchCapacityRequired() {
-    setLoading("true");
+    setLoading(true);
     const url =
       "https://t2v0d33au7.execute-api.ap-south-1.amazonaws.com/Staging01/customerorder/" +
       params.customerOrderId;
@@ -128,8 +131,9 @@ const Assignment = (props) => {
         var sum = 0;
         console.log(resp);
         setDesiredDeliveryDate(resp.data.Item.deliveryDate);
-        setDesiredPickupDate(resp.data.Item.pickupdate);
-        loadData(resp.data.Item.pickupdate);
+        setDesiredPickupDate(resp.data.Item.pickupDate);
+        loadData(resp.data.Item.pickupDate);
+        // alert( resp.data.Item.pickupDate);
         resp.data.Item.items.map((item) => {
           if (item.measurable === true) {
             sum += item.noOfUnits * item.weightPerUnit;
@@ -154,15 +158,15 @@ const Assignment = (props) => {
                 setCustomerDetails(resp[0].companyInfo);
               }
             }
-            setLoading("false");
+            setLoading(false);
           })
           .catch((err) => {
             console.log(err);
-            setLoading("false");
+            setLoading(false);
           })
           .catch((err) => {
             console.log(err);
-            setLoading("false");
+            setLoading(false);
           });
       })
 
@@ -172,7 +176,8 @@ const Assignment = (props) => {
   }
 
   function loadData(desiredDate) {
-    setLoading("true");
+
+    setLoading(true);
     Auth.currentUserInfo()
       .then((currentUser) => {
         var owner = currentUser.username;
@@ -183,19 +188,17 @@ const Assignment = (props) => {
         .then((resp) => {
             console.log(resp);
             var temp = [];
+            // alert(desiredDate,)
             var pickupParts = desiredDate.substring(0, 10).split("-");
             var ComparePickup = new Date(
               pickupParts[0],
               pickupParts[1] - 1,
               pickupParts[2]
             );
-        
 
-            for (var i = 0; i < resp.length; i++) {
+              for (var i = 0; i < resp.length; i++) {
               var isValid = false;
-              var toparts = resp[i].availableToDateTime
-                .substring(0, 10)
-                .split("-");
+              var toparts = resp[i].availableToDateTime.toString().substring(0, 10).split("-");
 
               var availableTo = new Date(
                 toparts[0],
@@ -203,8 +206,8 @@ const Assignment = (props) => {
                 toparts[2]
               );
 
-              var fromparts = resp[i].availableFromDateTime
-                .substring(0, 10)
+              var fromparts = resp[i].availableFromDateTime.toString().
+                substring(0, 10)
                 .split("-");
 
               var availablefrom = new Date(
@@ -212,22 +215,30 @@ const Assignment = (props) => {
                 fromparts[1] - 1,
                 fromparts[2]
               );
-
-              if (
-                ComparePickup <= availableTo &&
-                ComparePickup >= availablefrom
-              ) {
-                isValid = true;
-              }
-
-              if (isValid === true) {
+              // alert(availablefrom +ComparePickup + availableTo);
+              // if (
+              //   // ComparePickup < availableTo &&
+              //   // ComparePickup > availablefrom
+              //   availablefrom <
+              //   ComparePickup <
+              //   availableTo
+              // ) {
+              //   // temp.push({
+              //   //   label: resp[i].capability + "(" + resp[i].capacity + " tons)",
+              //   //   value: resp[i],
+              //   //   isNew: false,
+              //   // });
+              // }
+              // alert();
+              // alert(isValid)
+             
                 temp.push({
-                  label:
-                    resp[i].assetNumber + "(" + resp[i].capacity + " tons)",
+                  label: resp[i].assetNumber + "(" + resp[i].capacity + " tons)",
                   value: resp[i],
                   isNew: false,
                 });
-              }
+                
+             
               // temp.push({
               //   label: resp[i].assetNumber + "(" + resp[i].capacity + " tons)",
               //   value: resp[i],
@@ -236,6 +247,7 @@ const Assignment = (props) => {
             }
             setMyTrucks(temp);
             console.log(temp);
+            setLoading(false);
             //console.log(myTrucks)
           })
 
@@ -269,16 +281,16 @@ const Assignment = (props) => {
               setMyDrivers(temp);
               console.log(temp);
             }
-            setLoading("false");
+            setLoading(false);
           })
           .catch((err) => {
             console.log(err);
-            setLoading("error");
+            setLoading(false);
           });
       })
       .catch((err) => {
         console.log(err);
-        setLoading("error");
+        setLoading(false);
       });
   }
   // function getCustomerDetails(userDetails) {
@@ -296,19 +308,19 @@ const Assignment = (props) => {
   //           setCustomerDetails(resp[0].companyInfo);
   //         }
   //       }
-  //       setLoading("false");
+  //       setLoading(false);
   //     })
   //     .catch((err) => {
   //       console.log(err);
-  //       setLoading("false");
+  //       setLoading(false);
   //     })
   //     .catch((err) => {
   //       console.log(err);
-  //       setLoading("false");
+  //       setLoading(false);
   //     });
   // }
   function getTrackingId() {
-    setLoading("true");
+    setLoading(true);
     API.get(
       "GoFlexeOrderPlacement",
       `/tracking?type=getProcess&orderId=${params.id}`
@@ -319,13 +331,15 @@ const Assignment = (props) => {
         setTrackingId(resp.processId);
         setTaskId(resp.stages[0].tasks[0].taskId);
         setStageId(resp.stages[0].stageId);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
-        setLoading("false");
+        setLoading(false);
       });
   }
   const trackingAssetAllocation = async () => {
+    setLoading(true);
     setAllocatedLoading(true);
     const data = {
       trackingId: TrackingId,
@@ -354,13 +368,16 @@ const Assignment = (props) => {
         console.log(response);
         setAllocatedLoading(false);
         getTrackingId()
+        setLoading(false);
       })
       .catch((error) => {
         console.log(error.response);
         setAllocatedLoading(false);
+        setLoading(false);
       });
   };
   const changeTaskStatus = async () => {
+    setLoading(true);
     setAllocatedLoading(true);
     const data = {
       trackingId: TrackingId,
@@ -382,11 +399,13 @@ const Assignment = (props) => {
         getAllocationDetails(response);
         setAllocated(true);
         setAllocatedLoading(false);
+        setLoading(false);
       })
       .catch((error) => {
         console.log(error.response);
         alert("An error occoured, Please try again");
         setAllocatedLoading(false);
+        setLoading(false);
       });
   };
 
@@ -430,7 +449,7 @@ const Assignment = (props) => {
           assetNumber: chosenTrucks[i].label,
           capacity: chosenTrucks[i].value.capacity,
           unit: "tons",
-          capabilities: chosenTrucks[i].value.capabilities,
+          capability: chosenTrucks[i].value.capability,
           availableFromDateTime: thisYearDate,
           availableToDateTime: nextYearDate,
           ownershipType:
@@ -582,7 +601,6 @@ const Assignment = (props) => {
   // }
 
   const submitButtonHandler = async () => {
-    setLoading(true);
     await submitNewTrucks();
     await submitNewDrivers();
     await includeAllTrucks();
@@ -590,8 +608,7 @@ const Assignment = (props) => {
 
     await trackingAssetAllocation();
     await changeTaskStatus();
-    getTrackingId();
-    setLoading(false);
+    await getTrackingId();
 
     //  submitNewDrivers();
     //console.log(allotedDrivers)
@@ -604,7 +621,7 @@ const Assignment = (props) => {
     //   console.log(err)
     //   alert('An error occured. Try again later')
     // }
-    setLoading("false");
+    setLoading(false);
   };
   const onTruckNumberChanged = (newValue, i) => {
     var items = chosenTrucks.slice();
@@ -615,7 +632,7 @@ const Assignment = (props) => {
         var temp = {
           value: {
             capacity: 0,
-            capabilities: [],
+            capability: [],
             features : [],
             assetNumber: newValue.label,
             location: "",
@@ -689,12 +706,13 @@ const Assignment = (props) => {
   };
   const onCapabilityChange = (event, i) => {
     var items = chosenTrucks.slice();
-    items[i].value.capabilities = event;
+    items[i].value.capability = event;
     setChosenTrucks(items);
   };
   const onCapacityChangeController = (event, i) => {
     var items = chosenTrucks.slice();
-    items[i].value.capacity = event;
+    items[i].value.capacity = event.value;
+    items[i].value.capacityName = event;
     setChosenTrucks(items);
   };
   const onFeaturesChange = (event, i) => {
@@ -744,7 +762,7 @@ const Assignment = (props) => {
               isSearchable
               name="Capability"
               placeholder="Capability"
-              value={chosenTrucks[i].value.capabilities}
+              value={chosenTrucks[i].value.capability}
               onChange={(event) => onCapabilityChange(event, i)}
               options={constants.truckCapabilityOptions}
             />
@@ -756,7 +774,7 @@ const Assignment = (props) => {
               value={
                 chosenTrucks[i] === null
                   ? null
-                  : chosenTrucks[i].value.capabilities
+                  : chosenTrucks[i].value.capability
               }
               variant="outlined"
               InputLabelProps={{ shrink: true }}
@@ -784,7 +802,7 @@ const Assignment = (props) => {
               isSearchable
               name="Capacity"
               placeholder="Capacity"
-              value={chosenTrucks[i].value.capacity}
+              value={chosenTrucks[i].value.capacityName}
               onChange={(event) => onCapacityChangeController(event, i)}
               options={constants.truckCapacityOptions}
             />
@@ -853,16 +871,13 @@ const Assignment = (props) => {
     </div>
   ));
 
-  if (loading === "true") {
+  if (loading == true) {
     return (
       <React.Fragment>
-        <h1>Loading your truck details</h1>
+        {/* <h1>Loading your truck details</h1> */}
         <Spinner />
       </React.Fragment>
     );
-  }
-  if (loading === "uploading") {
-    return <Spinner />;
   }
   if (stageCount == 1) {
     return (
