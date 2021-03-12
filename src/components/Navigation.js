@@ -302,7 +302,7 @@ export default function Dashboard() {
             onClose={handleNotificationClose}
           >
             <List component="nav">
-              <Link to={"accept-order/" + notifications}>
+              <Link to={"/accept-order/" + notifications}>
                 <ListItem alignItems="flex-start">
                   <ListItemAvatar>
                     <Avatar>
