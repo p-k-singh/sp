@@ -141,7 +141,7 @@ const ArrivedAtDrop = (props) => {
                     padding: 10,
                   }}
                 >
-                  Arrived at Drop Location
+                  {props.Tasks[0].taskLabel}
                 </TableCell>
               </TableRow>
             </TableHead>

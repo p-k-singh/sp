@@ -229,7 +229,7 @@ const MyOrders = () => {
                         <Grid itemsm={12} xs={6}>
                           <h6>
                             Total Amount :{" "}
-                            {eachOrder.customerDetails.Item.estimatedPrice}
+                            {Math.round(Number(eachOrder.customerDetails.Item.estimatedPrice))}
                           </h6>
                         </Grid>
                       </Grid>

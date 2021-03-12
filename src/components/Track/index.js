@@ -41,6 +41,7 @@ const Track = (props) => {
   const [count, setCount] = useState(0);
   const [activeStep, setActiveStep] = React.useState(0);
   const [AllStageNames, setAllStageNames] = React.useState([]);
+  const [StageDescription, setStageDescription] = React.useState([]);
   const [CurrentStageName, setCurrentStageName] = React.useState([]);
   const [Tasks, setTasks] = React.useState([]);
   const steps = getSteps();
@@ -106,11 +107,14 @@ const Track = (props) => {
 
   const getAllStageNames = (resp) => {
     var tempAllStageNames = [];
+     var tempStageDescription = [];
     var i;
     for (i = 0; i < resp.stages.length; i++) {
       tempAllStageNames.push(resp.stages[i].stageLabel);
+      tempStageDescription.push(resp.stages[i].description)
     }
     setAllStageNames(tempAllStageNames);
+    setStageDescription(tempStageDescription);
   };
 
   function FindStage(resp) {
