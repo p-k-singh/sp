@@ -7,19 +7,13 @@ import SubmitButton from "./Elements/SubmitButton";
 
 
 const Element = ({
-  field: {
-    taskType,
-    field_id,
-    taskLabel,
-    field_value,
-    field_options,
-  },
+  field: { taskType, taskId, taskLabel, field_value, field_options },
 }) => {
   switch (taskType) {
     case "input-text":
       return (
         <TextInput
-          field_id={field_id}
+          field_id={taskId}
           field_label={taskLabel}
           field_value={field_value}
         />
@@ -27,7 +21,7 @@ const Element = ({
     case "input-number":
       return (
         <NumberInput
-          field_id={field_id}
+          field_id={taskId}
           field_label={taskLabel}
           field_value={field_value}
         />
@@ -35,7 +29,7 @@ const Element = ({
     case "submit-button":
       return (
         <SubmitButton
-          field_id={field_id}
+          field_id={taskId}
           field_label={taskLabel}
           field_value={field_value}
         />
@@ -43,7 +37,7 @@ const Element = ({
     case "input-attachment":
       return (
         <SubmitDocument
-          field_id={field_id}
+          field_id={taskId}
           field_label={taskLabel}
           field_value={field_value}
         />
@@ -51,7 +45,7 @@ const Element = ({
     case "checkbox":
       return (
         <Checkbox
-          field_id={field_id}
+          field_id={taskId}
           field_label={taskLabel}
           field_value={field_value}
         />

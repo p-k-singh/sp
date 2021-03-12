@@ -49,27 +49,32 @@ const PickupChecklist = (props) => {
        setElements(props.Tasks);
      }, []);
      const { taskType, page_label } = elements ?? {};
-     const handleSubmit = (event) => {
-       event.preventDefault();
+    
+    
+     const handleSubmit = (id, event) => {
        console.log(elements);
      };
+
      const handleChange = (id, event) => {
-       const newElements = { ...elements };
+       var newElements = elements.slice() 
        newElements.forEach((field) => {
-         const { taskType, number } = field;
-         if (id === number ) {
+         const { taskType, taskId } = field;
+         if (id == taskId ) {
            switch (taskType) {
              case "checkbox":
                field["field_value"] = event.target.checked;
                break;
-
+             case "input-attachment":
+               field["field_value"] = event.target.files[0];
+               break;
              default:
                field["field_value"] = event.target.value;
                break;
            }
          }
-         setElements(newElements);
        });
+      //  console.log(newElements);
+       setElements(newElements);
        console.log(elements);
      };
 
@@ -187,7 +192,7 @@ const PickupChecklist = (props) => {
         {props.StageName}
       </Typography>
 
-      <FormContext.Provider value={{ handleChange }}>
+      <FormContext.Provider value={{ handleChange ,handleSubmit}}>
         <div className="App container">
           <form>
             {" "}
@@ -209,7 +214,7 @@ const PickupChecklist = (props) => {
         spacing={3}
         style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}
       >
-        <Grid item sm={6} xs={12}>
+        {/* <Grid item sm={6} xs={12}>
           <TextField
             type="number"
             required
@@ -383,7 +388,7 @@ const PickupChecklist = (props) => {
           >
             Pickup Completed
           </Button>
-        )}
+        )} */}
       </Grid>
     </div>
   );

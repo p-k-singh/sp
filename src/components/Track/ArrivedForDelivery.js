@@ -111,7 +111,7 @@ const ArrivedAtDrop = (props) => {
         }}
         fullWidth
       >
-        {props.Tasks[0].taskLabel}
+        {props.StageName}
       </Typography>
 
       <form>

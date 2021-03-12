@@ -48,33 +48,34 @@ const DeliveryChecklist = (props) => {
     setElements(props.Tasks);
   }, []);
   const { taskType, page_label } = elements ?? {};
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log(elements);
-  };
-  const handleChange = (id, event) => {
-    const newElements = { ...elements };
-    newElements.forEach((field) => {
-      const { taskType, number } = field;
-      if (id === number-1) {
-        switch (taskType) {
-          case "checkbox":
-            field["field_value"] = event.target.checked;
-            break;
-
-          default:
-            field["field_value"] = event.target.value;
-            break;
-        }
-      }
-      setElements(newElements);
-    });
-    console.log(elements);
-  };
 
 
+   const handleSubmit = (id, event) => {
+     console.log(elements);
+   };
 
-
+   const handleChange = (id, event) => {
+     var newElements = elements.slice();
+     newElements.forEach((field) => {
+       const { taskType, taskId } = field;
+       if (id == taskId) {
+         switch (taskType) {
+           case "checkbox":
+             field["field_value"] = event.target.checked;
+             break;
+           case "input-attachment":
+             field["field_value"] = event.target.files[0];
+             break;
+           default:
+             field["field_value"] = event.target.value;
+             break;
+         }
+       }
+     });
+     //  console.log(newElements);
+     setElements(newElements);
+     console.log(elements);
+   };
 
 
 
@@ -192,7 +193,7 @@ const DeliveryChecklist = (props) => {
         {props.StageName}
       </Typography>
 
-      <FormContext.Provider value={{ handleChange }}>
+      <FormContext.Provider value={{ handleChange,handleSubmit }}>
         <div className="App container">
           <form>
             {" "}

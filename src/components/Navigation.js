@@ -303,12 +303,9 @@ export default function Dashboard() {
           >
             <List component="nav">
               {numberOfNotifications === 0 ? (
-               
                   <ListItem alignItems="flex-start">
-                    
                     <ListItemText
                       primary={"No Pending Notifications"}
-                     
                     />
                   </ListItem>
             

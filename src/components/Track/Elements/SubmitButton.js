@@ -9,12 +9,12 @@ import TableRow from "@material-ui/core/TableRow";
 import Table from "@material-ui/core/Table";
 
 const SubmitButton = ({ field_id, field_label, field_value }) => {
-  const { handleChange } = useContext(FormContext);
+  const { handleSubmit } = useContext(FormContext);
 
   return (
     <Grid item>
       <Button
-        // onClick={}
+        onClick={handleSubmit}
         className="row"
         variant="contained"
         style={{
