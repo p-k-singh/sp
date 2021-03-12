@@ -302,20 +302,33 @@ export default function Dashboard() {
             onClose={handleNotificationClose}
           >
             <List component="nav">
-              <Link to={"/accept-order/" + notifications}>
-                <ListItem alignItems="flex-start">
-                  <ListItemAvatar>
-                    <Avatar>
-                      <ShoppingCartIcon />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={"New Order Request"}
-                    secondary="Tap to see Details"
-                  />
-                </ListItem>
-              </Link>
-              <Divider />
+              {numberOfNotifications === 0 ? (
+               
+                  <ListItem alignItems="flex-start">
+                    
+                    <ListItemText
+                      primary={"No Pending Notifications"}
+                     
+                    />
+                  </ListItem>
+            
+              ) : (
+                <Link to={"/accept-order/" + notifications}>
+                  <ListItem alignItems="flex-start">
+                    <ListItemAvatar>
+                      <Avatar>
+                        <ShoppingCartIcon />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={"New Order Request"}
+                      secondary="Tap to see Details"
+                    />
+                  </ListItem>
+                </Link>
+              )}
+
+              {/* <Divider />
               <Link to="/Track">
                 <ListItem alignItems="flex-start">
                   <ListItemAvatar>
@@ -357,7 +370,7 @@ export default function Dashboard() {
                   />
                 </ListItem>
               </Link>
-              <Divider />
+              <Divider /> */}
             </List>
           </Menu>
 
