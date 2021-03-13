@@ -74,7 +74,6 @@ const Assignment = (props) => {
   const [Allocated, setAllocated] = useState(false);
   const [AllocatedLoading, setAllocatedLoading] = useState(false);
   const [stageCount, setStageCount] = useState(0);
-
   var count = 0;
   const selectStyles = {
     menu: (base) => ({
@@ -133,7 +132,6 @@ const Assignment = (props) => {
         setDesiredDeliveryDate(resp.data.Item.deliveryDate);
         setDesiredPickupDate(resp.data.Item.pickupDate);
         loadData(resp.data.Item.pickupDate);
-        // alert( resp.data.Item.pickupDate);
         resp.data.Item.items.map((item) => {
           if (item.measurable === true) {
             sum += item.noOfUnits * item.weightPerUnit;
@@ -143,31 +141,7 @@ const Assignment = (props) => {
         });
 
         console.log(resp);
-
         setCapacityRequired(sum / 1000);
-        API.get(
-          "GoFlexeOrderPlacement",
-          "/kyc/info?type=customer&id=ff7675f7-ac42-43f7-91e3-599624f1661a"
-        )
-          .then((resp) => {
-            console.log(resp);
-            if (resp.length === 0) {
-              setCustomerDetails(null);
-            } else {
-              if (resp[0].companyInfo !== undefined) {
-                setCustomerDetails(resp[0].companyInfo);
-              }
-            }
-            setLoading(false);
-          })
-          .catch((err) => {
-            console.log(err);
-            setLoading(false);
-          })
-          .catch((err) => {
-            console.log(err);
-            setLoading(false);
-          });
       })
 
       .catch((err) => {
@@ -216,39 +190,25 @@ const Assignment = (props) => {
                 fromparts[2]
               );
               // alert(availablefrom +ComparePickup + availableTo);
-              // if (
-              //   // ComparePickup < availableTo &&
-              //   // ComparePickup > availablefrom
-              //   availablefrom <
-              //   ComparePickup <
-              //   availableTo
-              // ) {
-              //   // temp.push({
-              //   //   label: resp[i].capability + "(" + resp[i].capacity + " tons)",
-              //   //   value: resp[i],
-              //   //   isNew: false,
-              //   // });
-              // }
-              // alert();
-              // alert(isValid)
-             
-                temp.push({
-                  label: resp[i].assetNumber + "(" + resp[i].capacity + " tons)",
-                  value: resp[i],
-                  isNew: false,
-                });
-                
-             
-              // temp.push({
-              //   label: resp[i].assetNumber + "(" + resp[i].capacity + " tons)",
-              //   value: resp[i],
-              //   isNew: false,
-              // });
+              if (
+                // ComparePickup < availableTo &&
+                // ComparePickup > availablefrom
+                availablefrom <
+                ComparePickup <
+                availableTo
+              ) {
+                  temp.push({
+                    label:
+                      resp[i].assetNumber + "(" + resp[i].capacity + " tons)",
+                    value: resp[i],
+                    isNew: false,
+                  });
+              }
             }
             setMyTrucks(temp);
             console.log(temp);
             setLoading(false);
-            //console.log(myTrucks)
+           
           })
 
           .catch((err) => console.log(err));
@@ -293,32 +253,7 @@ const Assignment = (props) => {
         setLoading(false);
       });
   }
-  // function getCustomerDetails(userDetails) {
-  //   setLoading("true");
-  //   API.get(
-  //     "GoFlexeOrderPlacement",
-  //     `/kyc/info?type=customer&id=${CustomerEmail}`
-  //   )
-  //     .then((resp) => {
-  //       console.log(resp);
-  //       if (resp.length === 0) {
-  //         setCustomerDetails(null);
-  //       } else {
-  //         if (resp[0].companyInfo !== undefined) {
-  //           setCustomerDetails(resp[0].companyInfo);
-  //         }
-  //       }
-  //       setLoading(false);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //       setLoading(false);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //       setLoading(false);
-  //     });
-  // }
+  
   function getTrackingId() {
     setLoading(true);
     API.get(
@@ -404,7 +339,6 @@ const Assignment = (props) => {
       .catch((error) => {
         console.log(error.response);
         alert("An error occoured, Please try again");
-        setAllocatedLoading(false);
         setLoading(false);
       });
   };
@@ -419,7 +353,59 @@ const Assignment = (props) => {
     setEstimatedDeliveryDate(deliveryDate);
   };
 
-  const submitNewTrucks = async () => {
+
+  const SubmitNewPricing = async () => {
+
+    for (var i = 0; i < chosenTrucks.length; i++) {
+      if (chosenTrucks[i].isNew === true) {
+
+        setLoading(true);
+        const data = {
+          serviceProviderId: currentUser,
+          assetType: "truck",
+          capability: chosenTrucks[i].value.capability.value,
+          capacity:chosenTrucks[i].value.capacityName.value,
+          rangeinkms: chosenTrucks[i].value.truckDistance.value,
+          additionalDetails: {
+            price: chosenTrucks[i].value.truckPrice,
+            routeDetails :[
+              {
+    sourceArea: null,
+    deliveryCommitment: null,
+    destinationArea: null,
+    immediatePricing: null,
+    deliveryCommitmentname: {},
+    destinationLocation: null,
+    sourceLocation: null,
+    thirtyDaysPricing: null,
+  }
+            ]
+          },
+        };
+        const payload = {
+          body: data,
+        };
+
+        API.post(
+          "GoFlexeOrderPlacement",
+          `/serviceprovidercost`,
+          payload
+        )
+          .then((response) => {
+            console.log(response);
+            submitNewTrucks(response)
+            setLoading(false);
+          })
+          .catch((error) => {
+            console.log(error.response);
+            setLoading(false);
+          });      
+      }}}
+     
+
+  const submitNewTrucks = async (costId) => {
+    setLoading(true)
+
     var today = new Date();
     var thisYearDate =
       today.getFullYear() +
@@ -438,28 +424,26 @@ const Assignment = (props) => {
     for (var i = 0; i < chosenTrucks.length; i++) {
       if (chosenTrucks[i] === null) {
         alert(`Please Choose a truck number for  truck ${i + 1}`);
+        // eslint-disable-next-line no-loop-func
         return new Promise((resolve) => {
           return resolve(`Please Choose a truck number for  truck ${i + 1}`);
         });
       }
       if (chosenTrucks[i].isNew === true) {
-        const data = {
-          owner: currentUser,
-          type: "truck",
-          assetNumber: chosenTrucks[i].label,
-          capacity: chosenTrucks[i].value.capacity,
-          unit: "tons",
-          capability: chosenTrucks[i].value.capability,
-          availableFromDateTime: thisYearDate,
-          availableToDateTime: nextYearDate,
-          ownershipType:
-            chosenTrucks[i].value.ownershipType === null
-              ? "self"
-              : chosenTrucks[i].value.ownershipType.value,
-          location: chosenTrucks[i].value.location,
-          active: true,
-          pincode: "-",
-        };
+        
+         const data = {
+           ownerId: currentUser,
+           assetType: "truck",
+           assetNumber: chosenTrucks[i].label,
+           unit: "tons",
+           features: chosenTrucks[i].features,
+           availableFromDateTime: thisYearDate,
+           availableToDateTime: nextYearDate,
+           active: true,
+           capability: chosenTrucks[i].value.capability.value,
+           capacity: chosenTrucks[i].value.capacityName.value,
+           costId: costId, 
+         };
         const payload = {
           body: data,
         };
@@ -468,9 +452,11 @@ const Assignment = (props) => {
           API.post("GoFlexeOrderPlacement", `/capacity`, payload)
             .then((response) => {
               console.log(response);
+              setLoading(false);
             })
             .catch((error) => {
               console.log(error.response);
+              setLoading(false);
             })
         );
       }
@@ -601,27 +587,14 @@ const Assignment = (props) => {
   // }
 
   const submitButtonHandler = async () => {
-    await submitNewTrucks();
+    await SubmitNewPricing();
     await submitNewDrivers();
     await includeAllTrucks();
     
-
     await trackingAssetAllocation();
     await changeTaskStatus();
     await getTrackingId();
 
-    //  submitNewDrivers();
-    //console.log(allotedDrivers)
-    // try{
-    //   await submitNewTrucks()
-    //   await includeAllTrucks()
-    //   console.log(allotedTrucks)
-    // }
-    // catch(err){
-    //   console.log(err)
-    //   alert('An error occured. Try again later')
-    // }
-    setLoading(false);
   };
   const onTruckNumberChanged = (newValue, i) => {
     var items = chosenTrucks.slice();
@@ -635,8 +608,8 @@ const Assignment = (props) => {
             capability: [],
             features : [],
             assetNumber: newValue.label,
-            location: "",
-            ownershipType: null,
+            truckPrice : null,
+           truckDistance : []
           },
           isNew: true,
           label: newValue.label,
@@ -720,6 +693,16 @@ const Assignment = (props) => {
     items[i].value.features = event;
     setChosenTrucks(items);
   }
+  const onTruckPriceChange = (event, i) => {
+    var items = chosenTrucks.slice();
+    items[i].value.truckPrice = event.target.value;
+    setChosenTrucks(items);
+  };
+  const onTruckDistanceChange = (event, i) => {
+    var items = chosenTrucks.slice();
+    items[i].value.truckDistance = event;
+    setChosenTrucks(items);
+  };
   const onLicenseIdChangeController = (event, i) => {
     var items = chosenDrivers.slice();
     items[i].licenceId = event.target.value;
@@ -818,6 +801,31 @@ const Assignment = (props) => {
               className="basic-multi-select"
               onChange={(event) => onFeaturesChange(event, i)}
               classNamePrefix="select"
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={4}></Grid>
+          <Grid item xs={12} sm={4}>
+            <Select
+              styles={selectStyles}
+              className="basic-single"
+              classNamePrefix="Distance"
+              isSearchable
+              name="Distance"
+              placeholder="Distance"
+              value={chosenTrucks[i].value.truckDistance}
+              onChange={(event) => onTruckDistanceChange(event, i)}
+              options={constants.DistanceOptions}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              size="small"
+              fullWidth
+              variant="outlined"
+              helperText={"*Immediate Pricing inclusive of GST per Trip"}
+              value={chosenTrucks[i].value.truckPrice}
+              onChange={(event) => onTruckPriceChange(event, i)}
             />
           </Grid>
 

@@ -84,10 +84,10 @@ const Track = (props) => {
       .then((resp) => {
         console.log(resp);
         setTrackingData(resp);
-        setLoading(false);
         FindStage(resp);
         getAllStageNames(resp);
         getCurrentTrackingStage(resp);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
@@ -234,9 +234,6 @@ const Track = (props) => {
     }
   }
 
-  {
-    /* <Tracking />; */
-  }
   if (Loading === true) {
     return <Spinner />;
   }

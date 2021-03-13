@@ -19,6 +19,8 @@ import WarningIcon from "@material-ui/icons/Warning";
 import Paper from "@material-ui/core/Paper";
 import Checkbox from "@material-ui/core/Checkbox";
 import { API, Auth } from "aws-amplify";
+import Element from "./Element";
+import { FormContext } from "./FormContext";
 
 const useStyles = makeStyles({
   table: {
@@ -40,6 +42,59 @@ const useStyles = makeStyles({
 });
 
 const LeftForPickupComponent = (props) => {
+
+
+
+
+
+
+
+
+
+
+   const [elements, setElements] = useState(null);
+     useEffect(() => {
+       setElements(props.Tasks);
+     }, []);
+     const { taskType, page_label } = elements ?? {};
+    
+    
+     const handleSubmit = (id, event) => {
+       console.log(elements);
+     };
+
+     const handleChange = (id, event) => {
+       var newElements = elements.slice() 
+       newElements.forEach((field) => {
+         const { taskType, taskId } = field;
+         if (id == taskId ) {
+           switch (taskType) {
+             case "checkbox":
+               field["field_value"] = event.target.checked;
+               break;
+             case "input-attachment":
+               field["field_value"] = event.target.files[0];
+               break;
+             default:
+               field["field_value"] = event.target.value;
+               break;
+           }
+         }
+       });
+      //  console.log(newElements);
+       setElements(newElements);
+       console.log(elements);
+     };
+
+
+
+
+
+
+
+
+
+
   const classes = useStyles();
   const [LeftForPickup, setLeftForPickup] = React.useState(false);
 
@@ -58,6 +113,7 @@ const LeftForPickupComponent = (props) => {
     props.ApiRequest(payload);
   };
 
+
   return (
     <div style={{ overflow: "hidden", marginTop: "20px" }}>
       <Typography
@@ -73,8 +129,22 @@ const LeftForPickupComponent = (props) => {
       >
         {props.StageName}
       </Typography>
-      <form>
-        <Grid
+      <FormContext.Provider value={{ handleChange, handleSubmit }}>
+        <div className="App container">
+          <form>
+            {" "}
+            {elements
+              ? elements.map((field, i) => (
+                  <center>
+                    {" "}
+                    <Element key={i} field={field} />
+                  </center>
+                ))
+              : null}
+          </form>
+        </div>
+      </FormContext.Provider>
+      {/* <Grid
           container
           spacing={3}
           style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}
@@ -107,7 +177,7 @@ const LeftForPickupComponent = (props) => {
             </TableHead>
           </Table>
         </TableContainer>
-      </form>
+      </form> */}
     </div>
   );
 };

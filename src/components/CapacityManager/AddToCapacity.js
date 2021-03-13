@@ -701,7 +701,6 @@ if (additionalCostDetails.routeDetails) {
           capability: basicCostDetails.capability.value,
           capacity: basicCostDetails.capacity.value,
           rangeinkms: basicCostDetails.distance.value,
-          // additionalDetails: additionalCostDetails,
           additionalDetails: {
             price: additionalCostDetails.price,
             routeDetails: tempRouteDetails,
@@ -740,7 +739,7 @@ if (additionalCostDetails.routeDetails) {
       assetType: type.value,
       assetNumber: truckNumber,
       unit: unit,
-      features: Features.value,
+      features: Features,
       availableFromDateTime: availableFrom,
       availableToDateTime: availableTo,
       active: assetActive,

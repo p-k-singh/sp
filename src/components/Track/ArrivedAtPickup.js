@@ -20,6 +20,8 @@ import Paper from "@material-ui/core/Paper";
 import Checkbox from "@material-ui/core/Checkbox";
 import { API, Auth } from "aws-amplify";
 import Spinner from "../UI/Spinner";
+import Element from "./Element";
+import { FormContext } from "./FormContext";
 
 const useStyles = makeStyles({
   table: {
@@ -41,6 +43,44 @@ const useStyles = makeStyles({
 });
 
 const ArrivedAtPickupComponent = (props) => {
+
+   const [elements, setElements] = useState(null);
+   useEffect(() => {
+     setElements(props.Tasks);
+   }, []);
+   const { taskType, page_label } = elements ?? {};
+
+   const handleSubmit = (id, event) => {
+     console.log(elements);
+   };
+
+   const handleChange = (id, event) => {
+     var newElements = elements.slice();
+     newElements.forEach((field) => {
+       const { taskType, taskId } = field;
+       if (id == taskId) {
+         switch (taskType) {
+           case "checkbox":
+             field["field_value"] = event.target.checked;
+             break;
+           case "input-attachment":
+             field["field_value"] = event.target.files[0];
+             break;
+           default:
+             field["field_value"] = event.target.value;
+             break;
+         }
+       }
+     });
+     //  console.log(newElements);
+     setElements(newElements);
+     console.log(elements);
+   };
+
+
+
+
+
   const classes = useStyles();
   const [ArrivedAtPickup, setArrivedAtPickup] = React.useState(false);
 
@@ -89,7 +129,23 @@ const ArrivedAtPickupComponent = (props) => {
       >
         {props.StageName}
       </Typography>
-      <TableContainer>
+      <FormContext.Provider value={{ handleChange, handleSubmit }}>
+        <div className="App container">
+          <form>
+            {" "}
+           
+              {elements
+                ? elements.map((field, i) => (
+                    <center>
+                      <Element key={i} field={field} />
+                    </center>
+                  ))
+                : null}
+            
+          </form>
+        </div>
+      </FormContext.Provider>
+      {/* <TableContainer>
         <Table>
           <TableHead>
             <TableRow>
@@ -121,7 +177,8 @@ const ArrivedAtPickupComponent = (props) => {
           </TableHead>
         </Table>
       </TableContainer>{" "}
-    </div>
+    </div> */}
+     </div>
   );
 };
 export default ArrivedAtPickupComponent;

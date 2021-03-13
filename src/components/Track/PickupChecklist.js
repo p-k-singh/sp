@@ -202,13 +202,13 @@ const PickupChecklist = (props) => {
               style={{ paddingTop: 10, paddingBottom: 30 }}
             >
               {elements
-                ? elements.map((field, i) => <Element key={i} field={field} />)
+                ? elements.map((field, i) => <center><Element key={i} field={field} /></center>)
                 : null}
             </Grid>
           </form>
         </div>
       </FormContext.Provider>
-
+      
       <Grid
         container
         spacing={3}
