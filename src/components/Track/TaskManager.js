@@ -209,7 +209,7 @@ const TaskManager = (props) => {
         {pendingTasks.map((eachTask) => (
           <div>
             <Accordion
-              TransitionProps={{ unmountOnExit: true }}
+              // TransitionProps={{ unmountOnExit: true }}
               style={{ marginBottom: 10 }}
             >
               <AccordionSummary
@@ -220,7 +220,7 @@ const TaskManager = (props) => {
                 <ListItem alignItems="flex-start">
                   <ListItemAvatar>
                     <Avatar>
-                      <WarningIcon />
+                      <LocalShippingIcon />
                     </Avatar>
                   </ListItemAvatar>
                   <ListItemText
@@ -230,12 +230,12 @@ const TaskManager = (props) => {
                 </ListItem>
               </AccordionSummary>{" "}
               <AccordionDetails>
-                    <Track id={eachTask.principal} />
+                <Track id={eachTask.principal} />
               </AccordionDetails>
             </Accordion>
           </div>
         ))}
-        </div>
+      </div>
       {/* <Typography className={classes.formHeadings}></Typography>
       <div className={classes.root} style={{ marginRight: 100 }}>
         <AppBar position="static">

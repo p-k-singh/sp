@@ -225,7 +225,6 @@ export default function Dashboard() {
       var orderId = JSON.parse(message.data).orderId;
       setNotifications(orderId);
       setNumberOfNotifications(numberOfNotifications + 1);
-      //console.log(message.data.orderId);
       console.log(orderId);
     };
     //console.log(user)

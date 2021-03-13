@@ -52,7 +52,7 @@ const PickupChecklist = (props) => {
     
     
      const handleSubmit = (id, event) => {
-       console.log(elements);
+       CompletePickupChecklist()
      };
 
      const handleChange = (id, event) => {
@@ -147,21 +147,50 @@ const PickupChecklist = (props) => {
       });
   };
 
+
+
   const CompletePickupChecklist = async () => {
     setLoading(true);
-    let details = props.getTrackingIds(props.TrackingData, "NUMBER_OF_UNIT");
+    let resTasks = [];
+    props.TrackingData.stages.forEach((stage) => {
+      if (stage.stageId === props.StageId) {
+        stage.tasks.forEach((task) => {
+          const resTask = {
+            taskId: task.taskId,
+            status: "NEXT",
+          };
+          resTasks.push(resTask);
+        });
+      }
+    });
+
     const data = {
       trackingId: props.TrackingData.processId,
-      stageId: details.stageId,
-      taskId: details.taskId,
-      status: "NEXT",
+      stageId: props.StageId,
+      tasks: resTasks,
     };
     const payload = {
       body: data,
     };
-    props.ApiRequest(payload);
+    props.BulkUpdateApiRequest(payload);
     setLoading(false);
   };
+
+  // const CompletePickupChecklist = async () => {
+  //   setLoading(true);
+  //   let details = props.getTrackingIds(props.TrackingData, "NUMBER_OF_UNIT");
+  //   const data = {
+  //     trackingId: props.TrackingData.processId,
+  //     stageId: details.stageId,
+  //     taskId: details.taskId,
+  //     status: "NEXT",
+  //   };
+  //   const payload = {
+  //     body: data,
+  //   };
+  //   props.BulkUpdateApiRequest(payload);
+  //   setLoading(false);
+  // };
 
   const getTaskProgress = () => {
     props.TrackingData.stages.forEach((stage) => {

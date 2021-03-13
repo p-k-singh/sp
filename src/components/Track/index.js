@@ -43,6 +43,7 @@ const Track = (props) => {
   const [AllStageNames, setAllStageNames] = React.useState([]);
   const [StageDescription, setStageDescription] = React.useState([]);
   const [CurrentStageName, setCurrentStageName] = React.useState([]);
+  const [CurrentStageId, setCurrentStageId] = React.useState("");
   const [Tasks, setTasks] = React.useState([]);
   const steps = getSteps();
 
@@ -126,6 +127,7 @@ const Track = (props) => {
         resp.stages[i].status === "PENDING"
       ) {
         setCurrentStageName(resp.stages[i].stageLabel);
+        setCurrentStageId(resp.stages[i].stageId);
         setTasks(resp.stages[i].tasks);
         break;
       }
@@ -170,6 +172,27 @@ const Track = (props) => {
       });
   }
 
+  function BulkUpdateApiRequest(payload) {
+    setLoading(true);
+    API.patch(
+      "GoFlexeOrderPlacement",
+      `/tracking?type=bulkUpdateTaskStatus`,
+      payload
+    )
+      .then((response) => {
+        console.log(response);
+        setTrackingData(response);
+        FindStage(response);
+        getCurrentTrackingStage(response);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error.response);
+        setLoading(false);
+      });
+  }
+  
+
   function getSteps() {
     return AllStageNames;
   }
@@ -183,9 +206,11 @@ const Track = (props) => {
           <LeftForPickupComponent
             getTrackingIds={getTrackingIds}
             ApiRequest={ApiRequest}
+            BulkUpdateApiRequest={BulkUpdateApiRequest}
             TrackingData={TrackingData}
             StageName={CurrentStageName}
             Tasks={Tasks}
+            StageId = {CurrentStageId}
           />
         );
       case 2:
@@ -193,9 +218,11 @@ const Track = (props) => {
           <ArrivedAtPickupComponent
             getTrackingIds={getTrackingIds}
             ApiRequest={ApiRequest}
+            BulkUpdateApiRequest={BulkUpdateApiRequest}
             TrackingData={TrackingData}
             StageName={CurrentStageName}
             Tasks={Tasks}
+            StageId={CurrentStageId}
           />
         );
       case 3:
@@ -203,9 +230,11 @@ const Track = (props) => {
           <PickupChecklist
             getTrackingIds={getTrackingIds}
             ApiRequest={ApiRequest}
+            BulkUpdateApiRequest={BulkUpdateApiRequest}
             TrackingData={TrackingData}
             StageName={CurrentStageName}
             Tasks={Tasks}
+            StageId={CurrentStageId}
           />
         );
       case 4:
@@ -213,9 +242,11 @@ const Track = (props) => {
           <ArrivedAtDrop
             getTrackingIds={getTrackingIds}
             ApiRequest={ApiRequest}
+            BulkUpdateApiRequest={BulkUpdateApiRequest}
             TrackingData={TrackingData}
             StageName={CurrentStageName}
             Tasks={Tasks}
+            StageId={CurrentStageId}
           />
         );
 
@@ -224,9 +255,11 @@ const Track = (props) => {
           <DeliveryChecklist
             getTrackingIds={getTrackingIds}
             ApiRequest={ApiRequest}
+            BulkUpdateApiRequest={BulkUpdateApiRequest}
             TrackingData={TrackingData}
             StageName={CurrentStageName}
             Tasks={Tasks}
+            StageId={CurrentStageId}
           />
         );
 
@@ -260,7 +293,7 @@ const Track = (props) => {
             <Typography className={classes.instructions}>
               {getStepContent(activeStep)}
             </Typography>
-            <div>
+            {/* <div>
               <Button
                 disabled={activeStep === 0}
                 onClick={handleBack}
@@ -271,7 +304,7 @@ const Track = (props) => {
               <Button variant="contained" color="primary" onClick={handleNext}>
                 {activeStep === steps.length - 1 ? "Finish" : "Next"}
               </Button>
-            </div>
+            </div> */}
           </div>
         )}
       </div>

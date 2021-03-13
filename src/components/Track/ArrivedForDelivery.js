@@ -53,7 +53,7 @@ const ArrivedAtDrop = (props) => {
    const { taskType, page_label } = elements ?? {};
 
    const handleSubmit = (id, event) => {
-     console.log(elements);
+      CompleteArrivedAtDrop()
    };
 
    const handleChange = (id, event) => {

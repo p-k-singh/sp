@@ -51,7 +51,7 @@ const DeliveryChecklist = (props) => {
 
 
    const handleSubmit = (id, event) => {
-     console.log(elements);
+   CompleteDeliveryChecklist()
    };
 
    const handleChange = (id, event) => {
@@ -146,22 +146,47 @@ const DeliveryChecklist = (props) => {
   };
 
 
+  // const CompleteDeliveryChecklist = async () => {
+  //   let details = props.getTrackingIds(
+  //     props.TrackingData,
+  //     "DELIVERY_CHECKLIST"
+  //   );
+  //   const data = {
+  //     trackingId: props.TrackingData.processId,
+  //     stageId: details.stageId,
+  //     taskId: details.taskId,
+  //     status: "NEXT",
+  //   };
+  //   const payload = {
+  //     body: data,
+  //   };
+  //   props.ApiRequest(payload);
+  // };
   const CompleteDeliveryChecklist = async () => {
-    let details = props.getTrackingIds(
-      props.TrackingData,
-      "DELIVERY_CHECKLIST"
-    );
+    let resTasks = [];
+    props.TrackingData.stages.forEach((stage) => {
+      if (stage.stageId === props.StageId) {
+        stage.tasks.forEach((task) => {
+          const resTask = {
+            taskId: task.taskId,
+            status: "NEXT",
+          };
+          resTasks.push(resTask);
+        });
+      }
+    });
+
     const data = {
       trackingId: props.TrackingData.processId,
-      stageId: details.stageId,
-      taskId: details.taskId,
-      status: "NEXT",
+      stageId: props.StageId,
+      tasks: resTasks,
     };
     const payload = {
       body: data,
     };
-    props.ApiRequest(payload);
+    props.BulkUpdateApiRequest(payload);
   };
+
 
   const getTaskProgress = () => {
     props.TrackingData.stages.forEach((stage) => {
@@ -210,7 +235,7 @@ const DeliveryChecklist = (props) => {
         </div>
       </FormContext.Provider>
 
-      <form>
+      {/* <form>
         <Accordion expanded={DeliveryChecklistPending}>
           <AccordionSummary
             style={{
@@ -429,7 +454,7 @@ const DeliveryChecklist = (props) => {
             </Grid>
           </AccordionDetails>
         </Accordion>
-      </form>
+      </form> */}
     </div>
   );
 };
