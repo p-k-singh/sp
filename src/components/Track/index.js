@@ -161,6 +161,7 @@ const Track = (props) => {
         console.log(response);
         setTrackingData(response);
         FindStage(response);
+        getCurrentTrackingStage(response);
         setLoading(false);
       })
       .catch((error) => {

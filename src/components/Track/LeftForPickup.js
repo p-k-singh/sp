@@ -61,6 +61,7 @@ const LeftForPickupComponent = (props) => {
     
      const handleSubmit = (id, event) => {
        console.log(elements);
+       CompleteLeftforpickup();
      };
 
      const handleChange = (id, event) => {
@@ -116,68 +117,51 @@ const LeftForPickupComponent = (props) => {
 
   return (
     <div style={{ overflow: "hidden", marginTop: "20px" }}>
-      <Typography
-        style={{
-          borderBottom: `1px solid black`,
-          fontSize: 20,
-          height: 50,
-          padding: 10,
-          paddingLeft: 30,
-          fontWeight: 700,
-        }}
-        fullWidth
-      >
-        {props.StageName}
-      </Typography>
-      <FormContext.Provider value={{ handleChange, handleSubmit }}>
-        <div className="App container">
-          <form>
-            {" "}
-            {elements
-              ? elements.map((field, i) => (
-                  <center>
-                    {" "}
-                    <Element key={i} field={field} />
-                  </center>
-                ))
-              : null}
-          </form>
-        </div>
-      </FormContext.Provider>
-      {/* <Grid
-          container
-          spacing={3}
-          style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}
-        ></Grid>
-        <TableContainer component={Paper} fullWidth>
-          <Table aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  <Radio
-                    color="primary"
-                    disabled={LeftForPickup == true ? true : false}
-                    onChange={(e) => {
-                      setLeftForPickup(e.target.checked);
-                      CompleteLeftforpickup();
-                    }}
-                  />
-                </TableCell>
-                <TableCell
-                  align="left"
+      <TableContainer>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                <Typography
                   style={{
                     fontSize: 20,
                     height: 50,
                     padding: 10,
+                    paddingLeft: 50,
+                    fontWeight: 700,
                   }}
+                  fullWidth
                 >
-                  {props.Tasks[0].taskLabel}
-                </TableCell>
-              </TableRow>
-            </TableHead>
-          </Table>
-        </TableContainer>
-      </form> */}
+                  {props.StageName}
+                </Typography>
+              </TableCell>
+              <TableCell
+                align="left"
+                style={{
+                  fontSize: 20,
+                  height: 50,
+                  padding: 10,
+                }}
+              >
+                <FormContext.Provider value={{ handleChange, handleSubmit }}>
+                  <div className="App container">
+                    <form>
+                      {" "}
+                      {elements
+                        ? elements.map((field, i) => (
+                            <center>
+                              <Element key={i} field={field} />
+                            </center>
+                          ))
+                        : null}
+                    </form>
+                  </div>
+                </FormContext.Provider>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+        </Table>
+      </TableContainer>{" "}
     </div>
   );
 };

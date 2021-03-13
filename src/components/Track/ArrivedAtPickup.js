@@ -51,7 +51,7 @@ const ArrivedAtPickupComponent = (props) => {
    const { taskType, page_label } = elements ?? {};
 
    const handleSubmit = (id, event) => {
-     console.log(elements);
+    CompleteArrivedAtPickup()
    };
 
    const handleChange = (id, event) => {
@@ -116,52 +116,24 @@ const ArrivedAtPickupComponent = (props) => {
 
   return (
     <div style={{ overflow: "hidden", marginTop: "20px" }}>
-      <Typography
-        style={{
-          borderBottom: `1px solid black`,
-          fontSize: 20,
-          height: 50,
-          padding: 10,
-          paddingLeft: 30,
-          fontWeight: 700,
-        }}
-        fullWidth
-      >
-        {props.StageName}
-      </Typography>
-      <FormContext.Provider value={{ handleChange, handleSubmit }}>
-        <div className="App container">
-          <form>
-            {" "}
-           
-              {elements
-                ? elements.map((field, i) => (
-                    <center>
-                      <Element key={i} field={field} />
-                    </center>
-                  ))
-                : null}
-            
-          </form>
-        </div>
-      </FormContext.Provider>
-      {/* <TableContainer>
+      <TableContainer>
         <Table>
           <TableHead>
             <TableRow>
               <TableCell>
-                <Radio
-                  disabled={ArrivedAtPickup == true ? true : false}
-                  value="checkedA"
-                  checked={ArrivedAtPickup == true ? true : false}
-                  onChange={(e) => {
-                    setArrivedAtPickup(e.target.checked);
-                    CompleteArrivedAtPickup();
+                <Typography
+                  style={{
+                   
+                    fontSize: 20,
+                    height: 50,
+                    padding: 10,
+                    paddingLeft: 50,
+                    fontWeight: 700,
                   }}
-                  size="small"
-                  color="primary"
-                  inputProps={{ "aria-label": "secondary checkbox" }}
-                />
+                  fullWidth
+                >
+                  {props.StageName}
+                </Typography>
               </TableCell>
               <TableCell
                 align="left"
@@ -171,14 +143,26 @@ const ArrivedAtPickupComponent = (props) => {
                   padding: 10,
                 }}
               >
-                {props.Tasks[0].taskLabel}
+                <FormContext.Provider value={{ handleChange, handleSubmit }}>
+                  <div className="App container">
+                    <form>
+                      {" "}
+                      {elements
+                        ? elements.map((field, i) => (
+                            <center>
+                              <Element key={i} field={field} />
+                            </center>
+                          ))
+                        : null}
+                    </form>
+                  </div>
+                </FormContext.Provider>
               </TableCell>
             </TableRow>
           </TableHead>
         </Table>
       </TableContainer>{" "}
-    </div> */}
-     </div>
+    </div>
   );
 };
 export default ArrivedAtPickupComponent;

@@ -140,73 +140,54 @@ const ArrivedAtDrop = (props) => {
     });
   };
 
-  return (
-    <div style={{ overflow: "hidden", marginTop: "20px" }}>
-      <Typography
-        style={{
-          borderBottom: `1px solid black`,
-          fontSize: 20,
-          height: 50,
-          padding: 10,
-          paddingLeft: 30,
-          fontWeight: 700,
-        }}
-        fullWidth
-      >
-        {props.StageName}
-      </Typography>
-      <FormContext.Provider value={{ handleChange, handleSubmit }}>
-        <div className="App container">
-          <form>
-            {" "}
-            
-              {elements
-                ? elements.map((field, i) => (
-                    <center>
-                      <Element key={i} field={field} />
-                    </center>
-                  ))
-                : null}
-            
-          </form>
-        </div>
-      </FormContext.Provider>
-
-      {/* <form>
-        <TableContainer component={Paper}>
-          <Table aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  <Radio
-                    value="checkedA"
-                    disabled={ArrivedAtDrop == true ? true : false}
-                    checked={ArrivedAtDrop == true ? true : false}
-                    onChange={(e) => {
-                      setArrivedAtDrop(e.target.checked);
-                      CompleteArrivedAtDrop();
-                    }}
-                    size="small"
-                    color="primary"
-                    inputProps={{ "aria-label": "secondary Radio" }}
-                  />
-                </TableCell>
-                <TableCell
-                  align="left"
-                  style={{
-                    fontSize: 20,
-                    height: 50,
-                    padding: 10,
-                  }}
-                >
-                  {props.Tasks[0].taskLabel}
-                </TableCell>
-              </TableRow>
-            </TableHead>
-          </Table>
-        </TableContainer>
-      </form> */}
-    </div>
-  );
+   return (
+     <div style={{ overflow: "hidden", marginTop: "20px" }}>
+       <TableContainer>
+         <Table>
+           <TableHead>
+             <TableRow>
+               <TableCell>
+                 <Typography
+                   style={{
+                     fontSize: 20,
+                     height: 50,
+                     padding: 10,
+                     paddingLeft: 50,
+                     fontWeight: 700,
+                   }}
+                   fullWidth
+                 >
+                   {props.StageName}
+                 </Typography>
+               </TableCell>
+               <TableCell
+                 align="left"
+                 style={{
+                   fontSize: 20,
+                   height: 50,
+                   padding: 10,
+                 }}
+               >
+                 <FormContext.Provider value={{ handleChange, handleSubmit }}>
+                   <div className="App container">
+                     <form>
+                       {" "}
+                       {elements
+                         ? elements.map((field, i) => (
+                             <center>
+                               <Element key={i} field={field} />
+                             </center>
+                           ))
+                         : null}
+                     </form>
+                   </div>
+                 </FormContext.Provider>
+               </TableCell>
+             </TableRow>
+           </TableHead>
+         </Table>
+       </TableContainer>{" "}
+     </div>
+   );
 };
 export default ArrivedAtDrop;

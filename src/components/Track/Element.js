@@ -4,6 +4,7 @@ import TextInput from "./Elements/TextInput";
 import NumberInput from "./Elements/NumberInput";
 import SubmitDocument from "./Elements/SubmitDoc";
 import SubmitButton from "./Elements/SubmitButton";
+import NextButton from "./Elements/Next Button";
 
 
 const Element = ({
@@ -26,6 +27,15 @@ const Element = ({
           field_value={field_value}
         />
       );
+    case "button":
+      return (
+        <NextButton
+          field_id={taskId}
+          field_label={taskLabel}
+          field_value={field_value}
+        />
+      );
+
     case "submit-button":
       return (
         <SubmitButton
