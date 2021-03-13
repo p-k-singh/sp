@@ -63,6 +63,7 @@ import { PureComponent } from "react";
 import { Sector, Cell } from "recharts";
 import { PieChart, Pie } from "recharts";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import Spinner from "../UI/Spinner";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -123,7 +124,7 @@ const Home = (props) => {
   const [loading, setLoading] = React.useState(false);
 
   function loadData() {
-    setLoading("true");
+    setLoading(true);
     Auth.currentUserInfo()
       .then((userDetails) => {
         const payload = {
@@ -189,6 +190,12 @@ const Home = (props) => {
       );
     });
   };
+
+  if (loading == true){
+    return(
+      <Spinner/>
+    )
+  }
 
   return (
     <div>
