@@ -83,7 +83,7 @@ const PaymentIndex = (props) => {
   if (data !== null && data.paymentOption !== null) {
     return <ShowPaymentDetails data={data} />;
   } else {
-    return <h1>Payment Pending</h1>;
+    return <center><h1>Payment Pending</h1></center>;
   }
 };
 export default PaymentIndex;

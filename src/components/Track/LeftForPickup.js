@@ -19,6 +19,8 @@ import WarningIcon from "@material-ui/icons/Warning";
 import Paper from "@material-ui/core/Paper";
 import Checkbox from "@material-ui/core/Checkbox";
 import { API, Auth } from "aws-amplify";
+import Element from "./Element";
+import { FormContext } from "./FormContext";
 
 const useStyles = makeStyles({
   table: {
@@ -40,6 +42,60 @@ const useStyles = makeStyles({
 });
 
 const LeftForPickupComponent = (props) => {
+
+
+
+
+
+
+
+
+
+
+   const [elements, setElements] = useState(null);
+     useEffect(() => {
+       setElements(props.Tasks);
+     }, []);
+     const { taskType, page_label } = elements ?? {};
+    
+    
+     const handleSubmit = (id, event) => {
+       console.log(elements);
+       CompleteLeftforpickup();
+     };
+
+     const handleChange = (id, event) => {
+       var newElements = elements.slice() 
+       newElements.forEach((field) => {
+         const { taskType, taskId } = field;
+         if (id == taskId ) {
+           switch (taskType) {
+             case "checkbox":
+               field["field_value"] = event.target.checked;
+               break;
+             case "input-attachment":
+               field["field_value"] = event.target.files[0];
+               break;
+             default:
+               field["field_value"] = event.target.value;
+               break;
+           }
+         }
+       });
+      //  console.log(newElements);
+       setElements(newElements);
+       console.log(elements);
+     };
+
+
+
+
+
+
+
+
+
+
   const classes = useStyles();
   const [LeftForPickup, setLeftForPickup] = React.useState(false);
 
@@ -58,56 +114,54 @@ const LeftForPickupComponent = (props) => {
     props.ApiRequest(payload);
   };
 
+
   return (
     <div style={{ overflow: "hidden", marginTop: "20px" }}>
-      <Typography
-        style={{
-          borderBottom: `1px solid black`,
-          fontSize: 20,
-          height: 50,
-          padding: 10,
-          paddingLeft: 30,
-          fontWeight: 700,
-        }}
-        fullWidth
-      >
-        Pickup in Progress
-      </Typography>
-      <form>
-        <Grid
-          container
-          spacing={3}
-          style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}
-        ></Grid>
-        <TableContainer component={Paper} fullWidth>
-          <Table aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  <Radio
-                    color="primary"
-                    disabled={LeftForPickup == true ? true : false}
-                    onChange={(e) => {
-                      setLeftForPickup(e.target.checked);
-                      CompleteLeftforpickup();
-                    }}
-                  />
-                </TableCell>
-                <TableCell
-                  align="left"
+      <TableContainer>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                <Typography
                   style={{
                     fontSize: 20,
                     height: 50,
                     padding: 10,
+                    paddingLeft: 50,
+                    fontWeight: 700,
                   }}
+                  fullWidth
                 >
-                  Left for Pickup
-                </TableCell>
-              </TableRow>
-            </TableHead>
-          </Table>
-        </TableContainer>
-      </form>
+                  {props.StageName}
+                </Typography>
+              </TableCell>
+              <TableCell
+                align="left"
+                style={{
+                  fontSize: 20,
+                  height: 50,
+                  padding: 10,
+                }}
+              >
+                <FormContext.Provider value={{ handleChange, handleSubmit }}>
+                  <div className="App container">
+                    <form>
+                      {" "}
+                      {elements
+                        ? elements.map((field, i) => (
+                            <center>
+                              <Element key={i} field={field} />
+                            </center>
+                          ))
+                        : null}
+                    </form>
+                  </div>
+                </FormContext.Provider>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+        </Table>
+      </TableContainer>{" "}
     </div>
   );
 };

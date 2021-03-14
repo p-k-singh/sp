@@ -236,99 +236,162 @@ const Login = (props) =>  {
 
 
         return (
-                <React.Fragment>
-                <header className="header">
-                <nav className="navbar navbar-expand-lg navbar-light py-3">
+          <React.Fragment>
+            <header className="header">
+              <nav className="navbar navbar-expand-lg navbar-light py-3">
                 <div className="container">
-
-                {/* <a href="#" className="navbar-brand">
+                  {/* <a href="#" className="navbar-brand">
                     <img src="https://res.cloudinary.com/mhmd/image/upload/v1571398888/Group_1514_tjekh3_zkts1c.svg" alt="logo" width="150" />
                 </a> */}
-                <a href="#" className="navbar-brand">
+                  <a href="#" className="navbar-brand">
                     GoFlexe
-                </a>
+                  </a>
                 </div>
-                </nav>
-                </header>
+              </nav>
+            </header>
 
-
-                <div className="container">
-                    <div className="row py-5 mt-4 align-items-center">
-
+            <div className="container">
+              <div className="row py-5 mt-4 align-items-center">
                 <div className="col-md-5 pr-lg-5 mb-5 mb-md-0">
-                <img src="https://res.cloudinary.com/mhmd/image/upload/v1569543678/form_d9sh6m.svg" alt="" className="img-fluid mb-3 d-none d-md-block" />
-                <h1>Login to your Account</h1>
-                
+                  <img
+                    src="https://res.cloudinary.com/mhmd/image/upload/v1569543678/form_d9sh6m.svg"
+                    alt=""
+                    className="img-fluid mb-3 d-none d-md-block"
+                  />
+                  <h1>Login to your Account</h1>
                 </div>
-
 
                 <div className="col-md-7 col-lg-6 ml-auto">
-                <form>
-                <h3>Sign In</h3>
+                  <form>
+                    <h3>Sign In</h3>
 
-                <div className="form-group">
-                    <Input value={email} onChange={(event) => onEmailChangeController(event)} disableUnderline='true' type="email" className="form-control" placeholder="Enter email or phone"  />
-                </div>
-                
-               {!getOTP && <div className="form-group">
-                    <Input value={password} onChange={(event) => onPasswordChangeController(event)} disableUnderline='true' type="password" className="form-control" placeholder="Enter password" />
-                    {/* <input type="password" className="form-control" placeholder="Enter password" /> */}
-                </div>}
-
-                <div className="row">
-
-                    {!getOTP && <Button onClick={handleGetOTP}
-                    className="col col-sm-3 ml-3" variant='contained' 
-                    style={{marginBottom:'20px' }} color='primary' >Login by OTP</Button>
-                    }
-                    { getOTP && resend &&
-                        <Button onClick={handleGetOTP}
-                        className="col col-sm-3 ml-3" variant='contained' 
-                        style={{marginBottom:'20px' }} color='primary' >Resend</Button>
-                    }
-                    {
-                        getOTP && !resend &&
-                        <Button onClick={handleGetOTP}
-                        disabled='true'
-                        className="col col-sm-3 ml-3" variant='contained' 
-                        style={{marginBottom:'20px', fontSize:'12px' }} color='default' >Resend in 00:{timeLeft}</Button>
-                    }
-                    { getOTP && 
-                        <div className="form-group col col-sm">
-                        <Input 
-                        value={otp} disableUnderline='true' type="tel" 
-                        onChange={handleOTPChange} className="form-control" 
-                        placeholder="Enter OTP"  />
-                        </div>
-                    }
-                    
-                </div>
-               
-
-                <div className="form-group">
-                    <div className="custom-control custom-checkbox">
-                        <input type="checkbox" className="custom-control-input" id="customCheck1" />
-                        <label className="custom-control-label" htmlFor="customCheck1">Remember me</label>
+                    <div className="form-group">
+                      <Input
+                        value={email}
+                        onChange={(event) => onEmailChangeController(event)}
+                        disableUnderline="true"
+                        type="email"
+                        className="form-control"
+                        placeholder="Enter email or phone"
+                      />
                     </div>
+
+                    {!getOTP && (
+                      <div className="form-group">
+                        <Input
+                          value={password}
+                          onChange={(event) =>
+                            onPasswordChangeController(event)
+                          }
+                          disableUnderline="true"
+                          type="password"
+                          className="form-control"
+                          placeholder="Enter password"
+                        />
+                        {/* <input type="password" className="form-control" placeholder="Enter password" /> */}
+                      </div>
+                    )}
+
+                    <div className="row">
+                      {getOTP && resend && (
+                        <Button
+                          onClick={handleGetOTP}
+                          className="col col-sm-3 ml-3"
+                          variant="contained"
+                          style={{ marginBottom: "20px" }}
+                          color="primary"
+                        >
+                          Resend
+                        </Button>
+                      )}
+                      {getOTP && !resend && (
+                        <Button
+                          onClick={handleGetOTP}
+                          disabled="true"
+                          className="col col-sm-3 ml-3"
+                          variant="contained"
+                          style={{ marginBottom: "20px", fontSize: "12px" }}
+                          color="default"
+                        >
+                          Resend in 00:{timeLeft}
+                        </Button>
+                      )}
+                      {getOTP && (
+                        <div className="form-group col col-sm">
+                          <Input
+                            value={otp}
+                            disableUnderline="true"
+                            type="tel"
+                            onChange={handleOTPChange}
+                            className="form-control"
+                            placeholder="Enter OTP"
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="form-group">
+                      <div className="custom-control custom-checkbox">
+                        <input
+                          type="checkbox"
+                          className="custom-control-input"
+                          id="customCheck1"
+                        />
+                        <label
+                          className="custom-control-label"
+                          htmlFor="customCheck1"
+                        >
+                          Remember me
+                        </label>
+                      </div>
+                    </div>
+                    {getOTP && (
+                      <Button
+                        onClick={submitOTPLogin}
+                        variant="contained"
+                        color="primary"
+                        className="btn btn-primary btn-block"
+                      >
+                        Submit
+                      </Button>
+                    )}
+                    {!getOTP && (
+                      <Button
+                        onClick={submitLogin}
+                        variant="contained"
+                        color="primary"
+                        className="btn btn-primary btn-block"
+                      >
+                        Submit
+                      </Button>
+                    )}
+                    {/* <button onClick={submitLogin} type="submit" className="btn btn-primary btn-block">Submit</button> */}
+                    {!getOTP && (
+                      <Button
+                        onClick={handleGetOTP}
+                       
+                      
+                        style={{margin:0,marginTop:20 }}
+                        color="primary"
+                      >
+                        Login by OTP
+                      </Button>
+                    )}
+                    <p className="forgot-password text-right">
+                      <Link to="/resetPassword">Forgot Password?</Link>
+                    </p>
+                    <Link
+                      to="/signup"
+                      style={{ float: "right" }}
+                      className="forgot-password text-right"
+                    >
+                      Sign up
+                    </Link>
+                  </form>
                 </div>
-                {getOTP && <Button  onClick={submitOTPLogin} variant='contained' color='primary' className="btn btn-primary btn-block" >Submit</Button>}
-                {!getOTP && <Button  onClick={submitLogin} variant='contained' color='primary' className="btn btn-primary btn-block" >Submit</Button>}
-                {/* <button onClick={submitLogin} type="submit" className="btn btn-primary btn-block">Submit</button> */}
-                <p className="forgot-password text-right">
-                     <Link to='/resetPassword'>Forgot Password?</Link>
-                </p>
-                <Link to='/signup' style={{float:'right'}} className="forgot-password text-right">
-                    Sign up
-                </Link>
-                
-                
-            </form>
-</div>
-</div>
-</div>
-
-
-</React.Fragment>
+              </div>
+            </div>
+          </React.Fragment>
         );
     }
 

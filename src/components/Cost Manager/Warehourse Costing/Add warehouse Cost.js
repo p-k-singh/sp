@@ -68,104 +68,72 @@ const useStyles = makeStyles({
 
 const AddWarehouseCost = (props) => {
   const classes = useStyles();
-  const [deliveryCommitment, setdeliveryCommitment] = React.useState(0);
   const [currentUser, setCurrentUser] = useState(null);
-  const handleSliderChange = (event, newValue, i) => {
-    var items = chosenProducts.slice();
-    items[i].additionalDetails.deliveryCommitment = newValue;
-    setChosenProducts(items);
-    setdeliveryCommitment(newValue);
-  };
-  const [Area, setArea] = useState("");
-  const [deliveryArea, setDeliveryArea] = useState("");
-  const [ZipValidator, setZipValidator] = useState("");
-  const [PinData, setPinData] = useState([]);
-  const onAreaChangeController = (event) => {
-    setArea(event.target.value);
-  };
+  
 
-  const onPinChangeController = (event) => {
-    var PinPinCode = parseInt(event.target.value, 10);
-    if (PinPinCode < 0) {
-      setZipValidator("Cannot be a negative value");
+   const onAreaChangeController = (event, i) => {
+     var items = chosenProducts.slice();
+     items[i].locationArea = event;
+     setChosenProducts(items);
+   };
 
-      return;
-    } else {
-      setZipValidator("");
-    }
-    var count = 0,
-      temp = PinPinCode;
-    while (temp > 0) {
-      count++;
-      temp = Math.floor(temp / 10);
-    }
-    if (count == 6) {
-      const api_url = "https://api.postalpincode.in/pincode/" + PinPinCode;
+ const onLocationChangeController = (event, i, j) => {
+   var PinCode = parseInt(event.target.value, 10);
+   var items = chosenProducts.slice();
+   if (PinCode < 0) {
+     items[i].ZipValidator =
+       "Cannot be a negative value";
+     setChosenProducts(items);
+     return;
+   } else {
+     items[i].ZipValidator = "";
+   }
+   var count = 0,
+     temp = PinCode;
+   while (temp > 0) {
+     count++;
+     temp = Math.floor(temp / 10);
+   }
+   items[i].location = event.target.value;
 
-      // Defining async function
-      async function getapi(url) {
-        // Storing response
+   if (count === 6) {
+     const api_url = "https://api.postalpincode.in/pincode/" + PinCode;
+     fetch(api_url)
+       .then((response) => {
+         response.json().then((data) => {
+           if (data !== null && data[0].PostOffice !== null) {
+             items[i].pinData = data[0].PostOffice;
+           }
+           setChosenProducts(items);
+         });
+       })
+       .catch((err) => {
+         console.log(err);
+         setChosenProducts(items);
+       });
+   } else {
+     items[i].ZipValidator =
+       "Pin must be of 6 digits";
+     setChosenProducts(items);
+   }
+ };
 
-        const response = await fetch(url);
-
-        // Storing data in form of JSON
-        var data = await response.json();
-        console.log(data);
-        setPinData(
-          data !== null && data[0].PostOffice !== null ? data[0].PostOffice : ""
-        );
-      }
-      // Calling that async function
-      getapi(api_url);
-    }
-    if (count !== 6) {
-      setZipValidator("Must be of six digits");
-    } else {
-      setZipValidator("");
-    }
-  };
-
-  const handleInputChange = (event, i) => {
-    setdeliveryCommitment(
-      event.target.value === "" ? "" : Number(event.target.value)
-    );
-    // var items = chosenProducts.slice();
-    // items[i].deliveryCommitment = event.target.value;
-    // setChosenProducts(items);
-    // alert(event.target.value);
-  };
-
-  const handleBlur = () => {
-    if (deliveryCommitment < 0) {
-      setdeliveryCommitment(0);
-    } else if (deliveryCommitment > 100) {
-      setdeliveryCommitment(100);
-    }
-  };
 
   const [chosenProducts, setChosenProducts] = useState([
     {
-      capability: null,
+      features: [],
       capacity: null,
-      rangeinKms: null,
       pricing: null,
+      location: "",
       details: false,
-      additionalDetails: {
-        sourceLocation: "",
-        destinationLocation: "",
-        thirtyDaysPricing: null,
-        immediatePricing: null,
-        deliveryCommitment: 0,
-      },
+      ZipValidator: "",
+      locationArea :"",
+      pinData: [],
     },
   ]);
 
   const [capability, setCapability] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  const capabilityOptions = {
-    options: constants.capabilityOptions,
-  };
   const [redirect, setRedirect] = useState(false);
 
   const handleItemDeleted = (i) => {
@@ -176,18 +144,14 @@ const AddWarehouseCost = (props) => {
   const addproduct = () => {
     var items = chosenProducts.slice();
     items.push({
-      capability: null,
+      features: [],
       capacity: null,
-      rangeinKms: null,
       pricing: null,
+      location: "",
       details: false,
-      additionalDetails: {
-        sourceLocation: "",
-        destinationLocation: "",
-        thirtyDaysPricing: null,
-        immediatePricing: null,
-        deliveryCommitment: 0,
-      },
+      ZipValidator:"",
+      locationArea:"",
+      pinData: [],
     });
     setChosenProducts(items);
   };
@@ -197,45 +161,21 @@ const AddWarehouseCost = (props) => {
       zIndex: 100,
     }),
   };
-  const onsourceLocationChangeController = (event, i) => {
-    var items = chosenProducts.slice();
-    items[i].additionalDetails.sourceLocation = event.target.value;
-    setChosenProducts(items);
-  };
-  const onDestinationLocationChangeController = (event, i) => {
-    var items = chosenProducts.slice();
-    items[i].additionalDetails.destinationLocation = event.target.value;
-    setChosenProducts(items);
-  };
-  const onImmediatePricingChangeController = (event, i) => {
-    var items = chosenProducts.slice();
-    items[i].additionalDetails.immediatePricing = event.target.value;
-    setChosenProducts(items);
-  };
-  const onThirtyDaysPricingController = (event, i) => {
-    var items = chosenProducts.slice();
-    items[i].additionalDetails.thirtyDaysPricing = event.target.value;
-    setChosenProducts(items);
-  };
+ 
   const onPricingController = (event, i) => {
     var items = chosenProducts.slice();
     items[i].pricing = event.target.value;
     setChosenProducts(items);
   };
 
-  const onCapabilitiesChange = (event, i) => {
+  const onFeaturesChange = (event,i) => {
     var items = chosenProducts.slice();
-    items[i].capability = event;
-    setChosenProducts(items);
-  };
-  const onRangeinKmsChange = (event, i) => {
-    var items = chosenProducts.slice();
-    items[i].rangeinKms = event;
-    setChosenProducts(items);
+     items[i].features = event;
+     setChosenProducts(items);
   };
   const onCapacityChange = (event, i) => {
     var items = chosenProducts.slice();
-    items[i].capacity = event;
+    items[i].capacity = event.target.value;
     setChosenProducts(items);
   };
   useEffect(() => {
@@ -253,21 +193,12 @@ const AddWarehouseCost = (props) => {
     for (var i = 0; i < chosenProducts.length; i++) {
       const data = {
         serviceProviderId: currentUser,
-        assetType: "truck",
-        capability: chosenProducts[i].capability.value,
-        capacity: chosenProducts[i].capacity.value,
-        rangeinkms: chosenProducts[i].rangeinKms.value,
-        price:
-          chosenProducts[i].details !== true ? chosenProducts[i].pricing : null,
-        additionalDetails: chosenProducts[i].additionalDetails,
-        sourceLocation: chosenProducts[i].additionalDetails.sourceLocation,
-        destinationLocation:
-          chosenProducts[i].additionalDetails.destinationLocation,
-        thirtyDaysPricing:
-          chosenProducts[i].additionalDetails.thirtyDaysPricing,
-        immediatePricing: chosenProducts[i].additionalDetails.immediatePricing,
-        deliveryCommitment:
-          chosenProducts[i].additionalDetails.deliveryCommitment,
+        assetType: "warehouse",
+        capacity: chosenProducts[i].capacity,
+        price:chosenProducts[i].pricing,
+        features: chosenProducts[i].features,
+        locationArea: chosenProducts[i].locationArea,
+        Location: chosenProducts[i].location,
       };
       const payload = {
         body: data,
@@ -294,32 +225,7 @@ const AddWarehouseCost = (props) => {
     setCapability(items);
   };
 
-  const renderCapabilityForm = () => {
-    return (
-      <Container style={{ marginTop: 20 }}>
-        <Grid
-          container
-          spacing={3}
-          style={{ paddingLeft: 50, paddingRight: 50, paddingBottom: 10 }}
-        >
-          {capability.map((row, idx) => (
-            <Grid item xs={12} sm={4}>
-              <TextField
-                value={row.data}
-                id={row.label}
-                name={row.value}
-                onChange={(event) => setCapabilityKeyValues(event, idx)}
-                label={row.label}
-                helperText={row.unit}
-              />
-            </Grid>
-          ))}
-          <Grid item xs={12} sm={4}></Grid>
-        </Grid>
-      </Container>
-      // </Card>
-    );
-  };
+
   if (loading === true) {
     return <Spinner />;
   }
@@ -334,11 +240,8 @@ const AddWarehouseCost = (props) => {
         alignItems="center"
         style={{ paddingBottom: 20 }}
       >
-        {/* <Grid item>
-          <h5>Costing {i + 1} Information</h5>
-        </Grid> */}
         <Grid item xs={12} sm={10}></Grid>
-        {/* <Grid item>
+        <Grid item>
           {i == 0 ? (
             ""
           ) : (
@@ -346,19 +249,21 @@ const AddWarehouseCost = (props) => {
               <DeleteIcon style={{ fontSize: "30" }} />
             </IconButton>
           )}
-        </Grid> */}
+        </Grid>
       </Grid>
       <Grid container spacing={3} style={{ paddingLeft: 40, paddingRight: 40 }}>
         <Grid item xs={12} sm={3}>
           <TextField
             required
-            error={ZipValidator !== ""}
+            error={chosenProducts[i].ZipValidator !== ""}
             helperText={
-              ZipValidator === ""
-                ? PinData == ""
+              chosenProducts[i].ZipValidator === ""
+                ? chosenProducts[i].pinData == ""
                   ? ""
-                  : PinData[0].District + ", " + PinData[0].State
-                : ZipValidator
+                  : chosenProducts[i].pinData[0].District +
+                    ", " +
+                    chosenProducts[i].pinData[0].State
+                : chosenProducts[i].ZipValidator
             }
             type="number"
             id="PinCode
@@ -366,27 +271,27 @@ const AddWarehouseCost = (props) => {
             PinCode
             variant="outlined"
             size="small"
-            label="Location"
+            label="Location Zip Code"
             fullWidth
-            // value={props.pickupPin}
-            onChange={(event) => onPinChangeController(event)}
+            value={chosenProducts[i].location}
+            onChange={(event) => onLocationChangeController(event, i)}
             autoComplete="Pickup postal-code"
           />
         </Grid>
-        {PinData.length !== 0 ? (
+        {chosenProducts[i].pinData.length !== 0 ? (
           <Grid item xs={12} sm={3}>
             <MaterialSelect
               autoWidth={true}
               fullWidth
               native
               onChange={(event) => onAreaChangeController(event)}
-              value={Area}
+              value={chosenProducts[i].locationArea}
               inputProps={{
                 name: "age",
                 id: "age-native-simple",
               }}
             >
-              {PinData.map((d) => (
+              {chosenProducts[i].pinData.map((d) => (
                 <option>{d.Name}</option>
               ))}
             </MaterialSelect>
@@ -402,8 +307,8 @@ const AddWarehouseCost = (props) => {
             name="Capacity"
             label="Capacity"
             fullWidth
-            value={chosenProducts[i].additionalDetails.sourceLocation}
-            onChange={(event) => onsourceLocationChangeController(event, i)}
+            value={chosenProducts[i].capacity}
+            onChange={(event) => onCapacityChange(event, i)}
             variant="outlined"
             size="small"
             InputProps={{
@@ -414,26 +319,56 @@ const AddWarehouseCost = (props) => {
             autoComplete="shipping address-line1"
           />
         </Grid>
+        <Grid item xs={12} sm={3}>
+          <TextField
+            fullWidth
+            label="Duration"
+            type="number"
+            helperText={""}
+            value={chosenProducts[i].pricing}
+            onChange={(event) => onPricingController(event, i)}
+            variant="outlined"
+            size="small"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">Days</InputAdornment>
+              ),
+            }}
+          />
+        </Grid>
 
-        {chosenProducts[i].details == false ? (
-          <Grid item xs={12} sm={3}>
-            <TextField
-              fullWidth
-              label="Pricing"
-              type="number"
-              helperText={"Inclusive of GST"}
-              value={chosenProducts[i].pricing}
-              onChange={(event) => onPricingController(event, i)}
-              variant="outlined"
-              size="small"
-              InputProps={{
-                endAdornment: <InputAdornment position="end">₹</InputAdornment>,
-              }}
-            />
-          </Grid>
-        ) : (
-          <p></p>
-        )}
+        <Grid item xs={12} sm={3}>
+          <TextField
+            fullWidth
+            label="Price / Metric Ton"
+            type="number"
+            helperText={"Inclusive of GST"}
+            value={chosenProducts[i].pricing}
+            onChange={(event) => onPricingController(event, i)}
+            variant="outlined"
+            size="small"
+            InputProps={{
+              endAdornment: <InputAdornment position="end">₹</InputAdornment>,
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} sm={3}>
+          <TextField
+            fullWidth
+            label="Price / Sqft"
+            type="number"
+            helperText={"Inclusive of GST"}
+            value={chosenProducts[i].pricing}
+            onChange={(event) => onPricingController(event, i)}
+            variant="outlined"
+            size="small"
+            InputProps={{
+              endAdornment: <InputAdornment position="end">₹</InputAdornment>,
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} sm={1}></Grid>
+
         <Grid item>
           <TableContainer>
             <Table aria-label="simple table">
@@ -473,25 +408,6 @@ const AddWarehouseCost = (props) => {
           </TableContainer>
         </Grid>
         <Grid item sm={5} xs={12}></Grid>
-        <Grid item sm={3} xs={12}>
-          <TableContainer>
-            <Table aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell style={{ borderBottom: "none" }}>
-                    {i == 0 ? (
-                      ""
-                    ) : (
-                      <IconButton onClick={() => handleItemDeleted(i)}>
-                        <DeleteIcon style={{ fontSize: "30" }} />
-                      </IconButton>
-                    )}
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-            </Table>
-          </TableContainer>
-        </Grid>
       </Grid>
       {chosenProducts[i].details == true ? (
         <Grid
@@ -499,69 +415,81 @@ const AddWarehouseCost = (props) => {
           spacing={3}
           style={{ paddingLeft: 40, paddingRight: 40, paddingBottom: 30 }}
         >
-          <Grid item xs={12} sm={6}>
-            <TextField
-              type="text"
-              id="Source"
-              name="Source"
-              label="Source Location"
-              fullWidth
-              value={chosenProducts[i].additionalDetails.sourceLocation}
-              onChange={(event) => onsourceLocationChangeController(event, i)}
-              variant="outlined"
-              size="small"
-              autoComplete="shipping address-line1"
-            />
+          <Grid item xs={12} sm={12}>
+            <Tooltip title="Features available in selected Asset" arrow>
+              <Select
+                isMulti
+                styles={selectStyles}
+                name="Features"
+                value={chosenProducts[i].features}
+                options={constants.WarehouseCapabilityOptions}
+                placeholder="Features(Select multiple)"
+                className="basic-multi-select"
+                onChange={(event) => onFeaturesChange(event, i)}
+                classNamePrefix="select"
+              />
+            </Tooltip>
           </Grid>
+          {chosenProducts[i].features.map((row, idx) => (
+            <Grid item xs={12} sm={4}>
+              <TextField
+                value={row.data}
+                id={row.label}
+                name={row.value}
+                onChange={(event) => setCapabilityKeyValues(event, idx)}
+                label={row.label}
+                helperText={row.unit}
+              />
+            </Grid>
+          ))}
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Destination Location"
-              type="text"
-              className={classes.textField}
-              value={chosenProducts[i].additionalDetails.destinationLocation}
-              onChange={(event) =>
-                onDestinationLocationChangeController(event, i)
-              }
-              variant="outlined"
-              size="small"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="30 Days Pricing"
+              label="Covered Area Available"
               type="number"
-              className={classes.textField}
-              value={chosenProducts[i].additionalDetails.thirtyDaysPricing}
-              onChange={(event) => onThirtyDaysPricingController(event, i)}
+              value={chosenProducts[i].pricing}
+              onChange={(event) => onPricingController(event, i)}
               variant="outlined"
               size="small"
               InputProps={{
-                endAdornment: <InputAdornment position="end">₹</InputAdornment>,
+                endAdornment: (
+                  <InputAdornment position="end">Sqft</InputAdornment>
+                ),
               }}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Immediate Payment Pricing"
+              label="Open Area Available"
               type="number"
-              className={classes.textField}
-              value={chosenProducts[i].additionalDetails.immediatePricing}
-              onChange={(event) => onImmediatePricingChangeController(event, i)}
+              value={chosenProducts[i].pricing}
+              onChange={(event) => onPricingController(event, i)}
               variant="outlined"
-              InputProps={{
-                endAdornment: <InputAdornment position="end">₹</InputAdornment>,
-              }}
               size="small"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">Sqft</InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={12}>
+            <TextField
+              fullWidth
+              label="Remarks"
+              type="text"
+              value={chosenProducts[i].pricing}
+              onChange={(event) => onPricingController(event, i)}
+              variant="outlined"
+              size="small"
+             
             />
           </Grid>
         </Grid>
       ) : (
         <p></p>
       )}
-      {/* {renderCapabilityForm()} */}
     </div>
   ));
 

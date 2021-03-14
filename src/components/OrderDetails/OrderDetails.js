@@ -80,8 +80,8 @@ const OrderDetails = (props) => {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <tr>
-                  <th scope="row">{constants.noOfUnits}</th>
-                  <td>{allDetails.noOfUnits}</td>
+                  <th scope="row">{constants.noOfUnits}:</th>
+                  <td>{allDetails.items[0].noOfUnits}</td>
                 </tr>
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -104,16 +104,16 @@ const OrderDetails = (props) => {
 
               <Grid item xs={12} sm={6}>
                 <tr>
-                  <th scope="row">{constants.weightPerUnit}</th>
-                  <td>{allDetails.weightPerUnit} kg</td>
+                  <th scope="row">{constants.weightPerUnit}: </th>
+                  <td>{allDetails.items[0].weightPerUnit} kg</td>
                 </tr>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <tr>
                   <th scope="row">{constants.DimensionPerUnit}</th>
                   <td>
-                    {allDetails.width} x {allDetails.height} x{" "}
-                    {allDetails.breadth} {allDetails.unit}{" "}
+                    {allDetails.items[0].width} x {allDetails.items[0].height} x{" "}
+                    {allDetails.items[0].length} {allDetails.items[0].unit}{" "}
                   </td>
                 </tr>
               </Grid>

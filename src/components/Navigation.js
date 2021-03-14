@@ -141,14 +141,6 @@ const useStyles = makeStyles((theme) => ({
 export default function Dashboard() {
   const list = [
     { title: "Dashboard", to: "/", icon: <DashboardIcon /> },
-    { title: "My Orders", to: "/my-orders", icon: <AddShoppingCartIcon /> },
-    {
-      title: "Availability Manager",
-      to: "/capacity",
-      icon: <BatteryFullIcon />,
-    },
-    { title: "Cost Manager", to: "/CostManager", icon: <MonetizationOnIcon /> },
-
     {
       title: "My WorkList",
       to: "/TaskManager",
@@ -158,6 +150,13 @@ export default function Dashboard() {
         // </Badge>
       ),
     },
+    { title: "My Orders", to: "/my-orders", icon: <AddShoppingCartIcon /> },
+    {
+      title: "Availability Manager",
+      to: "/capacity",
+      icon: <BatteryFullIcon />,
+    },
+    { title: "Cost Manager", to: "/CostManager", icon: <MonetizationOnIcon /> },
     { title: "User Manager", to: "/userManager", icon: <GroupIcon /> },
     { title: "KYC", to: "/kyc", icon: <FileCopyIcon /> },
     { title: "Help", to: "/help", icon: <Help /> },
@@ -226,7 +225,6 @@ export default function Dashboard() {
       var orderId = JSON.parse(message.data).orderId;
       setNotifications(orderId);
       setNumberOfNotifications(numberOfNotifications + 1);
-      //console.log(message.data.orderId);
       console.log(orderId);
     };
     //console.log(user)
@@ -303,20 +301,30 @@ export default function Dashboard() {
             onClose={handleNotificationClose}
           >
             <List component="nav">
-              <Link to={"accept-order/" + notifications}>
-                <ListItem alignItems="flex-start">
-                  <ListItemAvatar>
-                    <Avatar>
-                      <ShoppingCartIcon />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={"New Order Request"}
-                    secondary="Tap to see Details"
-                  />
-                </ListItem>
-              </Link>
-              <Divider />
+              {numberOfNotifications === 0 ? (
+                  <ListItem alignItems="flex-start">
+                    <ListItemText
+                      primary={"No Pending Notifications"}
+                    />
+                  </ListItem>
+            
+              ) : (
+                <Link to={"/accept-order/" + notifications}>
+                  <ListItem alignItems="flex-start">
+                    <ListItemAvatar>
+                      <Avatar>
+                        <ShoppingCartIcon />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={"New Order Request"}
+                      secondary="Tap to see Details"
+                    />
+                  </ListItem>
+                </Link>
+              )}
+
+              {/* <Divider />
               <Link to="/Track">
                 <ListItem alignItems="flex-start">
                   <ListItemAvatar>
@@ -358,7 +366,7 @@ export default function Dashboard() {
                   />
                 </ListItem>
               </Link>
-              <Divider />
+              <Divider /> */}
             </List>
           </Menu>
 

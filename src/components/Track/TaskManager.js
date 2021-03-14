@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -55,7 +56,7 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import AcceptanceForm from "../AcceptanceForm";
-import Track from "./Track";
+import Track from "./index";
 const tracking = [
   { key: 1, name: "apple" },
   { key: 2, name: "orange" },
@@ -132,42 +133,56 @@ function a11yProps(index) {
 }
 
 const TaskManager = (props) => {
-  useEffect(async () => {
-    var currentUser = await Auth.currentUserInfo();
-    var currentUsername = currentUser.username;
-    const client = new W3CWebSocket(
-      "wss://kb14hb5n02.execute-api.ap-south-1.amazonaws.com/staging?userName=" +
-        currentUsername
-    );
-    client.onopen = () => {
-      console.log("WebSocket Client Connected");
-    };
-    client.onmessage = (message) => {
-      var orderId = JSON.parse(message.data).orderId;
-      setNotifications(orderId);
-      setNumberOfNotifications(numberOfNotifications + 1);
-      //console.log(message.data.orderId);
-      console.log(orderId);
-    };
-    //console.log(user)
-  }, []);
+   useEffect(() => {
+     setLoading(true);
+     async function putValues() {
+       var currentUser = await Auth.currentUserInfo();
+       var owner = currentUser.username;
+       //currentUser.username
+       var temp = await API.get(
+         "GoFlexeOrderPlacement",
+         `/stages?status=PENDING&processGroup=${owner}`
+       );
+       console.log(temp);
+      //  var i;
+      //  for (i = 0; i < temp.length; i++) {
+      //    var temporderData = await API.get(
+      //      "GoFlexeOrderPlacement",
+      //      `/customerorder/${temp[i].customerOrderId}`
+      //    );
+      //    temp[i].customerDetails = temporderData;
+      //  }
+       console.log(temp);
+       setPendingTasks(temp);
+       setLoading(false);
+     }
+     putValues();
+   }, []);
+
+   useEffect(async () => {
+    //  setLoading(true);
+     var currentUser = await Auth.currentUserInfo();
+     var owner = currentUser.username;
+     API.get(
+       "GoFlexeOrderPlacement",
+       `/stages?status=PENDING&processGroup=${owner}`
+     )
+       .then((response) => {
+         console.log(response);
+         //  setRows(response);
+         //  setLoading(false);
+       })
+       .catch((error) => {
+         console.log(error.response);
+         //  setLoading(false);
+       });
+   }, []);
+
   const classes = useStyles();
-  const [numberOfNotifications, setNumberOfNotifications] = useState(0);
-  const [notifications, setNotifications] = useState(
-    "abf96696-e920-4c59-93f5-8870263ae2bf"
-  );
   const [value, setValue] = React.useState(0);
+  const [pendingTasks, setPendingTasks] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
   const [progress, setProgress] = React.useState(10);
-  //   React.useEffect(() => {
-  //     const timer = setInterval(() => {
-  //       setProgress((prevProgress) =>
-  //         prevProgress >= 100 ? 10 : prevProgress + 1
-  //       );
-  //     }, 800);
-  //     return () => {
-  //       clearInterval(timer);
-  //     };
-  //   }, []);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -178,372 +193,48 @@ const TaskManager = (props) => {
     }),
   };
 
+  if (loading == true){
+    return(
+      <Spinner/>
+    )
+  }
   return (
     <CardContent style={{ padding: 0, overflow: "hidden" }}>
       <Typography className={classes.title} gutterBottom>
-        Hello, You've got 6 tasks today <TodayIcon />
-        {/* <Tooltip title="Specify the Pricing Details for your Assets">
-          <InfoIcon style={{ color: "lightgrey", marginLeft: 20 }} />
-        </Tooltip> */}
+        Hello, You've got {pendingTasks !== null ? pendingTasks.length : 0}{" "}
+        tasks today <TodayIcon />
       </Typography>
       <Divider />
       <div>
-        <List component="nav">
-          <Link to="/kyc">
-            <Card style={{ padding: 10, marginBottom: 10 }}>
-              <ListItem alignItems="flex-start">
-                <ListItemAvatar>
-                  <Avatar>
-                    <WarningIcon />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary={"KYC Pending"}
-                  secondary="Your KYC is pending.Please fill your KYC details first."
-                />
-              </ListItem>
-            </Card>
-          </Link>
-          <Accordion style={{ marginBottom: 10 }}>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
+        {pendingTasks.map((eachTask) => (
+          <div>
+            <Accordion
+              // TransitionProps={{ unmountOnExit: true }}
+              style={{ marginBottom: 10 }}
             >
-              <Grid container spacing={0}>
-                <Grid item xs={12} sm={8}>
-                  <ListItem alignItems="flex-start">
-                    <ListItemAvatar>
-                      <Avatar>
-                        <ShoppingCartIcon />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={"New Order Request"}
-                      secondary="Shipment from Etwarpur,Rajasthan to Patna,Bihar"
-                    />
-                  </ListItem>
-                </Grid>
-                {/* <Grid item xs={4}>
-                  <Button
-                    style={{
-                      maxWidth: "150px",
-                      minWidth: "150px",
-                      maxHeight: "50px",
-                      marginTop: 15,
-                      marginBottom: 7,
-                    }}
-                    component={Link}
-                    to={`accept-order/${notifications}`}
-                    variant="contained"
-                    color="default"
-                    startIcon={<LocalShippingIcon />}
-                    // component={Link}
-                    // to="/track"
-                  >
-                    Details
-                  </Button>
-                </Grid> */}
-              </Grid>
-            </AccordionSummary>
-            <AccordionDetails>
-              <div>
-                <Card className={classes.root}>
-                  <CardContent style={{ padding: 0 }}>
-                    <form>
-                      <Grid
-                        container
-                        spacing={3}
-                        style={{
-                          padding: 50,
-                          paddingTop: 10,
-                          paddingBottom: 30,
-                        }}
-                      >
-                        <Grid item xs={12} sm={6}>
-                          <TextField
-                            required
-                            id="requiredCapacity"
-                            name="requiredCapacity"
-                            label="Required Capacity"
-                            value="50 tonnes"
-                            disabled
-                            fullWidth
-                            autoComplete="available capacity"
-                          />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                          <TextField
-                            required
-                            id="pickupAddress"
-                            name="pickupAddress"
-                            label="Pickup Address"
-                            value={"Etwarpur,Rajasthan"}
-                            disabled
-                            fullWidth
-                            autoComplete="pickup address"
-                          />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                          <TextField
-                            required
-                            id="deliverAddress"
-                            name="deliverAddress"
-                            label="Deliver Address"
-                            value={"Patna,Bihar"}
-                            disabled
-                            fullWidth
-                            autoComplete="deliver address"
-                          />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                          <TextField
-                            required
-                            id="estimatedPickup"
-                            name="estimatedPickup"
-                            label="Estimated Pickup"
-                            value="14-01-2021"
-                            disabled
-                            fullWidth
-                            autoComplete="estimated pickup"
-                          />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                          <TextField
-                            required
-                            id="estimatedDelivery"
-                            name="estimatedDelivery"
-                            label="Estimated Delivery"
-                            value="20-01-2021"
-                            disabled
-                            fullWidth
-                            autoComplete="estimated delivery"
-                          />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                          <TextField
-                            required
-                            id="estimatedPrice"
-                            name="estimatedPrice"
-                            label="Estimated Price"
-                            value="Rs 2,00,000"
-                            disabled
-                            fullWidth
-                            autoComplete="estimated price"
-                          />
-                        </Grid>
-                      </Grid>
-                    </form>
-                  </CardContent>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "flex-end",
-                      margin: 20,
-                      padding: 10,
-                    }}
-                  >
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      // onClick={acceptOrder}
-                      className={classes.button}
-                      startIcon={<CheckIcon />}
-                    >
-                      Accept
-                    </Button>
-                    {/* <Button
-                                    variant="contained"
-                                    color="secondary"
-                                    startIcon={<ClearIcon/>}
-                                    >
-                                    Reject
-                                </Button>                      */}
-                  </div>
-                </Card>
-              </div>
-            </AccordionDetails>
-          </Accordion>
-          {/* <Link to="/Track"> */}
-          {/* <Card style={{ padding: 10, marginBottom: 10 }}> */}
-          <Accordion style={{ marginBottom: 10 }}>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-            >
-              <ListItem alignItems="flex-start">
-                <ListItemAvatar>
-                  <Avatar>
-                    <LocalShippingIcon />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary={"Shipment from Haryana to Rajasthan"}
-                  secondary="Driver Arrived at Drop Location"
-                />
-              </ListItem>
-            </AccordionSummary>{" "}
-            <AccordionDetails>
-              <Grid container spacing={0}>
-                <Grid item xs={12} sm={12}>
-                  {/* <Track /> */}
-                </Grid>
-                <Grid item xs={12} sm={1}></Grid>
-
-                <Grid item xs={12} sm={10}>
-                  <LinearProgressWithLabel value={83} />
-                </Grid>
-              </Grid>
-            </AccordionDetails>
-          </Accordion>
-          <Accordion style={{ marginBottom: 10 }}>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-            >
-              <ListItem alignItems="flex-start">
-                <ListItemAvatar>
-                  <Avatar>
-                    <LocalShippingIcon />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary={"Shipment from Bhopal to Indore"}
-                  secondary="Driver Arrived at Drop Location"
-                />
-              </ListItem>
-            </AccordionSummary>{" "}
-            <AccordionDetails>
-              <Grid container spacing={0}>
-                <Grid item xs={12} sm={1}></Grid>
-
-                <Grid item xs={12} sm={10}>
-                  <LinearProgressWithLabel value={83} />
-                </Grid>
-              </Grid>{" "}
-            </AccordionDetails>
-          </Accordion>
-          <Accordion style={{ marginBottom: 10 }}>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-            >
-              <ListItem alignItems="flex-start">
-                <ListItemAvatar>
-                  <Avatar>
-                    <LocalShippingIcon />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary={"Shipment from J&K to Assam"}
-                  secondary="Driver Arrived at Drop Location"
-                />
-              </ListItem>
-            </AccordionSummary>{" "}
-            <AccordionDetails>
-              <Grid container spacing={0}>
-                <Grid item xs={12} sm={1}></Grid>
-
-                <Grid item xs={12} sm={10}>
-                  <LinearProgressWithLabel value={83} />
-                </Grid>
-              </Grid>{" "}
-            </AccordionDetails>
-          </Accordion>
-          <Accordion style={{ marginBottom: 10 }}>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-            >
-              <ListItem alignItems="flex-start">
-                <ListItemAvatar>
-                  <Avatar>
-                    <LocalShippingIcon />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary={"Shipment from Haryana to Rajasthan"}
-                  secondary="Driver Arrived at Drop Location"
-                />
-              </ListItem>
-            </AccordionSummary>{" "}
-            <AccordionDetails>
-              <Grid container spacing={0}>
-                <Grid item xs={12} sm={1}></Grid>
-
-                <Grid item xs={12} sm={10}>
-                  <LinearProgressWithLabel value={83} />
-                </Grid>
-              </Grid>{" "}
-            </AccordionDetails>
-          </Accordion>
-          {/* </Link> */}
-          {/* <Card style={{ padding: 10, marginBottom: 10 }}>
-            <ListItem alignItems="flex-start">
-              <ListItemAvatar>
-                <Avatar>
-                  <LocalShippingIcon />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                primary={"Order Id. " + Math.floor(Math.random() * 10000)}
-                secondary="Pickup Completed Successfully"
-              />
-            </ListItem>
-            <Grid container spacing={0}>
-              <Grid item xs={12} sm={1}></Grid>
-
-              <Grid item xs={12} sm={10}>
-                <LinearProgressWithLabel value={60} />
-              </Grid>
-            </Grid>
-          </Card>
-          <Card style={{ padding: 10, marginBottom: 10 }}>
-            <ListItem alignItems="flex-start">
-              <ListItemAvatar>
-                <Avatar>
-                  <LocalShippingIcon />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                primary={"Order Id. " + Math.floor(Math.random() * 10000)}
-                secondary="Delivery Checklist Completed, Waiting for OTP verification"
-              />
-            </ListItem>
-            <Grid container spacing={0}>
-              <Grid item xs={12} sm={1}></Grid>
-
-              <Grid item xs={12} sm={10}>
-                <LinearProgressWithLabel value={90} />
-              </Grid>
-            </Grid>
-          </Card>
-          <Card style={{ padding: 10, marginBottom: 10 }}>
-            <ListItem alignItems="flex-start">
-              <ListItemAvatar>
-                <Avatar>
-                  <LocalShippingIcon />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                primary={"Order Id. " + Math.floor(Math.random() * 10000)}
-                secondary="Driver has left for Pickup"
-              />
-            </ListItem>
-            <Grid container spacing={0}>
-              <Grid item xs={12} sm={1}></Grid>
-
-              <Grid item xs={12} sm={10}>
-                <LinearProgressWithLabel value={10} />
-              </Grid>
-            </Grid>
-          </Card> */}
-        </List>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+              >
+                <ListItem alignItems="flex-start">
+                  <ListItemAvatar>
+                    <Avatar>
+                      <LocalShippingIcon />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={eachTask.stageLabel + " Pending"}
+                    secondary={eachTask.description}
+                  />
+                </ListItem>
+              </AccordionSummary>{" "}
+              <AccordionDetails>
+                <Track id={eachTask.principal} />
+              </AccordionDetails>
+            </Accordion>
+          </div>
+        ))}
       </div>
       {/* <Typography className={classes.formHeadings}></Typography>
       <div className={classes.root} style={{ marginRight: 100 }}>
@@ -721,3 +412,362 @@ const TaskManager = (props) => {
   );
 };
 export default TaskManager;
+
+
+  //  <List component="nav">
+  //         {/* <Link to="/kyc">
+  //           <Card style={{ padding: 10, marginBottom: 10 }}>
+  //             <ListItem alignItems="flex-start">
+  //               <ListItemAvatar>
+  //                 <Avatar>
+  //                   <WarningIcon />
+  //                 </Avatar>
+  //               </ListItemAvatar>
+  //               <ListItemText
+  //                 primary={"KYC Pending"}
+  //                 secondary="Your KYC is pending.Please fill your KYC details first."
+  //               />
+  //             </ListItem>
+  //           </Card>
+  //         </Link> */}
+  //         <Accordion style={{ marginBottom: 10 }}>
+  //           <AccordionSummary
+  //             expandIcon={<ExpandMoreIcon />}
+  //             aria-controls="panel1a-content"
+  //             id="panel1a-header"
+  //           >
+  //             <Grid container spacing={0}>
+  //               <Grid item xs={12} sm={8}>
+  //                 <ListItem alignItems="flex-start">
+  //                   <ListItemAvatar>
+  //                     <Avatar>
+  //                       <ShoppingCartIcon />
+  //                     </Avatar>
+  //                   </ListItemAvatar>
+  //                   <ListItemText
+  //                     primary={"New Order Request"}
+  //                     secondary="Shipment from Etwarpur,Rajasthan to Patna,Bihar"
+  //                   />
+  //                 </ListItem>
+  //               </Grid>
+  //               {/* <Grid item xs={4}>
+  //                 <Button
+  //                   style={{
+  //                     maxWidth: "150px",
+  //                     minWidth: "150px",
+  //                     maxHeight: "50px",
+  //                     marginTop: 15,
+  //                     marginBottom: 7,
+  //                   }}
+  //                   component={Link}
+  //                   to={`accept-order/${notifications}`}
+  //                   variant="contained"
+  //                   color="default"
+  //                   startIcon={<LocalShippingIcon />}
+  //                   // component={Link}
+  //                   // to="/track"
+  //                 >
+  //                   Details
+  //                 </Button>
+  //               </Grid> */}
+  //             </Grid>
+  //           </AccordionSummary>
+  //           <AccordionDetails>
+  //             <div>
+  //               <Card className={classes.root}>
+  //                 <CardContent style={{ padding: 0 }}>
+  //                   <form>
+  //                     <Grid
+  //                       container
+  //                       spacing={3}
+  //                       style={{
+  //                         padding: 50,
+  //                         paddingTop: 10,
+  //                         paddingBottom: 30,
+  //                       }}
+  //                     >
+  //                       <Grid item xs={12} sm={6}>
+  //                         <TextField
+  //                           required
+  //                           id="requiredCapacity"
+  //                           name="requiredCapacity"
+  //                           label="Required Capacity"
+  //                           value="50 tonnes"
+  //                           disabled
+  //                           fullWidth
+  //                           autoComplete="available capacity"
+  //                         />
+  //                       </Grid>
+  //                       <Grid item xs={12} sm={6}>
+  //                         <TextField
+  //                           required
+  //                           id="pickupAddress"
+  //                           name="pickupAddress"
+  //                           label="Pickup Address"
+  //                           value={"Etwarpur,Rajasthan"}
+  //                           disabled
+  //                           fullWidth
+  //                           autoComplete="pickup address"
+  //                         />
+  //                       </Grid>
+  //                       <Grid item xs={12} sm={6}>
+  //                         <TextField
+  //                           required
+  //                           id="deliverAddress"
+  //                           name="deliverAddress"
+  //                           label="Deliver Address"
+  //                           value={"Patna,Bihar"}
+  //                           disabled
+  //                           fullWidth
+  //                           autoComplete="deliver address"
+  //                         />
+  //                       </Grid>
+  //                       <Grid item xs={12} sm={6}>
+  //                         <TextField
+  //                           required
+  //                           id="estimatedPickup"
+  //                           name="estimatedPickup"
+  //                           label="Estimated Pickup"
+  //                           value="14-01-2021"
+  //                           disabled
+  //                           fullWidth
+  //                           autoComplete="estimated pickup"
+  //                         />
+  //                       </Grid>
+  //                       <Grid item xs={12} sm={6}>
+  //                         <TextField
+  //                           required
+  //                           id="estimatedDelivery"
+  //                           name="estimatedDelivery"
+  //                           label="Estimated Delivery"
+  //                           value="20-01-2021"
+  //                           disabled
+  //                           fullWidth
+  //                           autoComplete="estimated delivery"
+  //                         />
+  //                       </Grid>
+  //                       <Grid item xs={12} sm={6}>
+  //                         <TextField
+  //                           required
+  //                           id="estimatedPrice"
+  //                           name="estimatedPrice"
+  //                           label="Estimated Price"
+  //                           value="Rs 2,00,000"
+  //                           disabled
+  //                           fullWidth
+  //                           autoComplete="estimated price"
+  //                         />
+  //                       </Grid>
+  //                     </Grid>
+  //                   </form>
+  //                 </CardContent>
+  //                 <div
+  //                   style={{
+  //                     display: "flex",
+  //                     flexDirection: "row",
+  //                     justifyContent: "flex-end",
+  //                     margin: 20,
+  //                     padding: 10,
+  //                   }}
+  //                 >
+  //                   <Button
+  //                     variant="contained"
+  //                     color="primary"
+  //                     // onClick={acceptOrder}
+  //                     className={classes.button}
+  //                     startIcon={<CheckIcon />}
+  //                   >
+  //                     Accept
+  //                   </Button>
+  //                   {/* <Button
+  //                                   variant="contained"
+  //                                   color="secondary"
+  //                                   startIcon={<ClearIcon/>}
+  //                                   >
+  //                                   Reject
+  //                               </Button>                      */}
+  //                 </div>
+  //               </Card>
+  //             </div>
+  //           </AccordionDetails>
+  //         </Accordion>
+  //         {/* <Link to="/Track"> */}
+  //         {/* <Card style={{ padding: 10, marginBottom: 10 }}> */}
+  //         <Accordion style={{ marginBottom: 10 }}>
+  //           <AccordionSummary
+  //             expandIcon={<ExpandMoreIcon />}
+  //             aria-controls="panel1a-content"
+  //             id="panel1a-header"
+  //           >
+  //             <ListItem alignItems="flex-start">
+  //               <ListItemAvatar>
+  //                 <Avatar>
+  //                   <LocalShippingIcon />
+  //                 </Avatar>
+  //               </ListItemAvatar>
+  //               <ListItemText
+  //                 primary={"Shipment from Haryana to Rajasthan"}
+  //                 secondary="Driver Arrived at Drop Location"
+  //               />
+  //             </ListItem>
+  //           </AccordionSummary>{" "}
+  //           <AccordionDetails>
+  //             <Grid container spacing={0}>
+  //               <Grid item xs={12} sm={12}>
+  //                 {/* <Track /> */}
+  //               </Grid>
+  //               <Grid item xs={12} sm={1}></Grid>
+
+  //               <Grid item xs={12} sm={10}>
+  //                 <LinearProgressWithLabel value={83} />
+  //               </Grid>
+  //             </Grid>
+  //           </AccordionDetails>
+  //         </Accordion>
+  //         <Accordion style={{ marginBottom: 10 }}>
+  //           <AccordionSummary
+  //             expandIcon={<ExpandMoreIcon />}
+  //             aria-controls="panel1a-content"
+  //             id="panel1a-header"
+  //           >
+  //             <ListItem alignItems="flex-start">
+  //               <ListItemAvatar>
+  //                 <Avatar>
+  //                   <LocalShippingIcon />
+  //                 </Avatar>
+  //               </ListItemAvatar>
+  //               <ListItemText
+  //                 primary={"Shipment from Bhopal to Indore"}
+  //                 secondary="Driver Arrived at Drop Location"
+  //               />
+  //             </ListItem>
+  //           </AccordionSummary>{" "}
+  //           <AccordionDetails>
+  //             <Grid container spacing={0}>
+  //               <Grid item xs={12} sm={1}></Grid>
+
+  //               <Grid item xs={12} sm={10}>
+  //                 <LinearProgressWithLabel value={83} />
+  //               </Grid>
+  //             </Grid>{" "}
+  //           </AccordionDetails>
+  //         </Accordion>
+  //         <Accordion style={{ marginBottom: 10 }}>
+  //           <AccordionSummary
+  //             expandIcon={<ExpandMoreIcon />}
+  //             aria-controls="panel1a-content"
+  //             id="panel1a-header"
+  //           >
+  //             <ListItem alignItems="flex-start">
+  //               <ListItemAvatar>
+  //                 <Avatar>
+  //                   <LocalShippingIcon />
+  //                 </Avatar>
+  //               </ListItemAvatar>
+  //               <ListItemText
+  //                 primary={"Shipment from J&K to Assam"}
+  //                 secondary="Driver Arrived at Drop Location"
+  //               />
+  //             </ListItem>
+  //           </AccordionSummary>{" "}
+  //           <AccordionDetails>
+  //             <Grid container spacing={0}>
+  //               <Grid item xs={12} sm={1}></Grid>
+
+  //               <Grid item xs={12} sm={10}>
+  //                 <LinearProgressWithLabel value={83} />
+  //               </Grid>
+  //             </Grid>{" "}
+  //           </AccordionDetails>
+  //         </Accordion>
+  //         <Accordion style={{ marginBottom: 10 }}>
+  //           <AccordionSummary
+  //             expandIcon={<ExpandMoreIcon />}
+  //             aria-controls="panel1a-content"
+  //             id="panel1a-header"
+  //           >
+  //             <ListItem alignItems="flex-start">
+  //               <ListItemAvatar>
+  //                 <Avatar>
+  //                   <LocalShippingIcon />
+  //                 </Avatar>
+  //               </ListItemAvatar>
+  //               <ListItemText
+  //                 primary={"Shipment from Haryana to Rajasthan"}
+  //                 secondary="Driver Arrived at Drop Location"
+  //               />
+  //             </ListItem>
+  //           </AccordionSummary>{" "}
+  //           <AccordionDetails>
+  //             <Grid container spacing={0}>
+  //               <Grid item xs={12} sm={1}></Grid>
+
+  //               <Grid item xs={12} sm={10}>
+  //                 <LinearProgressWithLabel value={83} />
+  //               </Grid>
+  //             </Grid>{" "}
+  //           </AccordionDetails>
+  //         </Accordion>
+  //         {/* </Link> */}
+  //         {/* <Card style={{ padding: 10, marginBottom: 10 }}>
+  //           <ListItem alignItems="flex-start">
+  //             <ListItemAvatar>
+  //               <Avatar>
+  //                 <LocalShippingIcon />
+  //               </Avatar>
+  //             </ListItemAvatar>
+  //             <ListItemText
+  //               primary={"Order Id. " + Math.floor(Math.random() * 10000)}
+  //               secondary="Pickup Completed Successfully"
+  //             />
+  //           </ListItem>
+  //           <Grid container spacing={0}>
+  //             <Grid item xs={12} sm={1}></Grid>
+
+  //             <Grid item xs={12} sm={10}>
+  //               <LinearProgressWithLabel value={60} />
+  //             </Grid>
+  //           </Grid>
+  //         </Card>
+  //         <Card style={{ padding: 10, marginBottom: 10 }}>
+  //           <ListItem alignItems="flex-start">
+  //             <ListItemAvatar>
+  //               <Avatar>
+  //                 <LocalShippingIcon />
+  //               </Avatar>
+  //             </ListItemAvatar>
+  //             <ListItemText
+  //               primary={"Order Id. " + Math.floor(Math.random() * 10000)}
+  //               secondary="Delivery Checklist Completed, Waiting for OTP verification"
+  //             />
+  //           </ListItem>
+  //           <Grid container spacing={0}>
+  //             <Grid item xs={12} sm={1}></Grid>
+
+  //             <Grid item xs={12} sm={10}>
+  //               <LinearProgressWithLabel value={90} />
+  //             </Grid>
+  //           </Grid>
+  //         </Card>
+  //         <Card style={{ padding: 10, marginBottom: 10 }}>
+  //           <ListItem alignItems="flex-start">
+  //             <ListItemAvatar>
+  //               <Avatar>
+  //                 <LocalShippingIcon />
+  //               </Avatar>
+  //             </ListItemAvatar>
+  //             <ListItemText
+  //               primary={"Order Id. " + Math.floor(Math.random() * 10000)}
+  //               secondary="Driver has left for Pickup"
+  //             />
+  //           </ListItem>
+  //           <Grid container spacing={0}>
+  //             <Grid item xs={12} sm={1}></Grid>
+
+  //             <Grid item xs={12} sm={10}>
+  //               <LinearProgressWithLabel value={10} />
+  //             </Grid>
+  //           </Grid>
+  //         </Card> */}
+  //       </List>
+  //     </div>

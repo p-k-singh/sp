@@ -166,6 +166,12 @@ function App() {
                 return <OrderDetail {...props} />;
               }}
             />
+            <Route
+              path="/track/:id"
+              render={(props) => {
+                return <Track {...props} />;
+              }}
+            />
             <Route path="/capacity" component={StorageAndCapacity} />
             <Route path="/CostManager" component={CostManager} />
             <Route path="/TaskManager" component={TaskManager} />

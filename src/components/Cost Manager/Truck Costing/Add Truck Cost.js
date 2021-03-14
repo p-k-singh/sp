@@ -99,6 +99,7 @@ const AddTruckCost = (props) => {
       rangeinKms: null,
       pricing: null,
       details: false,
+
       additionalDetails: [
         {
           sourceLocation: "",
@@ -156,7 +157,7 @@ const AddTruckCost = (props) => {
         },
       ],
     });
-    setDestinationPinCodes(spins);
+    setSourcePinCodes(spins);
     var dpins = destinationPinCodes.slice();
     dpins.push({
       destinationLocation: [
@@ -194,7 +195,6 @@ const AddTruckCost = (props) => {
   };
   const addroute = (i) => {
     var items = chosenProducts.slice();
-
     var spins = sourcePinCodes.slice();
     spins[i].sourceLocation.push({
       pin: "",
@@ -259,7 +259,10 @@ const AddTruckCost = (props) => {
         .then((response) => {
           response.json().then((data) => {
             if (data !== null && data[0].PostOffice !== null) {
-              items[i].additionalDetails[j].sourcePinData = data[0].PostOffice;
+              items[i].additionalDetails[j].sourcePinData = data[0].PostOffice; 
+               items[i].additionalDetails[j].sourceArea =
+                 data[0].PostOffice[0].Name;
+               
             }
             setChosenProducts(items);
           });
@@ -370,16 +373,41 @@ const AddTruckCost = (props) => {
   const SubmitPricing = async () => {
     setLoading(true);
     var items = [];
+  
+
+
     for (var i = 0; i < chosenProducts.length; i++) {
+
+        var routeDetails = [];
+    for (var j = 0; j < chosenProducts[i].additionalDetails.length; j++) {
+   routeDetails.push({
+     sourceLocation: chosenProducts[i].additionalDetails[j].sourceLocation,
+     sourceArea: chosenProducts[i].additionalDetails[j].sourceArea,
+     destinationArea: chosenProducts[i].additionalDetails[j].destinationArea,
+     destinationLocation:
+       chosenProducts[i].additionalDetails[j].destinationLocation,
+     thirtyDaysPricing:
+       chosenProducts[i].additionalDetails[j].thirtyDaysPricing,
+     immediatePricing: chosenProducts[i].additionalDetails[j].immediatePricing,
+     deliveryCommitment:
+       chosenProducts[i].additionalDetails[j].deliveryCommitment,
+     deliveryCommitmentname:
+       chosenProducts[i].additionalDetails[j].deliveryCommitmentname,
+   });
+    }
+
+
       const data = {
         serviceProviderId: currentUser,
         assetType: "truck",
         capability: chosenProducts[i].capability.value,
         capacity: chosenProducts[i].capacity.value,
         rangeinkms: chosenProducts[i].rangeinKms.value,
-        price:
+        additionalDetails:{ 
+          price:
           chosenProducts[i].details !== true ? chosenProducts[i].pricing : null,
-        additionalDetails: chosenProducts[i].additionalDetails,
+          routeDetails: routeDetails
+        }
       };
       const payload = {
         body: data,

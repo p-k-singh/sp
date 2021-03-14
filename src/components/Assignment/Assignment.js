@@ -52,12 +52,10 @@ const Assignment = (props) => {
   // const [truckNumber,setTruckNumber]=useState([]);
   const [chosenTrucks, setChosenTrucks] = useState([]);
   const [chosenDrivers, setChosenDrivers] = useState([]);
-  const [CustomerEmail, setCustomerEmail] = useState([]);
   const {
     match: { params },
   } = props;
-  const [capability, setCapability] = useState([null]);
-  const [loading, setLoading] = useState("true");
+  const [loading, setLoading] = useState(true);
   const [capacityRequired, setCapacityRequired] = useState();
   const [capacityAlloted, setCapacityAlloted] = useState(0);
   const [allotedDrivers, setAllotedDrivers] = useState();
@@ -76,9 +74,7 @@ const Assignment = (props) => {
   const [Allocated, setAllocated] = useState(false);
   const [AllocatedLoading, setAllocatedLoading] = useState(false);
   const [stageCount, setStageCount] = useState(0);
-
   var count = 0;
-
   const selectStyles = {
     menu: (base) => ({
       ...base,
@@ -86,30 +82,32 @@ const Assignment = (props) => {
     }),
   };
 
-  useEffect(() => {
-    // loadCapabilities()
+  useEffect( () => {
     const setUser = async () => {
       var currentUser = await Auth.currentUserInfo();
       var owner = currentUser.username;
       setCurrentUser(owner);
     };
+   
     setUser();
-    fetchCapacityRequired();
-    loadData();
-    getCustomerDetails();
-    getTrackingId();
+   fetchCapacityRequired();
+   getTrackingId();
+
   }, []);
 
   const getAllocationDetails = (resp) => {
+    setLoading(true);
     resp.stages.forEach((stage) => {
       stage.tasks.forEach((task) => {
         if (task.name == "ASSET_ALLOCATION" && task.status == "COMPLETED") {
           setStageCount(1);
+          setLoading(false);
           return;
         }
       });
     });
   };
+  
 
   useEffect(() => {
     var sum = 0;
@@ -122,7 +120,7 @@ const Assignment = (props) => {
   }, [chosenTrucks]);
 
   function fetchCapacityRequired() {
-    setLoading("true");
+    setLoading(true);
     const url =
       "https://t2v0d33au7.execute-api.ap-south-1.amazonaws.com/Staging01/customerorder/" +
       params.customerOrderId;
@@ -132,8 +130,8 @@ const Assignment = (props) => {
         var sum = 0;
         console.log(resp);
         setDesiredDeliveryDate(resp.data.Item.deliveryDate);
-        setDesiredPickupDate(resp.data.Item.pickupdate);
-
+        setDesiredPickupDate(resp.data.Item.pickupDate);
+        loadData(resp.data.Item.pickupDate);
         resp.data.Item.items.map((item) => {
           if (item.measurable === true) {
             sum += item.noOfUnits * item.weightPerUnit;
@@ -143,31 +141,7 @@ const Assignment = (props) => {
         });
 
         console.log(resp);
-
         setCapacityRequired(sum / 1000);
-        API.get(
-          "GoFlexeOrderPlacement",
-          "/kyc/info?type=customer&id=ff7675f7-ac42-43f7-91e3-599624f1661a"
-        )
-          .then((resp) => {
-            console.log(resp);
-            if (resp.length === 0) {
-              setCustomerDetails(null);
-            } else {
-              if (resp[0].companyInfo !== undefined) {
-                setCustomerDetails(resp[0].companyInfo);
-              }
-            }
-            setLoading("false");
-          })
-          .catch((err) => {
-            console.log(err);
-            setLoading("false");
-          })
-          .catch((err) => {
-            console.log(err);
-            setLoading("false");
-          });
       })
 
       .catch((err) => {
@@ -175,28 +149,30 @@ const Assignment = (props) => {
       });
   }
 
-  function loadData() {
-    setLoading("true");
+  function loadData(desiredDate) {
 
-    //fetching truck details
+    setLoading(true);
     Auth.currentUserInfo()
-
       .then((currentUser) => {
         var owner = currentUser.username;
         API.get(
           "GoFlexeOrderPlacement",
           `/capacity?type=owner&ownerId=${owner}&asset=truck`
         )
-
-          .then((resp) => {
+        .then((resp) => {
             console.log(resp);
             var temp = [];
+            // alert(desiredDate,)
+            var pickupParts = desiredDate.substring(0, 10).split("-");
+            var ComparePickup = new Date(
+              pickupParts[0],
+              pickupParts[1] - 1,
+              pickupParts[2]
+            );
 
-            for (var i = 0; i < resp.length; i++) {
+              for (var i = 0; i < resp.length; i++) {
               var isValid = false;
-              var toparts = resp[i].availableToDateTime
-                .substring(0, 10)
-                .split("-");
+              var toparts = resp[i].availableToDateTime.toString().substring(0, 10).split("-");
 
               var availableTo = new Date(
                 toparts[0],
@@ -204,8 +180,8 @@ const Assignment = (props) => {
                 toparts[2]
               );
 
-              var fromparts = resp[i].availableFromDateTime
-                .substring(0, 10)
+              var fromparts = resp[i].availableFromDateTime.toString().
+                substring(0, 10)
                 .split("-");
 
               var availablefrom = new Date(
@@ -213,37 +189,26 @@ const Assignment = (props) => {
                 fromparts[1] - 1,
                 fromparts[2]
               );
-              var pickupParts = desiredPickupDate.substring(0, 10).split("-");
-              var ComparePickup = new Date(
-                pickupParts[0],
-                pickupParts[1] - 1,
-                pickupParts[2]
-              );
-
+              // alert(availablefrom +ComparePickup + availableTo);
               if (
-                ComparePickup <= availableTo &&
-                ComparePickup >= availablefrom
+                // ComparePickup < availableTo &&
+                // ComparePickup > availablefrom
+                availablefrom <
+                ComparePickup <
+                availableTo
               ) {
-                isValid = true;
+                  temp.push({
+                    label:
+                      resp[i].assetNumber + "(" + resp[i].capacity + " tons)",
+                    value: resp[i],
+                    isNew: false,
+                  });
               }
-
-              // if (isValid === true) {
-              //   temp.push({
-              //     label:
-              //       resp[i].assetNumber + "(" + resp[i].capacity + " tons)",
-              //     value: resp[i],
-              //     isNew: false,
-              //   });
-              // }
-              temp.push({
-                label: resp[i].assetNumber + "(" + resp[i].capacity + " tons)",
-                value: resp[i],
-                isNew: false,
-              });
             }
             setMyTrucks(temp);
             console.log(temp);
-            //console.log(myTrucks)
+            setLoading(false);
+           
           })
 
           .catch((err) => console.log(err));
@@ -276,47 +241,21 @@ const Assignment = (props) => {
               setMyDrivers(temp);
               console.log(temp);
             }
-            setLoading("false");
+            setLoading(false);
           })
           .catch((err) => {
             console.log(err);
-            setLoading("error");
+            setLoading(false);
           });
       })
       .catch((err) => {
         console.log(err);
-        setLoading("error");
+        setLoading(false);
       });
   }
-  function getCustomerDetails(userDetails) {
-    setLoading("true");
-
-    API.get(
-      "GoFlexeOrderPlacement",
-      `/kyc/info?type=customer&id=${CustomerEmail}`
-    )
-      .then((resp) => {
-        console.log(resp);
-        if (resp.length === 0) {
-          setCustomerDetails(null);
-        } else {
-          if (resp[0].companyInfo !== undefined) {
-            setCustomerDetails(resp[0].companyInfo);
-          }
-        }
-        setLoading("false");
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading("false");
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading("false");
-      });
-  }
+  
   function getTrackingId() {
-    setLoading("true");
+    setLoading(true);
     API.get(
       "GoFlexeOrderPlacement",
       `/tracking?type=getProcess&orderId=${params.id}`
@@ -327,13 +266,15 @@ const Assignment = (props) => {
         setTrackingId(resp.processId);
         setTaskId(resp.stages[0].tasks[0].taskId);
         setStageId(resp.stages[0].stageId);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
-        setLoading("false");
+        setLoading(false);
       });
   }
   const trackingAssetAllocation = async () => {
+    setLoading(true);
     setAllocatedLoading(true);
     const data = {
       trackingId: TrackingId,
@@ -343,6 +284,8 @@ const Assignment = (props) => {
         data: {
           allotedDrivers: chosenDrivers,
           allotedTrucks: chosenTrucks,
+          pickupDate:estimatedPickupDate,
+          deliveryDate:estimatedDeliveryDate
         },
         attachments: {},
       },
@@ -359,14 +302,17 @@ const Assignment = (props) => {
       .then((response) => {
         console.log(response);
         setAllocatedLoading(false);
+        getTrackingId()
+        setLoading(false);
       })
       .catch((error) => {
         console.log(error.response);
         setAllocatedLoading(false);
-        alert("An error occoured, Please try again");
+        setLoading(false);
       });
   };
   const changeTaskStatus = async () => {
+    setLoading(true);
     setAllocatedLoading(true);
     const data = {
       trackingId: TrackingId,
@@ -385,13 +331,15 @@ const Assignment = (props) => {
     )
       .then((response) => {
         console.log(response);
+        getAllocationDetails(response);
         setAllocated(true);
         setAllocatedLoading(false);
+        setLoading(false);
       })
       .catch((error) => {
         console.log(error.response);
         alert("An error occoured, Please try again");
-        setAllocatedLoading(false);
+        setLoading(false);
       });
   };
 
@@ -405,7 +353,59 @@ const Assignment = (props) => {
     setEstimatedDeliveryDate(deliveryDate);
   };
 
-  const submitNewTrucks = async () => {
+
+  const SubmitNewPricing = async () => {
+
+    for (var i = 0; i < chosenTrucks.length; i++) {
+      if (chosenTrucks[i].isNew === true) {
+
+        setLoading(true);
+        const data = {
+          serviceProviderId: currentUser,
+          assetType: "truck",
+          capability: chosenTrucks[i].value.capability.value,
+          capacity:chosenTrucks[i].value.capacityName.value,
+          rangeinkms: chosenTrucks[i].value.truckDistance.value,
+          additionalDetails: {
+            price: chosenTrucks[i].value.truckPrice,
+            routeDetails :[
+              {
+    sourceArea: null,
+    deliveryCommitment: null,
+    destinationArea: null,
+    immediatePricing: null,
+    deliveryCommitmentname: {},
+    destinationLocation: null,
+    sourceLocation: null,
+    thirtyDaysPricing: null,
+  }
+            ]
+          },
+        };
+        const payload = {
+          body: data,
+        };
+
+        API.post(
+          "GoFlexeOrderPlacement",
+          `/serviceprovidercost`,
+          payload
+        )
+          .then((response) => {
+            console.log(response);
+            submitNewTrucks(response)
+            setLoading(false);
+          })
+          .catch((error) => {
+            console.log(error.response);
+            setLoading(false);
+          });      
+      }}}
+     
+
+  const submitNewTrucks = async (costId) => {
+    setLoading(true)
+
     var today = new Date();
     var thisYearDate =
       today.getFullYear() +
@@ -424,28 +424,26 @@ const Assignment = (props) => {
     for (var i = 0; i < chosenTrucks.length; i++) {
       if (chosenTrucks[i] === null) {
         alert(`Please Choose a truck number for  truck ${i + 1}`);
+        // eslint-disable-next-line no-loop-func
         return new Promise((resolve) => {
           return resolve(`Please Choose a truck number for  truck ${i + 1}`);
         });
       }
       if (chosenTrucks[i].isNew === true) {
-        const data = {
-          owner: currentUser,
-          type: "truck",
-          assetNumber: chosenTrucks[i].label,
-          capacity: chosenTrucks[i].value.capacity,
-          unit: "tons",
-          capabilities: chosenTrucks[i].value.capabilities,
-          availableFromDateTime: thisYearDate,
-          availableToDateTime: nextYearDate,
-          ownershipType:
-            chosenTrucks[i].value.ownershipType === null
-              ? "self"
-              : chosenTrucks[i].value.ownershipType.value,
-          location: chosenTrucks[i].value.location,
-          active: true,
-          pincode: "-",
-        };
+        
+         const data = {
+           ownerId: currentUser,
+           assetType: "truck",
+           assetNumber: chosenTrucks[i].label,
+           unit: "tons",
+           features: chosenTrucks[i].features,
+           availableFromDateTime: thisYearDate,
+           availableToDateTime: nextYearDate,
+           active: true,
+           capability: chosenTrucks[i].value.capability.value,
+           capacity: chosenTrucks[i].value.capacityName.value,
+           costId: costId, 
+         };
         const payload = {
           body: data,
         };
@@ -454,9 +452,11 @@ const Assignment = (props) => {
           API.post("GoFlexeOrderPlacement", `/capacity`, payload)
             .then((response) => {
               console.log(response);
+              setLoading(false);
             })
             .catch((error) => {
               console.log(error.response);
+              setLoading(false);
             })
         );
       }
@@ -587,31 +587,14 @@ const Assignment = (props) => {
   // }
 
   const submitButtonHandler = async () => {
-    setLoading("uploading");
-    // console.log("1");
-    //  await submitNewTrucks();
-    // console.log("2");
-    //  await submitNewDrivers();
-    // console.log("3");
-    // await includeAllTrucks();
-    // console.log("4");
-
+    await SubmitNewPricing();
+    await submitNewDrivers();
+    await includeAllTrucks();
+    
     await trackingAssetAllocation();
     await changeTaskStatus();
-    getTrackingId();
+    await getTrackingId();
 
-    //  submitNewDrivers();
-    //console.log(allotedDrivers)
-    // try{
-    //   await submitNewTrucks()
-    //   await includeAllTrucks()
-    //   console.log(allotedTrucks)
-    // }
-    // catch(err){
-    //   console.log(err)
-    //   alert('An error occured. Try again later')
-    // }
-    setLoading("false");
   };
   const onTruckNumberChanged = (newValue, i) => {
     var items = chosenTrucks.slice();
@@ -622,10 +605,11 @@ const Assignment = (props) => {
         var temp = {
           value: {
             capacity: 0,
-            capabilities: [],
+            capability: [],
+            features : [],
             assetNumber: newValue.label,
-            location: "",
-            ownershipType: null,
+            truckPrice : null,
+           truckDistance : []
           },
           isNew: true,
           label: newValue.label,
@@ -695,23 +679,28 @@ const Assignment = (props) => {
   };
   const onCapabilityChange = (event, i) => {
     var items = chosenTrucks.slice();
-    items[i].value.capabilities = event;
+    items[i].value.capability = event;
     setChosenTrucks(items);
   };
   const onCapacityChangeController = (event, i) => {
     var items = chosenTrucks.slice();
-    items[i].value.capacity = event.target.value;
-    if (items[i].value.capacity < 0) items[i].value.capacity = 0;
+    items[i].value.capacity = event.value;
+    items[i].value.capacityName = event;
     setChosenTrucks(items);
   };
-  const onLocationChangeController = (event, i) => {
+  const onFeaturesChange = (event, i) => {
     var items = chosenTrucks.slice();
-    items[i].value.location = event.target.value;
+    items[i].value.features = event;
+    setChosenTrucks(items);
+  }
+  const onTruckPriceChange = (event, i) => {
+    var items = chosenTrucks.slice();
+    items[i].value.truckPrice = event.target.value;
     setChosenTrucks(items);
   };
-  const ownershipChangeController = (event, i) => {
+  const onTruckDistanceChange = (event, i) => {
     var items = chosenTrucks.slice();
-    items[i].value.ownershipType = event;
+    items[i].value.truckDistance = event;
     setChosenTrucks(items);
   };
   const onLicenseIdChangeController = (event, i) => {
@@ -746,8 +735,21 @@ const Assignment = (props) => {
             />
           </Tooltip>
         </Grid>
-        <Tooltip title="Features available in Truck" arrow placement="top">
-          <Grid item xs={12} sm={4}>
+
+        <Grid item xs={12} sm={4}>
+          {chosenTrucks[i] !== null && chosenTrucks[i].isNew ? (
+            <Select
+              styles={selectStyles}
+              className="basic-single"
+              classNamePrefix="Capability"
+              isSearchable
+              name="Capability"
+              placeholder="Capability"
+              value={chosenTrucks[i].value.capability}
+              onChange={(event) => onCapabilityChange(event, i)}
+              options={constants.truckCapabilityOptions}
+            />
+          ) : (
             <TextField
               disabled={chosenTrucks[i] === null || !chosenTrucks[i].isNew}
               label="Capability"
@@ -755,44 +757,16 @@ const Assignment = (props) => {
               value={
                 chosenTrucks[i] === null
                   ? null
-                  : chosenTrucks[i].value.capabilities
+                  : chosenTrucks[i].value.capability
               }
-              onChange={(event) => onCapacityChangeController(event, i)}
               variant="outlined"
               InputLabelProps={{ shrink: true }}
               size="small"
               autoComplete="shipping address-line1"
             />
-            {/* <Select
-              isMulti
-              styles={selectStyles}
-              name="categories"
-              value={
-                chosenTrucks[i] === null
-                  ? null
-                  : chosenTrucks[i].value.capabilities
-              }
-              options={constants.truckCapabilityOptions}
-              placeholder="Category(Select Multiple)"
-              isDisabled={chosenTrucks[i] === null || !chosenTrucks[i].isNew}
-              className="basic-multi-select"
-              onChange={(event) => onCapabilityChange(event, i)}
-              classNamePrefix="select"
-            /> */}
-            {/* <Multiselect
-              style={{
-                searchBox: { minHeight: "55px" },
-                multiselectContainer: { height: "80px" },
-              }}
-              selectedValues={chosenTrucks[i].capabilities} // Preselected value to persist in dropdown
-              options={capabilityOptions.options} // Options to display in the dropdown
-              onSelect={(list, item) => onMultiSelect(list, item, i)} // Function will trigger on select event
-              onRemove={(list, item) => onMultiRemove(list, item, i)} // Function will trigger on remove event
-              displayValue="name" // Property name to display in the dropdown options
-              placeholder="Capabilities"
-            /> */}
-          </Grid>
-        </Tooltip>
+          )}
+        </Grid>
+
         <Grid item xs={12} sm={2} style={{ marginLeft: 50 }}>
           <IconButton onClick={() => handleItemDeleted(i)}>
             <Tooltip title="Delete">
@@ -804,58 +778,58 @@ const Assignment = (props) => {
       {chosenTrucks[i] !== null && chosenTrucks[i].isNew && (
         <Grid container spacing={3} style={{ marginLeft: 30 }}>
           <Grid item xs={12} sm={4}>
-            <TextField
-              required
-              type="number"
-              //error={capacityValidator !== ""}
-              //helperText={capacityValidator === "" ? " " : capacityValidator}
-              id="size"
-              name="size"
-              label="Capacity(in tons)"
-              fullWidth
-              value={chosenTrucks[i].value.capacity}
+            <Select
+              styles={selectStyles}
+              className="basic-single"
+              classNamePrefix="Capacity"
+              isSearchable
+              name="Capacity"
+              placeholder="Capacity"
+              value={chosenTrucks[i].value.capacityName}
               onChange={(event) => onCapacityChangeController(event, i)}
-              variant="outlined"
-              size="small"
-              autoComplete="shipping address-line1"
+              options={constants.truckCapacityOptions}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <Tooltip title="Home Loaction of the Asset">
-              <TextField
-                required
-                type="text"
-                id="location"
-                name="location"
-                label="Base Location"
-                fullWidth
-                value={chosenTrucks[i].value.location}
-                onChange={(event) => onLocationChangeController(event, i)}
-                variant="outlined"
-                size="small"
-                autoComplete="shipping address-line1"
-              />
-            </Tooltip>
+            <Select
+              isMulti
+              styles={selectStyles}
+              name="Features"
+              value={chosenTrucks[i].value.features}
+              options={constants.truckFeatures}
+              placeholder="Features(Select multiple)"
+              className="basic-multi-select"
+              onChange={(event) => onFeaturesChange(event, i)}
+              classNamePrefix="select"
+            />
           </Grid>
 
+          <Grid item xs={12} sm={4}></Grid>
           <Grid item xs={12} sm={4}>
-            <FormControl className={classes.formControl}>
-              <InputLabel htmlFor="age-native-simple">Ownership</InputLabel>
-              <Tooltip title="Whether the asset is owned or outsourced to another company">
-                <Select
-                  styles={selectStyles}
-                  className="basic-single"
-                  classNamePrefix="ownership"
-                  isSearchable
-                  name="ownership"
-                  placeholder="Ownership"
-                  value={chosenTrucks[i].value.ownershipType}
-                  onChange={(event) => ownershipChangeController(event, i)}
-                  options={constants.ownerShip}
-                />
-              </Tooltip>
-            </FormControl>
+            <Select
+              styles={selectStyles}
+              className="basic-single"
+              classNamePrefix="Distance"
+              isSearchable
+              name="Distance"
+              placeholder="Distance"
+              value={chosenTrucks[i].value.truckDistance}
+              onChange={(event) => onTruckDistanceChange(event, i)}
+              options={constants.DistanceOptions}
+            />
           </Grid>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              size="small"
+              fullWidth
+              variant="outlined"
+              helperText={"*Immediate Pricing inclusive of GST per Trip"}
+              value={chosenTrucks[i].value.truckPrice}
+              onChange={(event) => onTruckPriceChange(event, i)}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={4}></Grid>
         </Grid>
       )}
 
@@ -905,16 +879,13 @@ const Assignment = (props) => {
     </div>
   ));
 
-  if (loading === "true") {
+  if (loading == true) {
     return (
       <React.Fragment>
-        <h1>Loading your truck details</h1>
+        {/* <h1>Loading your truck details</h1> */}
         <Spinner />
       </React.Fragment>
     );
-  }
-  if (loading === "uploading") {
-    return <Spinner />;
   }
   if (stageCount == 1) {
     return (

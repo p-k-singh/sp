@@ -115,7 +115,7 @@ const AcceptanceForm = (props) => {
                     (Order.items[0].measurable == true
                       ? Number(Order.items[0].noOfUnits) *
                         Number(Order.items[0].weightPerUnit)
-                      : Order.items[0].density) + " Kgs"
+                      : Order.items[0].totalWeight) + " Kgs"
                   }
                   disabled
                   fullWidth
@@ -152,7 +152,7 @@ const AcceptanceForm = (props) => {
                   id="estimatedPickup"
                   name="estimatedPickup"
                   label="Estimated Pickup"
-                  value={Order.pickupdate}
+                  value={Order.pickupDate}
                   disabled
                   fullWidth
                   autoComplete="estimated pickup"
