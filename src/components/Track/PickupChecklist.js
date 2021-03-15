@@ -52,7 +52,6 @@ const PickupChecklist = (props) => {
     
     
      const handleSubmit = (id, event) => {
-       SendPickupChecklistData()
        CompletePickupChecklist()
      };
 
