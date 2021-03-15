@@ -148,7 +148,6 @@ const AddTruckCost = (props) => {
 
   const addproduct = () => {
     var items = chosenProducts.slice();
-
     var spins = sourcePinCodes.slice();
     spins.push({
       sourceLocation: [
