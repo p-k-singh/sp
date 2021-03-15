@@ -53,7 +53,7 @@ const AcceptanceForm = (props) => {
   const [accepted, setAccepted] = useState(false);
 
   useEffect(async () => {
-    // async function putValues(){
+    // async function putOrders(){
     var temp = await API.get(
       "GoFlexeOrderPlacement",
       `/customerorder/${params.id}`
@@ -92,135 +92,376 @@ const AcceptanceForm = (props) => {
   if (Order === null) {
     return <Spinner />;
   }
-  return (
-    <div>
-      <Card className={classes.root}>
-        <CardContent style={{ padding: 0 }}>
-          <Typography className={classes.title} gutterBottom>
-            Order Acceptance Form
-          </Typography>
-          <form>
-            <Grid
-              container
-              spacing={3}
-              style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}
-            >
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  id="requiredCapacity"
-                  name="requiredCapacity"
-                  label="Required Capacity"
-                  value={
-                    (Order.items[0].measurable == true
-                      ? Number(Order.items[0].noOfUnits) *
-                        Number(Order.items[0].weightPerUnit)
-                      : Order.items[0].totalWeight) + " Kgs"
-                  }
-                  disabled
-                  fullWidth
-                  autoComplete="available capacity"
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  id="pickupAddress"
-                  name="pickupAddress"
-                  label="Pickup Address"
-                  value={Order.fromAddress}
-                  disabled
-                  fullWidth
-                  autoComplete="pickup address"
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  id="deliverAddress"
-                  name="deliverAddress"
-                  label="Deliver Address"
-                  value={Order.toAddress}
-                  disabled
-                  fullWidth
-                  autoComplete="deliver address"
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  id="estimatedPickup"
-                  name="estimatedPickup"
-                  label="Estimated Pickup"
-                  value={Order.pickupDate}
-                  disabled
-                  fullWidth
-                  autoComplete="estimated pickup"
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  id="estimatedDelivery"
-                  name="estimatedDelivery"
-                  label="Estimated Delivery"
-                  value={Order.deliveryDate}
-                  disabled
-                  fullWidth
-                  autoComplete="estimated delivery"
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  id="estimatedPrice"
-                  name="estimatedPrice"
-                  label="Estimated Price"
-                  value={Order.estimatedPrice}
-                  disabled
-                  fullWidth
-                  autoComplete="estimated price"
-                />
-              </Grid>
-            </Grid>
-          </form>
-        </CardContent>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "flex-end",
-            margin: 20,
-            padding: 10,
-          }}
-        >
-          {Loading == true ? (
-            <Spinner />
-          ) : accepted == true ? (
-            <p>Order Accepted Successfully</p>
-          ) : (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={acceptOrder}
-              className={classes.button}
-              startIcon={<CheckIcon />}
-            >
-              Accept
-            </Button>
-          )}
+   if ( Order === null) return <Spinner />;
+   else if (Order.items === undefined) {
+     return (
+       <div>
+         <div
+           style={{
+             display: "flex",
+             flexDirection: "row",
+             justifyContent: "flex-end",
+             paddingBottom: 10,
+           }}
+         >
+           {Loading == true ? (
+             <Spinner />
+           ) : accepted == true ? (
+             <p>Order Accepted Successfully</p>
+           ) : (
+             <Button
+               variant="contained"
+               color="primary"
+               onClick={acceptOrder}
+               className={classes.button}
+               startIcon={<CheckIcon />}
+             >
+               Accept
+             </Button>
+           )}
+         </div>
+         <Card>
+           <Typography
+             className={classes.title}
+             style={{ color: "black", backgroundColor: "lightgrey" }}
+           >
+             Order Acceptance Form
+           </Typography>
+           <table>
+             <Grid
+               container
+               spacing={3}
+               style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}
+             >
+               <Grid item xs={12} sm={6}>
+                 <tr>
+                   <th scope="row">{constants.pickupAddress + " : "}</th>
+                   <td>
+                     {Order.fromAddress},{Order.fromPin}
+                   </td>
+                 </tr>
+               </Grid>
+               <Grid item xs={12} sm={6}>
+                 <tr>
+                   <th scope="row">{constants.destinationAddress + " : "}</th>
+                   <td>
+                     {Order.toAddress},{Order.toPin}
+                   </td>
+                 </tr>
+               </Grid>
+               <Grid item xs={12} sm={6}>
+                 <tr>
+                   <th scope="row">{constants.noOfUnits + " : "}</th>
+                   <td> {Order.noOfUnits}</td>
+                 </tr>
+               </Grid>
+               <Grid item xs={12} sm={6}>
+                 <tr>
+                   <th scope="row">{constants.weightPerUnit + " : "}</th>
+                   <td> {Order.weightPerUnit} Kg</td>
+                 </tr>
+               </Grid>
+               <Grid item xs={12} sm={6}>
+                 <tr>
+                   <th scope="row">{constants.DimensionPerUnit + " : "}</th>
+                   <td>
+                     {Order.height} x {Order.width} x {Order.breadth}{" "}
+                     {Order.unit || Order.unit.label}
+                   </td>
+                 </tr>
+               </Grid>
+             </Grid>
+           </table>
+         </Card>
+       </div>
+     );
+    
+   } else if (Order.items.length == 1) {
+     return (
+       <div>
+         <div
+           style={{
+             display: "flex",
+             flexDirection: "row",
+             justifyContent: "flex-end",
+             paddingBottom: 10,
+           }}
+         >
+           {Loading == true ? (
+             <Spinner />
+           ) : accepted == true ? (
+             <p>Order Accepted Successfully</p>
+           ) : (
+             <Button
+               variant="contained"
+               color="primary"
+               onClick={acceptOrder}
+               className={classes.button}
+               startIcon={<CheckIcon />}
+             >
+               Accept
+             </Button>
+           )}
+         </div>
+         <Card>
+           <Typography
+             className={classes.title}
+             style={{ color: "black", backgroundColor: "lightgrey" }}
+           >
+             Order Acceptance Form
+           </Typography>
 
-          {/* <Button
-                                    variant="contained"
-                                    color="secondary"
-                                    startIcon={<ClearIcon/>}
-                                    >
-                                    Reject
-                                </Button>                      */}
-        </div>
-      </Card>
-    </div>
-  );
+           <table>
+             <Grid
+               container
+               spacing={3}
+               style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}
+             >
+               <Grid item xs={12} sm={12}>
+                 <tr>
+                   <th scope="row">{constants.pickupAddress + " : "}</th>
+                   <td>
+                     {Order.fromAddress},{Order.fromPin}
+                   </td>
+                 </tr>
+               </Grid>
+
+               <Grid item xs={12} sm={12}>
+                 <tr>
+                   <th scope="row">{constants.destinationAddress + " : "}</th>
+                   <td>
+                     {Order.toAddress},{Order.toPin}
+                   </td>
+                 </tr>
+               </Grid>
+             </Grid>
+           </table>
+           {Order.items.map((each, index) => (
+             <div>
+               <Typography
+                 className={classes.title}
+                 style={{ color: "black", backgroundColor: "lightgrey" }}
+               >
+                 Product Details
+               </Typography>
+               <table>
+                 <Grid
+                   container
+                   spacing={3}
+                   style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}
+                 >
+                   <Grid item xs={12} sm={6}>
+                     <tr>
+                       <th scope="row">{"Product Name : "}</th>
+                       <td>{each.productName}</td>
+                     </tr>
+                   </Grid>
+                   {each.measurable == true ? (
+                     <Grid item xs={12} sm={6}>
+                       <tr>
+                         <th scope="row">{"No. of Units : "}</th>
+                         <td>{each.noOfUnits}</td>
+                       </tr>
+                     </Grid>
+                   ) : (
+                     <p></p>
+                   )}
+                   {each.measurable == true ? (
+                     <Grid item xs={12} sm={6}>
+                       <tr>
+                         <th scope="row">{"Weight per Unit : "}</th>
+                         <td>{each.weightPerUnit} Kg</td>
+                       </tr>
+                     </Grid>
+                   ) : (
+                     <p></p>
+                   )}
+                   {each.measurable == false ? (
+                     <Grid item xs={12} sm={6}>
+                       <tr>
+                         <th scope="row">{"Total Weight : "}</th>
+                         <td>{each.totalWeight} Kg</td>
+                       </tr>
+                     </Grid>
+                   ) : (
+                     <p></p>
+                   )}
+                   <Grid item xs={12} sm={6}>
+                     <tr>
+                       <th scope="row">{"Product Type : "}</th>
+                       <td>{each.productType.label || each.productType}</td>
+                     </tr>
+                   </Grid>
+                   {each.measurable == true ? (
+                     <Grid item xs={12} sm={6}>
+                       <tr>
+                         <th scope="row">{"Dimensions : "}</th>
+                         <td>
+                           {each.height} x {each.length} x {each.width}{" "}
+                           {each.unit.label || each.unit}
+                         </td>
+                       </tr>
+                     </Grid>
+                   ) : (
+                     <p></p>
+                   )}
+
+                   <Grid item xs={12} sm={6}>
+                     <tr>
+                       <th scope="row">{"Category: "}</th>
+                       <td>
+                         {each.categories.map((unit) => unit.label + ",")}{" "}
+                       </td>
+                     </tr>
+                   </Grid>
+                 </Grid>
+               </table>
+             </div>
+           ))}
+         </Card>
+       </div>
+     );
+   } else if (Order.items.length > 1) {
+     return (
+       <div>
+         <div
+           style={{
+             display: "flex",
+             flexDirection: "row",
+             justifyContent: "flex-end",
+             paddingBottom: 10,
+           }}
+         >
+           {Loading == true ? (
+             <Spinner />
+           ) : accepted == true ? (
+             <p>Order Accepted Successfully</p>
+           ) : (
+             <Button
+               variant="contained"
+               color="primary"
+               onClick={acceptOrder}
+               className={classes.button}
+               startIcon={<CheckIcon />}
+             >
+               Accept
+             </Button>
+           )}
+         </div>
+         <Card>
+           <Typography
+             className={classes.title}
+             style={{ color: "black", backgroundColor: "lightgrey" }}
+           >
+             Order Acceptance Form
+           </Typography>
+
+           <table>
+             <Grid
+               container
+               spacing={3}
+               style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}
+             >
+               <Grid item xs={12} sm={12}>
+                 <tr>
+                   <th scope="row">{constants.pickupAddress + " : "}</th>
+                   <td>
+                     {Order.fromAddress},{Order.fromPin}
+                   </td>
+                 </tr>
+               </Grid>
+
+               <Grid item xs={12} sm={12}>
+                 <tr>
+                   <th scope="row">{constants.destinationAddress + " : "}</th>
+                   <td>
+                     {Order.toAddress},{Order.toPin}
+                   </td>
+                 </tr>
+               </Grid>
+             </Grid>
+           </table>
+           {Order.items.map((each, index) => (
+             <div>
+               <Typography
+                 className={classes.title}
+                 style={{ color: "black", backgroundColor: "lightgrey" }}
+               >
+                 Product No. {index + 1}
+               </Typography>
+               <table>
+                 <Grid
+                   container
+                   spacing={3}
+                   style={{ padding: 50, paddingTop: 10, paddingBottom: 30 }}
+                 >
+                   <Grid item xs={12} sm={6}>
+                     <tr>
+                       <th scope="row">{"Product Name : "}</th>
+                       <td>{each.productName}</td>
+                     </tr>
+                   </Grid>
+                   {each.measurable == true ? (<Grid item xs={12} sm={6}>
+                     <tr>
+                       <th scope="row">{"No. of Units : "}</th>
+                       <td>{each.noOfUnits}</td>
+                     </tr>
+                   </Grid>):(<p></p>)}
+                   {each.measurable == true ? (
+                     <Grid item xs={12} sm={6}>
+                       <tr>
+                         <th scope="row">{"Weight per Unit : "}</th>
+                         <td>{each.weightPerUnit} Kg</td>
+                       </tr>
+                     </Grid>
+                   ) : (
+                     <p></p>
+                   )}
+                   {each.measurable == false ? (
+                     <Grid item xs={12} sm={6}>
+                       <tr>
+                         <th scope="row">{"Total Weight : "}</th>
+                         <td>{each.totalWeight} Kg</td>
+                       </tr>
+                     </Grid>
+                   ) : (
+                     <p></p>
+                   )}
+                   <Grid item xs={12} sm={6}>
+                     <tr>
+                       <th scope="row">{"Product Type : "}</th>
+                       <td>{each.productType.label || each.productType}</td>
+                     </tr>
+                   </Grid>
+                   {each.measurable == true ? (
+                     <Grid item xs={12} sm={6}>
+                       <tr>
+                         <th scope="row">{"Dimensions : "}</th>
+                         <td>
+                           {each.height} x {each.length} x {each.width}{" "}
+                           {each.unit.label || each.unit}
+                         </td>
+                       </tr>
+                     </Grid>
+                   ) : (
+                     <p></p>
+                   )}
+
+                   <Grid item xs={12} sm={6}>
+                     <tr>
+                       <th scope="row">{"Category: "}</th>
+                       <td>
+                         {each.categories.map((unit) => unit.label + ",")}{" "}
+                       </td>
+                     </tr>
+                   </Grid>
+                 </Grid>
+               </table>
+             </div>
+           ))}
+         </Card>
+       </div>
+     );
 };
-
+}
 export default AcceptanceForm;
