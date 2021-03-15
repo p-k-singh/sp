@@ -283,10 +283,9 @@ const Track = (props) => {
       <div>
         {activeStep === steps.length ? (
           <div>
-            <Typography className={classes.instructions}>
-              All steps completed
-            </Typography>
-            <Button onClick={handleReset}>Reset</Button>
+            <center><Typography className={classes.instructions}>
+             <h3> Shipment Delivered Successfully</h3>
+            </Typography></center>
           </div>
         ) : (
           <div>

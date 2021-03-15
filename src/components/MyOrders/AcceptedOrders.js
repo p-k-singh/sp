@@ -228,8 +228,12 @@ const MyOrders = () => {
                         </Grid>
                         <Grid itemsm={12} xs={6}>
                           <h6>
-                            Total Amount :{" "}
-                            {Math.round(Number(eachOrder.customerDetails.Item.estimatedPrice))}
+                            Total Amount : ₹
+                            {Math.round(
+                              Number(
+                                eachOrder.customerDetails.Item.estimatedPrice
+                              )
+                            )}
                           </h6>
                         </Grid>
                       </Grid>
@@ -246,7 +250,7 @@ const MyOrders = () => {
                               eachOrder.trackingDetails.stages[3].status ==
                               "COMPLETED" ? (
                                 <Button
-                                disabled={true}
+                                  disabled={true}
                                   style={{
                                     maxWidth: "150px",
                                     minWidth: "150px",
@@ -260,7 +264,7 @@ const MyOrders = () => {
                                   component={Link}
                                   to={`/track/${eachOrder.ServiceOrderId}`}
                                 >
-                                 Delivered
+                                  Delivered
                                 </Button>
                               ) : (
                                 <Button

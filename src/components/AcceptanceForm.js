@@ -53,7 +53,7 @@ const AcceptanceForm = (props) => {
   const [accepted, setAccepted] = useState(false);
 
   useEffect(async () => {
-    // async function putOrders(){
+    // async function putOrde₹(){
     var temp = await API.get(
       "GoFlexeOrderPlacement",
       `/customerorder/${params.id}`
@@ -126,6 +126,10 @@ const AcceptanceForm = (props) => {
              style={{ color: "black", backgroundColor: "lightgrey" }}
            >
              Order Acceptance Form
+             <tr style={{ float: "right", marginRight: "10%" }}>
+               {/* <th scope="row">{constants.estimatedCost+": "}</th> */}
+               <td>Amount : ₹ {Order.estimatedPrice} </td>
+             </tr>
            </Typography>
            <table>
              <Grid
@@ -209,6 +213,11 @@ const AcceptanceForm = (props) => {
              style={{ color: "black", backgroundColor: "lightgrey" }}
            >
              Order Acceptance Form
+             <tr style={{ float: "right", marginRight: "10%" }}>
+               {/* <th scope="row">{constants.estimatedCost+": "}</th> */}
+               <td>Amount :</td>
+               <td>₹ {Order.estimatedPrice}</td>
+             </tr>
            </Typography>
 
            <table>
@@ -354,6 +363,11 @@ const AcceptanceForm = (props) => {
              style={{ color: "black", backgroundColor: "lightgrey" }}
            >
              Order Acceptance Form
+             <tr style={{ float: "right", marginRight: "10%" }}>
+               {/* <th scope="row">{constants.estimatedCost+": "}</th> */}
+               <td>Amount :</td>
+               <td>₹ {Order.estimatedPrice}</td>
+             </tr>
            </Typography>
 
            <table>
@@ -401,12 +415,16 @@ const AcceptanceForm = (props) => {
                        <td>{each.productName}</td>
                      </tr>
                    </Grid>
-                   {each.measurable == true ? (<Grid item xs={12} sm={6}>
-                     <tr>
-                       <th scope="row">{"No. of Units : "}</th>
-                       <td>{each.noOfUnits}</td>
-                     </tr>
-                   </Grid>):(<p></p>)}
+                   {each.measurable == true ? (
+                     <Grid item xs={12} sm={6}>
+                       <tr>
+                         <th scope="row">{"No. of Units : "}</th>
+                         <td>{each.noOfUnits}</td>
+                       </tr>
+                     </Grid>
+                   ) : (
+                     <p></p>
+                   )}
                    {each.measurable == true ? (
                      <Grid item xs={12} sm={6}>
                        <tr>
