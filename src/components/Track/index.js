@@ -85,6 +85,7 @@ const Track = (props) => {
       .then((resp) => {
         console.log(resp);
         setTrackingData(resp);
+        FindTaskData(resp);
         FindStage(resp);
         getAllStageNames(resp);
         getCurrentTrackingStage(resp);
@@ -128,12 +129,29 @@ const Track = (props) => {
       ) {
         setCurrentStageName(resp.stages[i].stageLabel);
         setCurrentStageId(resp.stages[i].stageId);
-        setTasks(resp.stages[i].tasks);
         break;
       }
       temp++;
     }
     setCount(temp);
+  }
+  function FindTaskData(resp) {
+    var temp = [];
+    var i;
+    var j;
+    for (i = 0; i < resp.stages.length; i++) {
+      if (
+        resp.stages[i].status === "INACTIVE" ||
+        resp.stages[i].status === "PENDING"
+      ) {
+        for (j = 0; j < resp.stages[i].tasks.length; j++){
+         temp.push(resp.stages[i].tasks[j].customFields.data);
+        } 
+        setTasks(temp);
+        break;
+      }
+    }
+    
   }
 
   const getTrackingIds = (trackingData, TaskName) => {
@@ -161,9 +179,11 @@ const Track = (props) => {
     )
       .then((response) => {
         console.log(response);
+        FindTaskData(response);
         setTrackingData(response);
         FindStage(response);
         getCurrentTrackingStage(response);
+        
         setLoading(false);
       })
       .catch((error) => {
@@ -183,6 +203,7 @@ const Track = (props) => {
         console.log(response);
         setTrackingData(response);
         FindStage(response);
+        FindTaskData(response);
         getCurrentTrackingStage(response);
         setLoading(false);
       })

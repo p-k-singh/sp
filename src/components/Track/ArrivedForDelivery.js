@@ -175,7 +175,10 @@ const ArrivedAtDrop = (props) => {
                        {elements
                          ? elements.map((field, i) => (
                              <center>
-                               <Element key={i} field={field} />
+                               <Element
+                                 key={field.show_fields[0].id}
+                                 field={field.show_fields[0]}
+                               />
                              </center>
                            ))
                          : null}

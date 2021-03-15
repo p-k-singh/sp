@@ -8,30 +8,30 @@ import NextButton from "./Elements/Next Button";
 
 
 const Element = ({
-  field: { taskType, taskId, taskLabel, field_value, field_options },
+  field: { type, id, label, field_value, field_options },
 }) => {
-  switch (taskType) {
+  switch (type) {
     case "input-text":
       return (
         <TextInput
-          field_id={taskId}
-          field_label={taskLabel}
+          field_id={id}
+          field_label={label}
           field_value={field_value}
         />
       );
     case "input-number":
       return (
         <NumberInput
-          field_id={taskId}
-          field_label={taskLabel}
+          field_id={id}
+          field_label={label}
           field_value={field_value}
         />
       );
     case "button":
       return (
         <NextButton
-          field_id={taskId}
-          field_label={taskLabel}
+          field_id={id}
+          field_label={label}
           field_value={field_value}
         />
       );
@@ -39,24 +39,24 @@ const Element = ({
     case "submit-button":
       return (
         <SubmitButton
-          field_id={taskId}
-          field_label={taskLabel}
+          field_id={id}
+          field_label={label}
           field_value={field_value}
         />
       );
     case "input-attachment":
       return (
         <SubmitDocument
-          field_id={taskId}
-          field_label={taskLabel}
+          field_id={id}
+          field_label={label}
           field_value={field_value}
         />
       );
     case "checkbox":
       return (
         <Checkbox
-          field_id={taskId}
-          field_label={taskLabel}
+          field_id={id}
+          field_label={label}
           field_value={field_value}
         />
       );

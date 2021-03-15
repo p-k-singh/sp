@@ -54,20 +54,20 @@ const DeliveryChecklist = (props) => {
    CompleteDeliveryChecklist()
    };
 
-   const handleChange = (id, event) => {
+   const handleChange = (Id, event) => {
      var newElements = elements.slice();
      newElements.forEach((field) => {
-       const { taskType, taskId } = field;
-       if (id == taskId) {
-         switch (taskType) {
+       const { type, id } = field.show_fields[0];
+       if (Id == id) {
+         switch (type) {
            case "checkbox":
-             field["field_value"] = event.target.checked;
+             field.read_fields[0]["value"] = event.target.checked;
              break;
            case "input-attachment":
-             field["field_value"] = event.target.files[0];
+             field.read_fields[0]["value"] = event.target.files[0];
              break;
            default:
-             field["field_value"] = event.target.value;
+             field.read_fields[0]["value"] = event.target.value;
              break;
          }
        }
@@ -218,7 +218,7 @@ const DeliveryChecklist = (props) => {
         {props.StageName}
       </Typography>
 
-      <FormContext.Provider value={{ handleChange,handleSubmit }}>
+      <FormContext.Provider value={{ handleChange, handleSubmit }}>
         <div className="App container">
           <form>
             {" "}
@@ -228,7 +228,12 @@ const DeliveryChecklist = (props) => {
               style={{ paddingTop: 10, paddingBottom: 30 }}
             >
               {elements
-                ? elements.map((field, i) => <Element key={i} field={field} />)
+                ? elements.map((field, i) => (
+                    <Element
+                      key={field.show_fields[0].id}
+                      field={field.show_fields[0]}
+                    />
+                  ))
                 : null}
             </Grid>
           </form>
