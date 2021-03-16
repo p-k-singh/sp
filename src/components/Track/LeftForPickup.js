@@ -54,6 +54,7 @@ const LeftForPickupComponent = (props) => {
 
    const [elements, setElements] = useState(null);
      useEffect(() => {
+       console.log(props.Tasks)
        setElements(props.Tasks);
      }, []);
      const { taskType, page_label } = elements ?? {};
@@ -150,7 +151,10 @@ const LeftForPickupComponent = (props) => {
                       {elements
                         ? elements.map((field, i) => (
                             <center>
-                              <Element key={i} field={field} />
+                              <Element
+                                key={field.show_fields[0].id}
+                                field={field.show_fields[0]}
+                              />
                             </center>
                           ))
                         : null}

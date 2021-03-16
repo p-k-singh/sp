@@ -9,6 +9,7 @@ import { Button, Divider } from "@material-ui/core";
 import AddTruckCost from "./Add Truck Cost";
 import ShowTruckCost from "./Show Trucks Cost";
 
+
 const useStyles = makeStyles({
   formHeadings: {
     margin: 20,
@@ -39,7 +40,6 @@ const TruckCost = (props) => {
   };
   const editButtonClicked = () => {
     setEditForm(!editForm);
-    // alert(rows[checkedBoxes[0]].productId)
   };
   return (
     <div>

@@ -29,6 +29,8 @@ import { Auth, API } from "aws-amplify";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Checkbox from "@material-ui/core/Checkbox";
 import EditIcon from "@material-ui/icons/Edit";
+import EditTruckCost from "./Edit Truck Cost";
+
 const useRowStyles = makeStyles({
   root: {
     "& > *": {
@@ -113,11 +115,11 @@ export default function TruckCostDetails(props) {
     props.editButtonClicked();
   };
 
-  //   if (toEdit === true) {
-  //     return (
-  //       <EditForm row={rows[checkedBoxes[0]]} editButtonClicked={showEditPage} />
-  //     );
-  //   }
+    if (toEdit === true) {
+      return (
+        <EditTruckCost row={rows[checkedBoxes[0]]} editButtonClicked={showEditPage} />
+      );
+    }
   if (loading === true) {
     return <Spinner />;
   }
